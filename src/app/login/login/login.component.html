@@ -1,0 +1,111 @@
+<div class="row" style="height: 99vh; overflow-x: hidden;">
+	<div class="col-md-8 login-side-pic container-fluid">
+		<div class="side-text-container container-fluid">
+			<div class="mt-5 ms-4">
+				<span style="
+            /* border: 1px solid red; */
+            background-color: rgba(0, 0, 0, 0.85);
+            color:white;
+            display: inline-block;
+            letter-spacing: 2px;
+            font-weight: 700;
+            font-size: 2.5rem;
+            padding: 1.2rem 0.75rem ;
+            text-align: center;
+            text-shadow: 0px 2px 2px black;
+            border-radius: 10px 10px 0 0;
+        "><img height="80px" style="margin-left: 10px;"
+					src="/assets/images/logoimage.png"></span>
+			</div>
+
+			<div class="ms-4">
+				<span class
+					style="
+                      font-size: 2.2rem;
+                      background-color: rgba(0, 0, 0, 0.85);
+                      color: white;
+                      padding: 0.75rem;
+                      text-align: center;
+                      font-weight: 300;
+                      display: inline-block;
+                      /* text-shadow: 0px 2px 2px black; */
+                      border-radius: 0 10px 10px 10px;
+                  ">
+				  India Meteorological Department RAinfall INformation System
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4 mt-md-0 mt-3 p-5 container-fluid"
+		style="background-color: #F1f1f1;">
+
+		<form [formGroup]="loginForm"
+			(ngSubmit)="onLoginSubmit()"
+			autocomplete="off">
+
+			<div class="w-100 text-center h5">
+				<img height="95px" style="margin-right: 10px;"
+					src="/assets/images/IMDlogo_Ipart-iris.png">
+
+					<img height="80px" style="margin-left: 10px;"
+					src="/assets/images/IMD150(BGR).png">
+				<br>
+				IMD RAinfall INformation System (iRAINS)
+        Hydromet Division <br>
+			</div>
+
+      <div class="w-100 text-center h6">
+        India Meteorological Department <br>
+        Ministry Of Earth Sciences <br>
+        New Delhi-110 003
+			</div>
+
+			<div class="mt-5 ">
+				<mat-form-field class="w-100"
+					appearance="outline">
+					<mat-icon matSuffix>email</mat-icon>
+					<mat-label>Email Address</mat-label>
+					<input [formControlName]="'username'"
+						matInput
+						placeholder="Email Address"
+						type="email">
+				</mat-form-field>
+			</div>
+
+			<div class="mt-3 ">
+				<mat-form-field class="w-100"
+					appearance="outline">
+					<mat-icon matSuffix>vpn_key</mat-icon>
+					<mat-label>Password</mat-label>
+					<input [formControlName]="'password'"
+						matInput
+						type="password">
+				</mat-form-field>
+			</div>
+
+			<mat-divider></mat-divider>
+
+			<div class="d-flex justify-content-between mt-3">
+				<div class="d-flex justify-content-left">
+					<mat-slide-toggle color="primary">Remember Password</mat-slide-toggle>
+				</div>
+
+				<div>
+					<a [routerLink]="'/common/auth/forget-password'"
+						style="text-decoration: none;">
+						Forgot Password?
+					</a>
+				</div>
+			</div>
+
+			<button [type]="'submit'"
+				mat-raised-button
+				color="primary"
+				class="w-100 mt-4 mb-4">
+				<mat-icon>input</mat-icon>
+				Login
+			</button>
+		</form>
+	</div>
+</div>
