@@ -1,21 +1,21 @@
 <table style="width: 100%; background: linear-gradient(to top, #09203f 0%, #537895 100%);">
-  <tbody>
-    <tr>
-      <td>
-        <label style="color: aliceblue; margin-left: 10px;">{{loggedInUser.data[0].name}}</label>
-      </td>
-      <td style="width: 8%;padding: 10px 0px 18px 18px;" align="left">
-        <!-- <img class="logo" src="/assets/images/IMDlogo_Ipart-iris.png" alt="" /> -->
-      </td>
-      <td style="text-align: center; padding: 20px 0px 20px 20px; width: 75%">
-        <table style="width: 100%">
-          <tbody>
-            <tr style="display: flex; flex-direction: column;">
-              <!-- <td>
+    <tbody>
+        <tr>
+            <td>
+                <label style="color: aliceblue; margin-left: 10px;">{{loggedInUser.data[0].name}}</label>
+            </td>
+            <td style="width: 8%;padding: 10px 0px 18px 18px;" align="left">
+                <!-- <img class="logo" src="/assets/images/IMDlogo_Ipart-iris.png" alt="" /> -->
+            </td>
+            <td style="text-align: center; padding: 20px 0px 20px 20px; width: 75%">
+                <table style="width: 100%">
+                    <tbody>
+                        <tr style="display: flex; flex-direction: column;">
+                            <!-- <td>
                 <img width="100px" style="margin-left: 10px;" src="/assets/images/logoimage.png">
               </td> -->
-              <td>
-                <label style="
+                            <td>
+                                <label style="
                     color: white;
                     vertical-align: middle;
                     font-family: Arial;
@@ -23,11 +23,11 @@
                     font-size: 20px;
                   ">
                   IMD Rainfall Information System<img width="100px" style="margin-left: 10px;" src="/assets/images/logoimage.png"></label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label style="
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label style="
                     color: white;
                     vertical-align: middle;
                     font-family: Arial;
@@ -35,9 +35,9 @@
                     font-size: 18px;
                   ">
                   Hydromet Division</label>
-              </td>
-            </tr>
-            <!-- <tr>
+                            </td>
+                        </tr>
+                        <!-- <tr>
               <td>
                 <label
                   style="
@@ -82,19 +82,19 @@
                 >
               </td>
             </tr> -->
-          </tbody>
-        </table>
-      </td>
-      <td>
-        <div class="button">
-          <button class="Logout" (click)="logOut()" id="usrLout">
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                <div class="button">
+                    <button class="Logout" (click)="logOut()" id="usrLout">
             Logout
           </button>
-          <button class="Back" href="http://www.imd.gov.in">
+                    <button class="Back" routerLink="../front-page/departure">
             Back
           </button>
-        </div>
-      </td>
-    </tr>
-  </tbody>
+                </div>
+            </td>
+        </tr>
+    </tbody>
 </table>
