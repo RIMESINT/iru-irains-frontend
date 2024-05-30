@@ -12,11 +12,11 @@ import * as FileSaver from 'file-saver';
 export class DataentryComponent {
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild('rainfallFileInput') rainfallFileInput!: ElementRef;
-  selectedRegions: string[] = [];
-  selectedStates: string[] = [];
-  selectedMcs: string[] = [];
-  selectedRMcs: string[] = [];
-  selectedDistricts: string[] = [];
+  selectedRegions: any[] = [];
+  selectedStates: any[] = [];
+  selectedMcs: any[] = [];
+  selectedRMcs: any[] = [];
+  selectedDistricts: any[] = [];
   tempfilteredStations: any[] = [];
   regionList: any[] = [];
   filteredMcs: any[] = [];
@@ -74,8 +74,19 @@ export class DataentryComponent {
   loggedInUserObject: any;
   emailGroups:any[]=[];
   emails:any[]=[];
+  loggedInUser: any;
+  currentUserType:any
+  currentUserMCorRMC:any;
+  currentUserMCorRMCregion :any;
 
   ngOnInit(): void {
+    this.loggedInUser = localStorage.getItem("isAuthorised");
+    const obj  = JSON.parse(this.loggedInUser);
+    this.currentUserType = obj.data[0].mcorhq
+    console.log('dhiudhe',this.currentUserType)
+
+    console.log('ff')
+
     this.fetchDataFromBackend();
     this.dataService.getEmailGroup().subscribe(res => {
       this.emailGroups = res;
@@ -85,13 +96,19 @@ export class DataentryComponent {
         })
       })
     })
+    
+
   }
+
 
   constructor(
     private dataService: DataService,
   ) {
     let loggedInUser: any = localStorage.getItem("isAuthorised");
     this.loggedInUserObject = JSON.parse(loggedInUser);
+    // this.currentUserType = loggedInUser.data[0].mcorhq
+
+    // console.log(this.loggedInUser.data[0].mcorhq, this.loggedInUser);
     if(this.loggedInUserObject.data[0].mcorhq == 'mc'){
       const todayDate = new Date();
       todayDate.setDate(todayDate.getDate() - 29);
@@ -213,13 +230,41 @@ export class DataentryComponent {
         this.regionList = regionList.map(x => {
           return {name: x}
         })
+        if(this.currentUserType=='mc'){
+          const obj  = JSON.parse(this.loggedInUser);
+          const mcOrRmc = obj.data[0].name
+          let region = ''
+          for(let i=0; i<this.existingstationdata.length; i++){
+            if(this.existingstationdata[i].rmc_mc.toLowerCase()==mcOrRmc.toLowerCase()){
+              region = this.existingstationdata[i].region;
+            }
+          }
+          this.selectedRegions = [{name:region}]
+          this.onChangeRegion()
+          this.currentUserMCorRMCregion = region.toUpperCase()
+          if (mcOrRmc.startsWith("MC")) {
+            const some = {'name' : mcOrRmc.toUpperCase()}
+            this.selectedMcs.push(some)
+            this.onChangeMc()
+            this.currentUserMCorRMC = mcOrRmc.toUpperCase()
+          } else if (mcOrRmc.startsWith("RMC")) {
+            const some = {'name' : mcOrRmc.toUpperCase()}
+            this.selectedRMcs = [some]
+            this.onChangeRMc()
+            this.currentUserMCorRMC = mcOrRmc.toUpperCase()
+
+          }
+          console.log(mcOrRmc, obj, this.existingstationdata)
+        }
         this.filterByDate();
       },
       error: (err) => console.error('Error fetching data:', err),
     });
+
   }
 
   filterByDate() {
+    console.log(this.selectedRegions, this.selectedMcs, this.selectedRMcs, this.selectedStates, this.selectedDistricts)
     if(this.tempfilteredStations && this.tempfilteredStations.length > 0){
       this.filteredStations = this.existingstationdata.filter(item => {
         return this.tempfilteredStations.some((value:any) => {
@@ -259,7 +304,6 @@ export class DataentryComponent {
   }
 
   editStation(station: any) {
-    console.log(station, 'dataentry');
     this.showEditPopup = true;
     this.editData.stationname = station.stationname,
       this.editData.stationid = station.stationid,
@@ -272,6 +316,7 @@ export class DataentryComponent {
       this.editData.previousstationid = station.stationid
     console.log(this.editData, "jjjj")
   }
+  
   deleteStationdata(index: number): void {
     this.showdeletePopup = true;
     this.deleteData = { ...this.existingstationdata[index] };

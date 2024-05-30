@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DataService } from '../data.service';
+import * as e from 'express';
 
 @Component({
   selector: 'app-verification-page-hq',
@@ -7,43 +8,53 @@ import { DataService } from '../data.service';
   styleUrls: ['./verification-page-hq.component.css']
 })
 export class VerificationPageHQComponent {
-selectedRegions: string[] = [];
-  selectedStates: string[] = [];
-  selectedMcs: string[] = [];
-  selectedRMcs: string[] = [];
-  selectedDistricts: string[] = [];
-  tempfilteredStations: any[] = [];
-  regionList: any[] = [];
-  filteredMcs: any[] = [];
-  filteredRMcs: any[] = [];
-  filteredStates: any[] = [];
-  filteredDistricts:any[]=[];
+
+  updateTheRainFallData() {
+    console.log('datatodisplay info', this.dataToDisplay)
+    const filteredStations = [];
+
+    for(let i=0; i<this.dataToDisplay.length; i++){
+      const stationid = this.dataToDisplay[i].stationid
+      const rainfallToUpdate = this.dataToDisplay[i].rainfall
+      filteredStations.push(
+        {
+          'RainFall' : rainfallToUpdate,
+          'stationid' : stationid
+        }
+      )
+    }
+
+    let data = {
+      date: this.dateCalculation(),
+      updatedstationdata: filteredStations
+    }
+    console.log(data);
+    this.dataService.updateRainFallData(data).subscribe(res => {
+      alert("Updated")
+      this.fetchDataFromBackend();
+      this.filterByDate()
+    })
+    console.log('updated succesfully')
+  }
+
+
+  filteredMCorRMCSArray:any[]= [];
+  filteredMCorRMCS: any = {}; 
+  // fetchedMasterFile: any;
+  dataToDisplay : any[]=[];
   filteredStations:any[]=[];
   selectedDate: Date = new Date();
-  selectedFile: File | null = null;
-  rainFallInMM: number = 0;
+
+  showIsUpdatesTable: boolean = false;
+  showIsNotUpdatesTable: boolean = false;
+  showIsVerifiedTable: boolean = false;
+  showIsNotVerifiedTable: boolean = false;
+
+
   todayDate: string;
-  message: string | null = null;
   existingstationdata: any[] = [];
-  data = {
-    stationName: '',
-    stationId: '',
-    dateTime: new Date(),
-    stationType: 'aws',
-    newOrOld: 'new',
-    lat: '',
-    lng: '',
-    activationDate: this.selectedDate
-  };
-  verifiedMessage: string = '';
-  status: string = '';
-  mcdata = [
-    {id:101, name: "mc1"},
-    {id:101, name: "mc1"},
-    {id:101, name: "mc1"},
-    {id:101, name: "mc1"},
-    {id:101, name: "mc1"}
-  ]
+
+  bottom_section: boolean = false;
 
   ngOnInit(): void {
     this.fetchDataFromBackend();
@@ -55,83 +66,7 @@ selectedRegions: string[] = [];
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yyyy = today.getFullYear();
-
     this.todayDate = yyyy + '-' + mm + '-' + dd;
-    }
-
-    onChangeRegion(){
-      let tempMcs = this.existingstationdata.filter(item => {
-        return this.selectedRegions.some((value:any) => {
-          return item.region == value.name;
-        });
-      });
-      let tempfilteredMcs = Array.from(new Set(tempMcs.map(a => a.rmc_mc)));
-      this.selectedMcs = [];
-      this.selectedRMcs = [];
-      this.selectedStates = [];
-      this.selectedDistricts = [];
-      tempfilteredMcs.forEach(m => {
-        if(m.split(" ")[0] == "MC"){
-          this.filteredMcs.push({name: m})
-        }
-      });
-
-      tempfilteredMcs.forEach(m => {
-        if(m.split(" ")[0] == "RMC"){
-          this.filteredRMcs.push({name: m})
-        }
-      });
-    }
-
-    onChangeMc(){
-      let tempStates = this.existingstationdata.filter(item => {
-        return this.selectedMcs.some((value:any) => {
-          return item.rmc_mc == value.name;
-        });
-      });
-      let tempfilteredStates = Array.from(new Set(tempStates.map(a => a.state)));
-      this.selectedStates = [];
-      this.selectedDistricts = [];
-      this.filteredStates = tempfilteredStates.map(a => { return {name: a}});
-    }
-
-    onChangeRMc(){
-      let tempStates = this.existingstationdata.filter(item => {
-        return this.selectedRMcs.some((value:any) => {
-          return item.rmc_mc == value.name;
-        });
-      });
-      let tempfilteredStates = Array.from(new Set(tempStates.map(a => a.state)));
-      this.selectedStates = [];
-      this.selectedDistricts = [];
-      this.filteredStates = tempfilteredStates.map(a => { return {name: a}});
-    }
-
-    onChangeState(){
-      let tempDistricts = this.existingstationdata.filter(item => {
-        return this.selectedStates.some((value:any) => {
-          return item.state == value.name;
-        });
-      })
-      let tempfilteredDistricts = Array.from(new Set(tempDistricts.map(a => a.district)));
-      this.selectedDistricts = [];
-      this.filteredDistricts = tempfilteredDistricts.map(a => { return {name: a}});
-    }
-
-    onChangeDistrict(){
-      let tempStations = this.existingstationdata.filter(item => {
-        return this.selectedDistricts.some((value:any) => {
-          return item.district == value.name;
-        });
-      })
-      this.tempfilteredStations = Array.from(new Set(tempStations.map(a => a.station)));
-    }
-
-    shareCheckedList(item:any[]){
-      console.log(item);
-    }
-    shareIndividualCheckedList(item:any){
-      console.log(item);
     }
 
     goBack() {
@@ -139,26 +74,58 @@ selectedRegions: string[] = [];
     }
 
     Verify(){
-      if (confirm("Do want to verify these stations") == true) {
-        let data = {
-          date: this.dateCalculation(),
-          verifiedDateTime: new Date(),
-          verifiedstationdata: this.filteredStations
-        }
-        this.dataService.verifiedRainfallData(data).subscribe(res => {
-          alert("Verified Successfully");
-          this.showVerifiedDateAndMessage();
-          this.filterByDate();
-        })
-      } else {
 
+    }
+
+
+    Verifyall() {
+      // updating for all isnotverified to verify
+      if(this.dataToDisplay.length>0){
+        if (confirm("Do want to verify these stations") == true) {
+          const filterStationIds = this.dataToDisplay.map((x:any)=>{
+            return {'station_id':Number(x.stationid)}}
+          )
+          let data = {
+            date: this.dateCalculation(),
+            verifiedDateTime: new Date(),
+            verifiedstationdata: filterStationIds
+          }
+          this.dataService.verifiedRainfallData(data).subscribe(res => {
+            alert("Verified Successfully");
+            this.fetchDataFromBackend()
+            this.filterByDate()
+          
+            for(let i=0; i<this.dataToDisplay.length;i++){
+              this.dataToDisplay[i]['status']='Verified'
+            }
+          })
+        } else {
+  
+        }
       }
     }
+      
+      
 
-    showVerifiedDateAndMessage(){
-      this.verifiedMessage = "These stations are Verified";
-    }
 
+    SortOrder = false;
+
+    sort(list: any[],key: string) {
+      this.SortOrder=!this.SortOrder;
+  
+      return list.sort((a, b) => {
+        const valueA = a[key];
+        const valueB = b[key];
+    
+        if (typeof valueA === "number" && typeof valueB === "number") {
+          return this.SortOrder === false ? valueA - valueB : valueB - valueA;
+        } else if (typeof valueA === "string" && typeof valueB === "string") {
+          return this.SortOrder === false ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+        } else {
+          throw new Error("Cannot sort by key: values are not of the same type or unsupported type.");
+        }
+      }); 
+     }
     dateCalculation() {
       const months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -171,67 +138,86 @@ selectedRegions: string[] = [];
       const selectedYear = String(year).slice(-2);
       return `${dd.padStart(2, '0')}_${currmonth}_${selectedYear}`;
     }
-  fetchDataFromBackend(): void {
-    this.dataService.existingstationdata().subscribe({
-      next: value => {
-        this.existingstationdata = value;
-        let regionList = Array.from(new Set(this.existingstationdata.map(a => a.region)));
-        this.regionList = regionList.map(x => {
-          return {name: x}
-        })
-        this.filteredStations = value.filter((x:any) => x[this.dateCalculation()] >= 0);
-        this.filterByDate();
-      },
-      error: err => console.error('Error fetching data:', err)
+    masterStationIds :any = {}
+
+    fetchDataFromBackend(): void {
+      // this.dataService.fetchMasterFile().subscribe({
+      //   next: value => {
+      //     this.fetchedMasterFile = value;
+      //   }
+      // });
+      this.dataService.existingstationdata().subscribe({
+        next: value => {
+    
+        this.existingstationdata = value
+        
+        console.log(this.existingstationdata.length, this.existingstationdata[0].stationid, typeof(this.existingstationdata[0].stationid), this.masterStationIds)
+        
+        for(let i=0; i<this.existingstationdata.length;i++){
+          if(this.existingstationdata[i].rmc_mc in this.filteredMCorRMCS){
+            this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['Total_Stations'] = this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['Total_Stations']+1;
+          }else{
+            this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc] = {
+              'Total_Stations' : 1,
+            }
+          }
+        }
+        this.filterByDate()
+        this.filteredMCorRMCSArray = Object.keys(this.filteredMCorRMCS).map(key => ({
+          name: key,
+          data: this.filteredMCorRMCS[key]
+        }));
+
+      }
     });
   }
 
   filterByDate(){
-    this.verifiedMessage = '';
-    if(this.tempfilteredStations && this.tempfilteredStations.length > 0){
-      this.filteredStations = this.existingstationdata.filter(item => {
-        return this.tempfilteredStations.some((value:any) => {
-          return item.station == value;
-        });
-      })
+    const datee = this.dateCalculation()
+    const curr_date = `isverified_${datee}`
+
+    for(let i=0; i<this.existingstationdata.length; i++){
+      this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isVerified'] =  0;
+      this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isNotVerified'] =  0;
+      this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isUpdated'] =  0;
+      this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isNotUpdated'] =  0;
     }
-    else if(this.selectedStates && this.selectedStates.length > 0){
-      this.filteredStations = this.existingstationdata.filter(item => {
-        return this.selectedStates.some((value:any) => {
-          return item.state == value.name;
-        });
-      })
-    }
-    else if(this.selectedMcs && this.selectedMcs.length > 0){
-      this.filteredStations = this.existingstationdata.filter(item => {
-        return this.selectedMcs.some((value:any) => {
-          return item.rmc_mc == value.name;
-        });
-      })
-    }
-    else if(this.selectedRegions && this.selectedRegions.length > 0){
-      this.filteredStations = this.existingstationdata.filter(item => {
-        return this.selectedRegions.some((value:any) => {
-          return item.region == value.name;
-        });
-      })
-    }
-    this.filteredStations.map(x => {
-      return x.RainFall = x[this.dateCalculation()];
-    })
-    this.filteredStations = this.filteredStations.filter((x:any) => x[this.dateCalculation()] >= 0);
-    this.filteredStations.map(x => {
-      return x.isverified = x['isverified_' + this.dateCalculation()];
-    })
-    if(this.status){
-      this.filteredStations = this.filteredStations.filter(s =>  s.isverified != 'null');
-    }
-    if(this.filteredStations.length > 0){
-      let isverified = this.filteredStations.every(station => station && station.isverified != 'null');
-      if(isverified){
-        this.showVerifiedDateAndMessage();
+
+    for(let i=0; i<this.existingstationdata.length; i++){
+      // console.log(this.existingstationdata[i][curr_date], typeof this.existingstationdata[i][curr_date], typeof this.existingstationdata[i][curr_date]==='string')
+
+      if(this.existingstationdata[i][curr_date]===undefined){
+        this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isVerified']= 'OutDated';
+        this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isNotVerified']= 'OutDated'
+      }else{
+        const Verification = (this.existingstationdata[i][curr_date]=='null' || this.existingstationdata[i][curr_date]==null) ? 0 : 1
+        if(Verification==1){
+          this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isVerified']= this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isVerified']+ 1;
+        }else{
+          this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isNotVerified']= this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isNotVerified']+1;
+        }
+      }
+
+
+      if(this.existingstationdata[i][datee]===undefined){
+
+        this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isUpdated']= 'OutDated';
+        this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isNotUpdated']= 'OutDated'
+      }else{
+        const Updation = (this.existingstationdata[i][datee]==-999.9) ? 0 : 1;
+        if(Updation==1){
+          this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isUpdated']= this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isUpdated']+ 1;
+        }else{
+          this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isNotUpdated']= this.filteredMCorRMCS[this.existingstationdata[i].rmc_mc]['isNotUpdated']+ 1;
+        }
       }
     }
+
+    console.log('prinring filterMcorRmc', this.filteredMCorRMCS)
+  }
+
+  sendEmail(){
+
   }
 
   showMessage(elementRef: any) {
@@ -251,42 +237,128 @@ selectedRegions: string[] = [];
         }
   }
 
-  sendEmail(){
-    if (confirm("Do want to send email") == true) {
-      // let emails = ["saurav97531@gmail.com", "pavan@rimes.int", "dominic@rimes.int", "tarakesh@rimes.int", "saipraveen@rimes.int", "saurabh@rimes.int"];
-      let emails = ["saurav97531@gmail.com"];
-      emails.forEach(email => {
-        let data = {
-          to: email,
-          subject: `Rainfall data is not correct for - ${new Date().toDateString()}`,
-          text: `Hi Rainfall data is not correct for - ${new Date().toDateString()} please correct it`,
-        }
-        this.dataService.sendEmail(data).subscribe(res => {
-          console.log("Email Sent Successfully");
-        })
-      })
+  submit(type:string, MCorRMCName:string){
+    this.showIsUpdatesTable = false;
+    this.showIsNotUpdatesTable = false;
+    this.showIsVerifiedTable = false;
+    this.showIsNotVerifiedTable = false
+
+    this.dataToDisplay = [];
+
+    if(type=='isUpdated'){
+      this.onIsUpdatedSubmit(MCorRMCName);
     }
+    if(type=='isVerified'){
+      this.onIsVerifiedSubmit(MCorRMCName);
+    }
+    if(type=='isNotVerified'){
+      this.onIsNotVerifiedSubmit(MCorRMCName);
+    }
+    if(type=='isNotUpdated'){
+      this.onIsNotUpdatedSubmit(MCorRMCName);
+    }
+
+    this.showIsUpdatesTable = type === 'isUpdated';
+    this.showIsNotUpdatesTable = type === 'isNotUpdated';
+    this.showIsVerifiedTable = type === 'isVerified';
+    this.showIsNotVerifiedTable = type === 'isNotVerified'
+
+    this.bottom_section = true;
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'
+    });
+
   }
 
-
-  // showMessage(elementRef:any){
-  //   if(Number(elementRef.value) > 400){
-  //     elementRef.style.background = 'red'
-  //     alert("Rainfall is greater than 400mm")
-  //   }else{
-  //     elementRef.style.background = ''
-  //   }
-  // }
-
-  submit(){
-    let data = {
-      date: this.dateCalculation(),
-      updatedstationdata: this.filteredStations
+  onIsUpdatedSubmit(MCorRMCName:String){
+    const datee = this.dateCalculation()
+    let index=1
+    for(let i=0; i<this.existingstationdata.length; i++){
+      if(this.existingstationdata[i].rmc_mc==MCorRMCName){
+        if(this.existingstationdata[i][datee]!=-999.9){
+          const temprecord = {
+            'SNo': index++,
+            'district' : this.existingstationdata[i].district, 
+            'stationname' : this.existingstationdata[i].stationname, 
+            'stationid' : this.existingstationdata[i].station_id, 
+            'rainfall' : this.existingstationdata[i][datee],
+            'status' : 'Updated' 
+        }
+        this.dataToDisplay.push(temprecord);
+        }
+      }
     }
-    this.dataService.updateRainFallData(data).subscribe(res => {
-      alert("Updated")
-      this.fetchDataFromBackend();
-    })
+
+    console.log('datatodisplay', this.dataToDisplay)
+  }
+
+  onIsNotUpdatedSubmit(MCorRMCName: string){
+    const datee = this.dateCalculation()
+    let index=1
+    for(let i=0; i<this.existingstationdata.length; i++){
+      if(this.existingstationdata[i].rmc_mc==MCorRMCName){
+        if(this.existingstationdata[i][datee]==-999.9){
+          const temprecord = {
+            'SNo': index++,
+            'district' : this.existingstationdata[i].district, 
+            'stationname' : this.existingstationdata[i].stationname, 
+            'stationid' : this.existingstationdata[i].station_id, 
+            'rainfall' : this.existingstationdata[i][datee],
+            'status' : 'Not Updated' 
+        }
+        this.dataToDisplay.push(temprecord);
+        }
+      }
+    }
+
+    console.log('datatodisplay', this.dataToDisplay) 
+  }
+
+  onIsVerifiedSubmit(MCorRMCName: string){
+    const datee = this.dateCalculation()
+    const column = `isverified_${datee}`
+    let index=1
+    for(let i=0; i<this.existingstationdata.length; i++){
+      if(this.existingstationdata[i].rmc_mc==MCorRMCName){
+        if(this.existingstationdata[i][column]!='null' && this.existingstationdata[i][column]!=null){
+          const temprecord = {
+            'SNo': index++,
+            'district' : this.existingstationdata[i].district, 
+            'stationname' : this.existingstationdata[i].stationname, 
+            'stationid' : this.existingstationdata[i].station_id, 
+            'rainfall' : this.existingstationdata[i][datee]==undefined?0:this.existingstationdata[i][datee],
+            'verifiedTime' : this.existingstationdata[i][column],
+            'status' : 'Verified' 
+        }
+        this.dataToDisplay.push(temprecord);
+        }
+      }
+    }
+  }    
+  
+  
+  onIsNotVerifiedSubmit(MCorRMCName: string){
+    const datee = this.dateCalculation()
+    const column = `isverified_${datee}`
+    let index=1
+    // console.log('fgeufgeufd')
+    for(let i=0; i<this.existingstationdata.length; i++){
+      if(this.existingstationdata[i].rmc_mc==MCorRMCName){
+        if(this.existingstationdata[i][column]=='null' || this.existingstationdata[i][column]==null){
+          const temprecord = {
+            'SNo': index++,
+            'district' : this.existingstationdata[i].district, 
+            'stationname' : this.existingstationdata[i].stationname, 
+            'stationid' : this.existingstationdata[i].station_id, 
+            'rainfall' : this.existingstationdata[i][datee]==undefined?0:this.existingstationdata[i][datee],
+            'verifiedTime' : this.existingstationdata[i][column],
+            'status' : 'Not Verified'
+        }
+        this.dataToDisplay.push(temprecord);
+        }
+      }
+    }
   }
 
 }

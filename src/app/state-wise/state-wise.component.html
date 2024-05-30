@@ -1,113 +1,209 @@
-<div class="background-effect" style="text-align: center">
+<div>
     <app-header></app-header>
+
+
     <h2 class="text-center text-primary mt-2">STATE WISE RAINFALL MAP</h2>
-    <div class="row mt-4">
-        <div class="col-sm-4"></div>
+    <!-- <button class="download" routerLink="../front-page/departure">Back</button> -->
+    <!-- <div *ngIf="isDaily == false" class="row" style="margin-left: 400px;">
+        <div class="col-2">
+            <label>Select Week</label>
+            <select class="form-control" [(ngModel)]="selectedWeek">
+          <option value="06-13T00:00:00.999Z&06-19T00:00:00.999Z">13 June - 19 June</option>
+          <option value="06-06T00:00:00.999Z&06-12T00:00:00.999Z">06 June - 12 June</option>
+          <option value="06-030T00:00:00.999Z&06-05T00:00:00.999Z">30 June - 05 June</option>
+          <option value="05-23T00:00:00.999Z&05-29T00:00:00.999Z">23 May - 29 May</option>
+          <option value="05-16T00:00:00.999Z&05-22T00:00:00.999Z">16 May - 22 May</option>
+          <option value="05-09T00:00:00.999Z&05-15T00:00:00.999Z">09 May - 15 May</option>
+          <option value="05-02T00:00:00.999Z&05-08T00:00:00.999Z">02 May - 08 May</option>
+          <option value="04-25T00:00:00.999Z&05-01T00:00:00.999Z">25 April - 01 May</option>
+        </select>
+        </div>
+        <div class="col-1">
+            <label>Select Year</label>
+            <select class="form-control" [(ngModel)]="selectedYear">
+          <option value="2025-">2025</option>
+          <option value="2024-">2024</option>
+          <option value="2023-">2023</option>
+          <option value="2022-">2022</option>
+          <option value="2021-">2021</option>
+          <option value="2020-">2020</option>
+          <option value="2019-">2019</option>
+          <option value="2018-">2018</option>
+          <option value="2017-">2017</option>
+        </select>
+        </div>
+        <div class="col-3 mt-4">
+            <button class="btn btn-success" (click)="weeklyDeparture()">Submit</button>
+        </div>
+    </div> -->
+
+    <div class="row" style="margin-left: 400px;">
+        <div class="col-3">
+            <label>Date</label>
+            <input type="date" class="form-control" [(ngModel)]="selectedDate" placeholder="Select date">
+        </div>
         <div class="col-sm-4">
-            <select class="form-control" (change)="onChangeState($event)">
+            <label class="form-label">Select State</label>
+            <select class="form-control" [(ngModel)]="selectedState">
         <option selected>Select State</option>
         <option *ngFor="let state of StateList" [value]="state.value">
           {{ state.name }}
         </option>
       </select>
         </div>
-    </div>
-    <div style="text-align: center; padding-top: 40px; margin: auto; width: 50%">
-        <div class="stateWise">
-            <div id="map" style="
-          width: 100%;
-          height: 70vh;
-          border-style: solid;
-          border-color: black;
-          border-width: 2px;
-          text-align: center;
-          margin: 10px;
-          box-shadow: 10px 15px 10px 2px rgba(0, 0, 0, 0.8);
-        ">
-                <table style="width: 100%">
-                    <tbody>
-                        <tr>
-                            <td style="width: 10%; text-align: center;">
-                                <img class="logo" src="/assets/images/IMDlogo_Ipart-iris.png" alt="" style="width: 100%; margin-left: 60px;" />
-                            </td>
-                            <td style="text-align: center; width: 85%">
-                                <table style="width: 100%">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-
-                                                <div class="row ms-4">
-                                                    <div class="col-sm-12">
-                                                        <h6 class="text-center  text-dark" style="font-weight: bolder;">INDIA METEOROLOGICAL DEPARTMENT</h6>
-                                                    </div>
-
-                                                    <div class="col-sm-12 ">
-                                                        <h6 class=" text-dark">DISTRICT RAINFALL DEPARTURE MAP - {{selectedStateName}}</h6>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                            <td>
-                                <img style="margin: 15px 0 0 7px; width: 50px; height: 50px" src="../../assets/images/—Pngtree—compass_6028609.png" alt="" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="leaflet-bottom leaflet-left">
-                    <table class="info_legend leaflet-control" style="width: 98%; height: 30px; margin-bottom: 20px">
-                        <tbody>
-                            <tr align="center">
-                                <td width="5px"></td>
-                                <td style="background-color: #0096ff; width: 10px"></td>
-                                <td style="font-size: 10px; color: black; font-weight: 800">
-                                    Large Excess [60% or more]
-                                </td>
-                                <td width="5px"></td>
-                                <td style="background-color: #32c0f8; width: 10px"></td>
-                                <td style="font-size: 10px; color: black; font-weight: 800">
-                                    Excess [20% to 59%]
-                                </td>
-                                <td width="5px"></td>
-                                <td style="background-color: #00cd5b; width: 10px"></td>
-                                <td style="font-size: 10px; color: black; font-weight: 800">
-                                    Normal [-19% to 19%]
-                                </td>
-
-                                <td width="5px"></td>
-                                <td style="background-color: #ff2700; width: 10px"></td>
-                                <td style="font-size: 10px; color: black; font-weight: 800">
-                                    Deficient [-59% to -20%]
-                                </td>
-
-                                <td width="5px"></td>
-                                <td style="background-color: #ffff20; width: 10px"></td>
-                                <td style="font-size: 10px; color: black; font-weight: 800">
-                                    Large Deficient [-99% to -60%]
-                                </td>
-                                <td width="5px"></td>
-                                <td style="background-color: #ffffff; width: 10px"></td>
-                                <td style="font-size: 10px; color: black; font-weight: 800">
-                                    No Rain [-100%]
-                                </td>
-                                <td style="background-color: #c0c0c0; width: 10px"></td>
-                                <td style="font-size: 10px; color: black; font-weight: 800">
-                                    No Data
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="col-2">
+            <button type="button" class="btn btn-primary mt-4" (click)="dailyDeparture()">Submit</button>
         </div>
     </div>
-</div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-8">
+                <div class="map-container">
+                    <div class="map-frame">
+                        <div id="map" style="
+                  width: 100%;
+                  height: 100vh;
+                  border-style: solid;
+                  border-color: black;
+                  border-width: 2px;
+                  text-align: center;
+                  margin: 10px;
+                  box-shadow: 10px 15px 10px 2px rgba(0,0,0,.8);
+                ">
+                            <table style="width: 100%">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 15%; text-align: center; margin-left: 20px ">
+                                            <img class="logo" src="/assets/images/IMDlogo_Ipart-iris.png" alt="" />
+                                        </td>
+                                        <td style="text-align: center; width: 72%">
+                                            <table style="width: 100%">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <label style="
+                                    color: black;
+                                    vertical-align: middle;
+                                    font-family: Arial;
+                                    font-weight: bolder;
+                                    font-size: 15px;
+                                  ">
+                                 DISTRICT RAINFALL MAP  {{selectedStateName}}</label
+                                >
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+  
+                           <label *ngIf="!previousWeekWeeklyStartDate && !previousWeekWeeklyEndDate"
+                                  style="
+                                    color: black;
+                                    vertical-align: middle;
+                                    font-family: Arial;
+                                    font-weight: bolder;
+                                    font-size: 14px;
+                                  "
+                                  >Date : {{formatteddate}}
+                                </label>
+                                                            <label *ngIf="previousWeekWeeklyStartDate && previousWeekWeeklyEndDate" style="
+                                  color: black;
+                                  vertical-align: middle;
+                                  font-family: Arial;
+                                  font-weight: bolder;
+                                  font-size: 14px;
+                                ">Date : {{previousWeekWeeklyStartDate | date: 'dd-MM-yyyy'}} to {{previousWeekWeeklyEndDate | date: 'dd-MM-yyyy'}}
+                              </label>
+
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            <label style="
+                                    color: black;
+                                    vertical-align: middle;
+                                    font-family: Arial;
+                                    font-weight: bolder;
+                                    font-size: 12px;
+                                  ">
+                                  INDIA METEOROLOGICAL DEPARTMENT, NEW DELHI</label
+                                >
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                      <td>
+                        <img style="margin: 15px 0 0 7px; width: 50px; height: 50px;"
+                          src="../../assets/images/—Pngtree—compass_6028609.png" alt="">
+                      </td>
+                      <td style="width: 30%">
+  
+                        <button class="download" (click)="downloadMapImage(selectedStateName)">
+                          Download
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- <tr>
+                      <td>
+                          <img style="margin-top: 7px; width: 80px; height: 80px;" src="../../assets/images/—Pngtree—compass_6028609.png" alt="">
+                      </td>
+                    </tr> -->
+                  </tbody>
+                </table>
+                <div class="leaflet-bottom leaflet-right" style="width: 100%;">
+                  <table
+                    class="info_legend leaflet-control"
+                    style="width: 98%; height: 30px; margin-bottom: 20px"
+                  >
+                  <tbody>
+                    <tr style="align-items: center">
+                      <td width="5px"></td>
+                      <td style="background-color: #0096ff; width: 10px"></td>
+                      <td style="font-size: 10px; color: black; font-weight: 800">
+                        Large Excess [60% or more]
+                      </td>
+                      <td width="5px"></td>
+                      <td style="background-color: #32c0f8; width: 10px"></td>
+                      <td style="font-size: 10px; color: black; font-weight: 800">
+                        Excess [20% to 59%]
+                      </td>
+                      <td width="5px"></td>
+                      <td style="background-color: #00cd5b; width: 10px"></td>
+                      <td style="font-size: 10px; color: black; font-weight: 800">
+                        Normal [-19% to 19%]
+                      </td>
+  
+                      <td width="5px"></td>
+                      <td style="background-color: #ff2700; width: 10px"></td>
+                      <td style="font-size: 10px; color: black; font-weight: 800">
+                        Deficient [-59% to -20%]
+                      </td>
+  
+                      <td width="5px"></td>
+                      <td style="background-color: #ffff20; width: 10px"></td>
+                      <td style="font-size: 10px; color: black; font-weight: 800">
+                        Large Deficient [-99% to -60%]
+                      </td>
+                      <td width="5px"></td>
+                      <td style="background-color:#ffffff;  width: 10px"></td>
+                      <td style="font-size: 10px; color: black; font-weight: 800">
+                        No Rain [-100%]
+                      </td>
+                      <td style="background-color: #c0c0c0; width: 10px"></td>
+                      <td style="font-size: 10px; color: black; font-weight: 800">
+                        No Data
+                      </td>
+                    </tr>
+                  </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

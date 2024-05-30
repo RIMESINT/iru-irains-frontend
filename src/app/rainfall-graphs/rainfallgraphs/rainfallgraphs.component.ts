@@ -3,8 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { Chart, ChartModule } from 'angular-highcharts';
 import { Router } from 'express';
-import { EMPTY, concatMap } from 'rxjs';
+import { EMPTY, concatMap, range } from 'rxjs';
 import { DataService } from '../../data.service';
+import { withNavigationErrorHandler } from '@angular/router';
 // import { DataService } from 'src/app/data.service';
 // import { IndexedDBService } from 'src/app/indexed-db.service';
 
@@ -44,37 +45,6 @@ export class RainfallgraphsComponent {
       fontFamily: 'Arial, sans-serif', 
     };
 
-    // const dateList: string[] = [
-    //   '01-01-2024',
-    //   '02-01-2024',
-    //   '03-01-2024',
-    //   '04-01-2024',
-    //   '05-01-2024',
-    //   '06-01-2024',
-    //   '07-01-2024',
-    //   '08-01-2024',
-    //   '09-01-2024',
-    //   '10-01-2024',
-    //   '11-01-2024',
-    //   '12-01-2024',
-    //   '13-01-2024',
-    //   '14-01-2024',
-    //   '15-01-2024',
-    //   '16-01-2024',
-    //   '17-01-2024',
-    //   '18-01-2024',
-    //   '19-01-2024',
-    //   '20-01-2024',
-    //   '21-01-2024',
-    //   '22-01-2024',
-    //   '23-01-2024',
-    //   '24-01-2024',
-    //   '25-01-2024',
-    //   '26-01-2024',
-    //   '27-01-2024',
-    //   '28-01-2024'
-    // ];
-    
 
     const dateList: string[] = [
       '01-01-2024',
@@ -172,32 +142,9 @@ export class RainfallgraphsComponent {
       referenceList[i]=referenceList[i]+20
     }
 
-    // Function to introduce slight variations to a given list of values
-    // function introduceVariations(list: number[]): number[] {
-    //     return list.map((value) => {
-    //         const randomVariation = Math.random() * 2 - 1; // Random value between -1 and 1
-    //         const newValue = Math.round(value + randomVariation); // Round to the nearest integer
-    //         return newValue;
-    //     }).slice(0, 28);
-    // }
-
-    // function getnew(referenceList: number[]){
-    //   const l = [];
-    //   for(let j = 0; j < referenceList.length; j++) {
-    //     const randomVariation = Math.random() * 2 - 1;
-    //     const newValue = Math.round(referenceList[j] + randomVariation);
-    //     l.push(newValue);
-    //   }
-    //   return l;
-    // }
     let AllData: any[] = [];
     for(let j = 0; j < 3; j++) {
         const randomNumbers: number[] = this.getnew(referenceList);
-        // for (let i = 0; i < 10; i++) {
-        //     // randomNumbers.push(...introduceVariations(referenceList));
-        //   randomNumbers.push(this.getnew(referenceList));
-
-        // }
         AllData.push(randomNumbers);
     }
 
@@ -207,48 +154,7 @@ export class RainfallgraphsComponent {
         'daily' : AllData[1],
         'departure' : AllData[2]
     };
-}
-
-
-  // getanotherdummyData(){
-
-
-    // let AllData:any = []
-    // for(let j = 0; j<3; j++){
-    //   const randomNumbers: number[] = [];
-    //   for (let i = 0; i < 10; i++) {
-    //     const randomNumber = Math.floor(Math.random() * 9) + 1;
-    //     const randomMultipleOfTen = randomNumber * 10;
-    //     randomNumbers.push(randomMultipleOfTen);
-    //   }
-    //   AllData.push(randomNumbers)
-    // }
-    // return {
-    //   'normal' : AllData[0],
-    //   'daily' : AllData[1],
-    //   'departure' : AllData[2]
-    // }
-
-
-
-
-
-
-    // const referenceList: number[] = [10,12,14,15,16,17,19,20,25,27,27,28,29,32,35,37,39,40,42,45,49,50,56,57,57,58,60,61];
-
-    // // Function to introduce slight variations to a given list of values
-    // function introduceVariations(list: number[]): number[] {
-    //     return list.map((value, index) => {
-    //         const randomVariation = Math.random() * 2 - 1; // Random value between -1 and 1
-    //         const newValue = Math.round(value + randomVariation); // Round to the nearest integer
-    //         return newValue;
-    //     });
-    // }
-    
-    // const similarFlowList: number[] = introduceVariations(referenceList);
-    // return similarFlowList;
-  // }
-
+  }
 
   initCharts() {
     this.fromdate = "01-01-2024"
@@ -267,14 +173,16 @@ export class RainfallgraphsComponent {
     if(this.season=='winter'){
       this.fromdate = '01-01-2024'
       this.todate = '28-02-2024'
+      const winterDates = this.getDateRange(this.getcustomdate(new Date().getFullYear(), 1,1), this.getcustomdate(new Date().getFullYear, 2, 29));
       if(this.regionToDisplay == 'COUNTRY INDIA'){ 
         //panindia
-        // this.processData(this.season, this.regionToDisplay)
+        this.processData(this.season, this.regionToDisplay)
 
         // this.dummy_data1 = {
         //   'normal' : [10,12,14,15,16,17,19,20,25, 27,27,28,29, 32,35, 37, 39, 40,42, 42, ],
         //   'daily'  : [],
         // }
+
         this.updatecharts(this.dummy_data1)
       }
       else if(this.regionToDisplay == 'REGION : EAST AND NORTH EAST INDIA'){
@@ -395,25 +303,112 @@ export class RainfallgraphsComponent {
 
   getdata(){
     var startDate = new Date(new Date().getFullYear(), 2, 1); // March is represented by index 2
+    console.log(startDate, typeof(startDate));
     var endDate = new Date(new Date().getFullYear(), this.today.getMonth(), this.today.getDate()); // April is represented by index 3
   }
 
-  getStationData(){
-    let stationtodistrict = [];
-    let districttostate = [];
-    let statetoregion = [];
-
-    for (const item of this.fetchedMasterData) {
-
-      // if (item[wd] != -999.9) {
-      //   stationrainfallsum = stationrainfallsum + item[wd];
-      //   numberofstations = numberofstations + 1;
-      // }
-      // else {
-      //   stationrainfallsum = stationrainfallsum + 0;
-      // }
-    }
+  formatDateToString2(){
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    const date= String(this.today.getDate());
+    const mon = String(months[this.today.getMonth() - 1])
+    const year = this.today.getFullYear();
+    return `${date}_${mon}_${year}`;
   }
+
+  formatDateToString1(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+    const year = String(date.getFullYear());
+    return `${day}-${month}-${year}`;
+  }
+
+  parseStringtoDate(date:String){
+    const months:any = {
+      'Jan':1, 'Feb':2, 'Mar':3, 'Apr':4, 'May':5, 'Jun':6,
+      'Jul':7, 'Aug':8, 'Sep':9, 'Oct':10, 'Nov':11, 'Dec':12
+    }
+    const month = months[date.slice(0,3)];
+    const dat = date.slice(3)
+    return new Date(new Date().getFullYear(), month, parseInt(dat));
+  }
+
+  getcustomdate(year:any, month:any, date:any){
+    return new Date(year, month, date)
+  }
+
+  getDateRange(startDate: Date, endDate: Date): Set<Date> {
+    const dates: Set<Date> = new Set();
+    const currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+        dates.add(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    console.log('dates', dates)
+
+    return dates;
+    }
+
+
+  getStationData(){
+    const seasons:any = {
+      'winter':{},  // {'northeast': [{Date:rainfall}]}
+      'premonsoon':{},
+      'monsoon':{},
+      'postmonsoon':{}
+    }
+
+    const winterDates = this.getDateRange(this.getcustomdate(new Date().getFullYear(), 1,1), this.getcustomdate(new Date().getFullYear, 2, 29));
+    const premonsoonDates = this.getDateRange(this.getcustomdate(new Date().getFullYear(), 3, 31), this.getcustomdate(new Date().getFullYear, 5, 31));
+    const monsoonDates = this.getDateRange(this.getcustomdate(new Date().getFullYear(), 6,1), this.getcustomdate(new Date().getFullYear,9,30));
+    const postmonsoonDates = this.getDateRange(this.getcustomdate(new Date().getFullYear(), 10,1), this.getcustomdate(new Date().getFullYear, 12,31));
+
+    console.log('winterdates : ', winterDates)
+    function appendData(p0: string, curr_region: any, toStore: { curr_date: any; }){
+      if (seasons['winter'].hasOwnProperty(curr_region)) {
+        seasons['winter'][curr_region].push(toStore);
+      } else {
+        seasons['winter'][curr_region] = [];
+      }
+    }
+
+
+    for(let i=0; i<this.fetchedData6.length; i++){
+      const curr_region=this.fetchedData6[i]["REGION"];
+        const obj = this.fetchedData6[i];
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                if(key=="REGION" || key=='regionid'){
+                  continue
+                }
+                const value = obj[key];
+                // console.log(key, value)
+
+                const curr_date = this.parseStringtoDate(key);
+                const toStore = {curr_date:value}
+                const date = this.parseStringtoDate(key);
+                console.log(key, value, date)
+
+              if (winterDates.has(date)) {
+                console.log(`winter ${curr_region} ${toStore}`)
+                appendData('winter', curr_region, toStore)
+              } else if (premonsoonDates.has(date)) {
+                appendData('premonsoon', curr_region, toStore)
+              } else if (monsoonDates.has(date)) {
+                appendData('monsoon', curr_region, toStore)
+              } else if (postmonsoonDates.has(date)) {
+                appendData('postmonsoon', curr_region, toStore)
+              }
+            }
+          }
+
+      }
+      console.log('Seasons printing');
+      console.log(seasons);
+    }
 
   previousWeekWeeklyStartDate: string = '';
   previousWeekWeeklyEndDate: string = '';
@@ -421,6 +416,37 @@ export class RainfallgraphsComponent {
   fetchDataFromBackend(): void {
     let data = this.dataService.fetchData6();
     console.log(data);
+
+
+    this.dataService.fetchMasterFile().pipe(
+      concatMap(masterData => {
+        this.fetchedMasterData = masterData;
+        this.stationtodistrict();
+        return this.dataService.fetchData6();
+      }),
+      concatMap(fetchedData6 => {
+        console.log(fetchedData6);
+        this.fetchedData6 = fetchedData6;
+        console.log(fetchedData6, "rtnir");
+        this.getStationData();
+
+        // console.log(this.getStingDate());
+        this.getdata();
+        return this.dataService.fetchData7();
+      }),
+      concatMap(fetchedData7 => {
+        this.fetchedData7 = fetchedData7;
+        this.processFetchedDataregionnormal();
+        return EMPTY; // or any observable to complete the chain
+      }),
+    ).subscribe(
+      () => { },
+      error => console.error('Error fetching data:', error)
+    );
+
+
+
+
     // this.dataService.fetchMasterFile().pipe(
     //   concatMap(masterData => {
     //     this.fetchedMasterData = masterData;
@@ -445,7 +471,7 @@ export class RainfallgraphsComponent {
     //   () => { },
     //   error => console.error('Error fetching data:', error)
     // );
-  }
+  } 
 
 
 
@@ -548,6 +574,9 @@ export class RainfallgraphsComponent {
       this.currentDateDaily = `${this.dd.padStart(2, '0')}_${currmonth}_${selectedYear}`;
       this.weeklyDates.push(this.currentDateDaily);
       // console.log(this.currentDateDaily, "dateeeeee")
+
+
+
     }
   
     weeklyDatesCalculation() {
@@ -1267,5 +1296,3 @@ export class RainfallgraphsComponent {
 
 
 }
-
-
