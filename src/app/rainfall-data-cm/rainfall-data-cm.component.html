@@ -96,16 +96,16 @@
             <thead class="">
               <tr>
                 <th>Metsubdivision</th>
-                <th>Station Name</th>
                 <th>District Name</th>
+                <th>Station Name</th>
                 <th>Rainfall (mm)</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let item of filteredItems">
                 <td>{{item.metsubdivision}}</td>
-                <td>{{item.stationname}}</td>
                 <td>{{item.district}}</td>
+                <td>{{item.stationname}}</td>
                 <td>{{item.rainFall }}</td>
               </tr>
             </tbody>
