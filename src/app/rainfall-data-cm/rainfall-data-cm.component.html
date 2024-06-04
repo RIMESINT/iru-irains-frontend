@@ -7,12 +7,7 @@
           <table style="width: 100%">
             <tbody>
               <tr>
-
-                <td>
-
-
-
-                  
+                <td>                  
                   <label style="
                       color: white;
                       vertical-align: middle;
@@ -95,10 +90,13 @@
           <table class="table table-bordered border-dark rounded-3">
             <thead class="">
               <tr>
-                <th>Metsubdivision</th>
+                <th>Met Subdivision</th>
                 <th>District Name</th>
                 <th>Station Name</th>
-                <th>Rainfall (mm)</th>
+                <th (click)="sortData('rainFall')">Rainfall (cm)
+                  <span *ngIf="sortDirection === 'asc' && sortKey === 'rainFall'">&#9650;</span>
+                  <span *ngIf="sortDirection === 'desc' && sortKey === 'rainFall'">&#9660;</span>
+            </th>
               </tr>
             </thead>
             <tbody>
@@ -106,7 +104,7 @@
                 <td>{{item.metsubdivision}}</td>
                 <td>{{item.district}}</td>
                 <td>{{item.stationname}}</td>
-                <td>{{item.rainFall }}</td>
+                <td>{{ (item.rainFall / 10).toFixed(1) }}</td>
               </tr>
             </tbody>
           </table>

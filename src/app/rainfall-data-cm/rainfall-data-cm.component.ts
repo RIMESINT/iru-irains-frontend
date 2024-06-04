@@ -14,12 +14,15 @@ import { format } from 'date-fns';
 })
 export class RainfallDataCmComponent implements OnInit{
 
+  loggedInUser: any;
   date: string = String(new Date().getDate());
   month: string = String((new Date().getMonth() + 1).toString().length == 1 ? ('0' + (new Date().getMonth() + 1)) : (new Date().getMonth() + 1));
   year: string = '2024'
+  sortedData: any[] = [];
   filteredStations: any[] = [];
   filteredItems: any[] = [];
   filterDate: string = '';
+  mcName: string = '';
   filterRainfall: number = 0;
   filteredDataForRainfall: any[] = [];
   existingstationdata: any[] = [];
@@ -29,6 +32,9 @@ export class RainfallDataCmComponent implements OnInit{
   fromDate: Date = new Date();
   toDate: Date = new Date();
   selectedFile: File | null = null;
+  sortDirection: 'asc' | 'desc' = 'asc';
+  sortKey: string = '';
+
     constructor(
     private router: Router,
     private http: HttpClient,
@@ -40,6 +46,10 @@ export class RainfallDataCmComponent implements OnInit{
 
   ngOnInit(): void {
     this.getAllData();
+    let loggedInUser: any = localStorage.getItem("isAuthorised");
+    this.loggedInUser = JSON.parse(loggedInUser);
+    console.log(this.loggedInUser);
+    console.log(this.loggedInUser.data[0].name);
   }
 
   goBack() {
@@ -55,7 +65,7 @@ export class RainfallDataCmComponent implements OnInit{
       this.fromDate = toDate;
     }
   }
-
+  
   exportAsXLSX(): void {
     console.log(this.filteredItems)
     this.exportAsExcelFile(this.sampleFile(), 'Significant_RainFall_Data');
@@ -113,15 +123,30 @@ export class RainfallDataCmComponent implements OnInit{
       elementRef.style.background = ''
     }
   }
+  
+   sortData(key: string) {
+    this.sortKey = key;
+    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    this.filteredItems.sort((a, b) => {
+      const isAsc = this.sortDirection === 'asc';
+      return (a[key] < b[key] ? -1 : 1) * (isAsc ? 1 : -1);
+    });
+  }
 
   getAllData() {
     // Call the fetchMasterFile() API here
     this.dataService.fetchMasterFile().subscribe(
       (data) => {
         // Process the data returned by the API
-        this.filteredDataForRainfall = data;
-        console.log('Data fetched:', data);
-        // You can perform any filtering logic here
+        console.log(data);
+        if (this.loggedInUser.data[0].mcorhq === "mc") {
+          this.filteredDataForRainfall = data.filter((it: any) => it.rmc_mc.toLowerCase() == this.loggedInUser.data[0].name.toLowerCase());
+          console.log('if cond', this.filteredDataForRainfall)
+        }
+        else {
+          this.filteredDataForRainfall = data;
+          console.log('Data fetched:', data);
+        }
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -140,7 +165,7 @@ export class RainfallDataCmComponent implements OnInit{
           return  x[formattedDate] >= rainfallInMM;
      })
       
-        this.filteredItems.map(x => {
+      this.filteredItems.map(x => {
         return x.rainFall = x[formattedDate];
     })
     // this.filteredItems = this.filteredDataForRainfall.filter(item => {
@@ -149,7 +174,7 @@ export class RainfallDataCmComponent implements OnInit{
       
       console.log(this.filteredItems)
     }
-    
+  
     dateCalculation() {
       const months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

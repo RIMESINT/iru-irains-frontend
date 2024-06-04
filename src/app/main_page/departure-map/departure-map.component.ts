@@ -84,7 +84,9 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
       if (value) {
         let fromAndToDates = JSON.parse(value);
         this.previousWeekWeeklyStartDate = fromAndToDates.fromDate;
+        console.log(this.previousWeekWeeklyStartDate, 'previousWeekWeeklyStartDate');
         this.previousWeekWeeklyEndDate = fromAndToDates.toDate;
+        console.log(this.previousWeekWeeklyEndDate, "previousWeekWeeklyEndDate");
         this.weeklyDatesCalculation();
         this.dateCalculation();
         this.fetchDataFromBackend();
@@ -566,10 +568,15 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
       const cumdeparture = ((matcheddailyrainfallcum - item1.cummnormal) / item1.cummnormal) * 100
       if (matchingItem) {
         this.districtdatacum.push({ ...item1, ...matchingItem, dailydeparturerainfall, cumdeparture });
+        console.log("item1", item1)
+        console.log("dailydeparturerainfall", dailydeparturerainfall)
+        console.log("cumdeparture", cumdeparture)
+        console.log("matchingItem", matchingItem);
       } else {
         console.log("data not found")
       }
-    });
+    }
+  );
 
     var dailyRainFallCumulativeArray = this.dailyRainFallCumulative();
     var array2Map = dailyRainFallCumulativeArray.reduce((acc: any, obj: any) => {
@@ -1292,10 +1299,12 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
     this.sortedDataArray = [];
     const data = this.districtdatacum.sort((a, b) => a.subdivorder - b.subdivorder);
     const data1 = this.subdivisionfetchedDatadepcum;
+    console.log("after data1", data1);
+    // console.log("before data1", data1);
     const data2 = this.statefetchedDatadepcum;
     const doc = new jsPDF() as any;
-    const columns1 = [' ', ' ', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, colSpan: 4 }, { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate, colSpan: 4 }]
-    const columns1forexcel = ['', '', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate }, '', '', '', { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate}]
+    const columns1 = [' ', ' ', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, colSpan: 4 }, { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-06-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-06-2024 To ' + this.formatteddate, colSpan: 4 }]
+    const columns1forexcel = ['', '', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate }, '', '', '', { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 edit4 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 edit5 To ' + this.formatteddate}]
     const columns = ['S.No', 'MET.SUBDIVISION/UT/STATE/DISTRICT', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.'];
     const rows: any[][] = [];
     let previousstateName: string;
@@ -1792,7 +1801,7 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
     const data1 = this.regionfetchedDatadepcum.sort((a, b) => a.regionid - b.regionid);
     const data2 = this.countryfetchedDatadepcum;
     const doc = new jsPDF() as any;
-    const columns1 = [' ', ' ', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, colSpan: 4 }, { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate, colSpan: 4 }]
+    const columns1 = [' ', ' ', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, colSpan: 4 }, { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-06-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-06-2024 To ' + this.formatteddate, colSpan: 4 }]
     const columns1forexcel = ['', '', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate }, '', '', '', { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate}]
     const columns = ['S.No', 'MET.SUBDIVISION/UT/STATE/DISTRICT', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.'];
     const rows: any[][] = [];
@@ -2065,7 +2074,7 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
     const data2 = this.countryfetchedDatadepcum;
     const doc = new jsPDF() as any;
 
-    const columns1 = [' ', ' ', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, colSpan: 4 }, { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate, colSpan: 4 }]
+    const columns1 = [' ', ' ', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, colSpan: 4 }, { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-06-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-06-2024 To ' + this.formatteddate, colSpan: 4 }]
     const columns1forexcel = ['', '', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate }, '', '', '', { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate}]
     const columns = ['S.No', 'MET.SUBDIVISION/UT/STATE/DISTRICT', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.'];
     const rows: any[][] = [];
@@ -2334,8 +2343,8 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
 
     const doc = new jsPDF() as any;
 
-    const columns1 = [' ', ' ', { content: 'Day : ' + this.formatteddate, colSpan: 4 }, { content: 'Period:01-03-2024 To ' + this.formatteddate, colSpan: 4 }];
-    const columns1forexcel = ['', '', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate }, '', '', '', { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate}]
+    const columns1 = [' ', ' ', { content: 'Day : ' + this.formatteddate, colSpan: 4 }, { content: 'Period:01-06-2024 To ' + this.formatteddate, colSpan: 4 }];
+    const columns1forexcel = ['', '', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate }, '', '', '', { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-06-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate}]
     const columns = ['S.No', 'REGION', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.'];
 
     const rows = data.map((item, index) => [
@@ -2461,7 +2470,7 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
   downloadMapData4(): void {
     const data = this.countryfetchedDatadepcum;
     const doc = new jsPDF() as any;
-    const columns1 = [' ', ' ', { content: 'Day : ' + this.formatteddate, colSpan: 4 }, { content: 'Period:01-03-2024 To ' + this.formatteddate, colSpan: 4 }];
+    const columns1 = [' ', ' ', { content: 'Day : ' + this.formatteddate, colSpan: 4 }, { content: 'Period:01-06-2024 To ' + this.formatteddate, colSpan: 4 }];
     const columns = ['S.No', 'COUNTRY AS WHOLE', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.'];
 
     const rows = data.map((item, index) => [
