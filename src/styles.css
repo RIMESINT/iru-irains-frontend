@@ -3,6 +3,12 @@
 @import "primeng/resources/primeng.css";
 @import "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css";
 
+* {
+  /* font-family: "Jost", sans-serif; */
+  font-family: "Mukta Malar", sans-serif;
+  font-optical-sizing: auto;
+}
+
 .p-multiselect {
   width: 250px;
 }

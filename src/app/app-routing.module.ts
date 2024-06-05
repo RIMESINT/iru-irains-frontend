@@ -67,6 +67,7 @@ import { RainfallGraphsPostmonsoonSouthpeninsularregionComponent } from './rainf
 import { RainfallGraphsPostmonsoonCentralindiaregionComponent } from './rainfall-graphs/post-monsoon/rainfall-graphs-postmonsoon-centralindiaregion/rainfall-graphs-postmonsoon-centralindiaregion.component';
 import { VerificationPageHQComponent } from './verification-page-hq/verification-page-hq.component';
 import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const routes: Routes = [
 
@@ -153,6 +154,10 @@ const routes: Routes = [
     ]
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+  { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
+  { path: 'app', loadChildren: () => import('./core/core.module').then(m => m.CoreModule) },
+  { path: '**', component: PageNotFoundComponent },
 ];
 
 @NgModule({

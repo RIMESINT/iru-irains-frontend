@@ -5,14 +5,14 @@ import 'jspdf-autotable';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/data.service';
 import * as FileSaver from 'file-saver';
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 
 @Component({
   selector: 'app-rainfall-data-cm',
   templateUrl: './rainfall-data-cm.component.html',
   styleUrls: ['./rainfall-data-cm.component.css']
 })
-export class RainfallDataCmComponent implements OnInit{
+export class RainfallDataCmComponent implements OnInit {
 
   loggedInUser: any;
   date: string = String(new Date().getDate());
@@ -35,7 +35,7 @@ export class RainfallDataCmComponent implements OnInit{
   sortDirection: 'asc' | 'desc' = 'asc';
   sortKey: string = '';
 
-    constructor(
+  constructor(
     private router: Router,
     private http: HttpClient,
     private dataService: DataService
@@ -53,9 +53,9 @@ export class RainfallDataCmComponent implements OnInit{
   }
 
   goBack() {
-      window.history.back();
+    window.history.back();
   }
-  
+
   validateDateRange() {
     var fromDate = this.fromDate;
     var toDate = this.toDate
@@ -65,22 +65,22 @@ export class RainfallDataCmComponent implements OnInit{
       this.fromDate = toDate;
     }
   }
-  
+
   exportAsXLSX(): void {
     console.log(this.filteredItems)
     this.exportAsExcelFile(this.sampleFile(), 'Significant_RainFall_Data');
     // this.exportAsExcelFile(this.filteredStations, 'export-to-excel');
   }
-  
-    exportAsExcelFile(json: any[], excelFileName: string): void {
+
+  exportAsExcelFile(json: any[], excelFileName: string): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(json);
     console.log('worksheet', worksheet);
     const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     this.saveAsExcelFile(excelBuffer, excelFileName);
   }
-  
-    saveAsExcelFile(buffer: any, fileName: string): void {
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const EXCEL_EXTENSION = '.xlsx';
     const data: Blob = new Blob([buffer], {
@@ -89,10 +89,10 @@ export class RainfallDataCmComponent implements OnInit{
     FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
   }
 
-    sampleFile(){
-    let data:any[] = [];
+  sampleFile() {
+    let data: any[] = [];
     this.filteredItems.forEach(x => {
-      let station:any = {
+      let station: any = {
         Metsubdivision: x.metsubdivision,
         Station_Name: x.station,
         District_Name: x.district,
@@ -101,13 +101,13 @@ export class RainfallDataCmComponent implements OnInit{
       data.push(station);
     })
     return data;
-    }
-  
-    onFileSelected(event: any) {
+  }
+
+  onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
   }
 
-    showMessage(elementRef: any) {
+  showMessage(elementRef: any) {
     const value = elementRef.value.trim();
     const regex = /^\d+(\.\d)?$|^\d+(\.\d)?$/;
     if (regex.test(value)) {
@@ -123,8 +123,8 @@ export class RainfallDataCmComponent implements OnInit{
       elementRef.style.background = ''
     }
   }
-  
-   sortData(key: string) {
+
+  sortData(key: string) {
     this.sortKey = key;
     this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     this.filteredItems.sort((a, b) => {
@@ -155,36 +155,38 @@ export class RainfallDataCmComponent implements OnInit{
     );
   }
 
-    filterData() {
-     // Format the filter date to match the backend format (e.g., 02_Jan_24)
-    const formattedDate = format(new Date(this.filterDate), 'dd_MMM_yy');
-    console.log(formattedDate)
+  filterData() {
+    let d = new Date(this.filterDate);
+    let [year, month, date] = [d.getFullYear(), d.getMonth(), d.getDate()];
+    let monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let formattedDate = `${date < 10 ? '0' + date : date}_${monthArray[month]}_${year}`;
+    
     const rainfallInMM = this.filterRainfall * 10; // Convert cm to mm
 
-     this.filteredItems = this.filteredDataForRainfall.filter(x => {
-          return  x[formattedDate] >= rainfallInMM;
-     })
-      
-      this.filteredItems.map(x => {
-        return x.rainFall = x[formattedDate];
+    this.filteredItems = this.filteredDataForRainfall.filter(x => {
+      return x[formattedDate] >= rainfallInMM;
+    })
+
+    this.filteredItems.map(x => {
+      return x.rainFall = x[formattedDate];
     })
     // this.filteredItems = this.filteredDataForRainfall.filter(item => {
     //   return item.date === formattedDate && item.rainfall >= rainfallInMM;
     // });
-      
-      console.log(this.filteredItems)
-    }
-  
-    dateCalculation() {
-      const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ];
-      let newDate = new Date(this.selectedDate);
-      let dd = String(newDate.getDate());
-      const year = newDate.getFullYear();
-      const currmonth = months[newDate.getMonth()];
-      const selectedYear = String(year).slice(-2);
-      return `${dd.padStart(2, '0')}_${currmonth}_${selectedYear}`;
-    }
+
+    console.log(this.filteredItems)
+  }
+
+  dateCalculation() {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    let newDate = new Date(this.selectedDate);
+    let dd = String(newDate.getDate());
+    const year = newDate.getFullYear();
+    const currmonth = months[newDate.getMonth()];
+    const selectedYear = String(year).slice(-2);
+    return `${dd.padStart(2, '0')}_${currmonth}_${selectedYear}`;
+  }
 }
