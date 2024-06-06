@@ -493,7 +493,7 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
 
     let allDates = [];
 
-    var startDate = new Date(new Date().getFullYear(), 2, 1); // March is represented by index 2
+    var startDate = new Date(new Date().getFullYear(), 5, 1); // March is represented by index 2
     var endDate = new Date(new Date().getFullYear(), this.today.getMonth(), this.today.getDate()); // April is represented by index 3
 
     // Loop through the dates from March 1st to April 24th and format each date
