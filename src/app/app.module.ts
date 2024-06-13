@@ -99,6 +99,8 @@ import { VerificationPageHQComponent } from './verification-page-hq/verification
 import { StateWiseComponent } from './state-wise/state-wise.component';
 import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AllMapsComponent } from './all-maps/all-maps.component';
+import { DistrictMapComponent } from './district-map/district-map.component';
 
 @NgModule({
   declarations: [
@@ -174,7 +176,9 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     VerificationPageHQComponent,
     StateWiseComponent,
     RainfallDataCmComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    AllMapsComponent,
+    DistrictMapComponent
   ],
   imports: [
     PdfViewerModule,

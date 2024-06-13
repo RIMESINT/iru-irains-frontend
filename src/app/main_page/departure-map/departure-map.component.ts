@@ -4097,16 +4097,38 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
     return !exclusionClasses.some((classname) => node.classList?.contains(classname));
   }
 
-  downloadMapImage(): void {
+  async downloadMapImage(): Promise<void> {
     let dat = this.today.toISOString()
-    htmlToImage.toJpeg(document.getElementById('map') as HTMLElement, { quality: 0.95, filter: this.filter })
-      .then(function (dataUrl) {
-        var link = document.createElement('a');
-        // link.download = `District_dep_${dat}.jpeg`;
-        link.download = `DISTRICT_RAINFALL_MAP_COUNTRY_INDIA_cd.jpeg`;
+ 
+        try {
+        const mapElement = document.getElementById('map') as HTMLElement;
+        if (!mapElement) {
+            throw new Error('Map element not found');
+        }
+
+        const scale = 4; // Increase the scale to improve resolution
+        const width = mapElement.clientWidth * scale;
+        const height = mapElement.clientHeight * scale;
+
+        const dataUrl = await htmlToImage.toJpeg(mapElement, {
+            quality: 0.95,
+            filter: this.filter,
+            width: width,
+            height: height,
+            style: {
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left'
+            }
+        });
+
+        const link = document.createElement('a');
+        link.download = 'STATE_RAINFALL_MAP_COUNTRY_INDIA_cd.jpeg';
         link.href = dataUrl;
         link.click();
-      });
+    } catch (error) {
+        console.error('Error downloading map image:', error);
+    }
+
   }
   downloadMappdf(): void {
     let dat = this.today.toISOString()
