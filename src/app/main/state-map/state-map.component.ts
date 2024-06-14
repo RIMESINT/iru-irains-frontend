@@ -1,22 +1,28 @@
 import { Component, Input, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
-import { DataService } from '../data.service';
 import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 import * as htmlToImage from 'html-to-image';
+import { DataService } from 'src/app/data.service';
+import {StateService} from 'src/app/services/state/state.service'
 
 @Component({
-  selector: 'app-district-map',
-  templateUrl: './district-map.component.html',
-  styleUrls: ['./district-map.component.css']
+  selector: 'app-state-map',
+  templateUrl: './state-map.component.html',
+  styleUrls: ['./state-map.component.css'],
 })
-export class DistrictMapComponent implements AfterViewInit {
-downloadMapData //             });
-() {
-throw new Error('Method not implemented.');
-}
-downloadMappdf() {
-throw new Error('Method not implemented.');
-}
+
+
+export class StateMapComponent implements AfterViewInit {
+  districtdatacum: any[] = [];
+
+  downloadMapData
+  () {
+    throw new Error('Method not implemented.');
+  }
+  downloadMappdf() {
+    throw new Error('Method not implemented.');
+  }
+
   @Input() fromDate: any;
   @Input() endDate: any;
 
@@ -36,14 +42,15 @@ throw new Error('Method not implemented.');
   selectedDate: Date = new Date();
   inputValue: string = '';
   inputValue1: string = '';
-  private initialZoom = 4;
+  private initialZoom = 4.3;
   private map: L.Map = {} as L.Map;
 
   constructor(
     private http: HttpClient,
     private dataService: DataService,
     private renderer: Renderer2,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private stateService : StateService
   ) {
     var currentDate = new Date();
     var dd = String(currentDate.getDate());
@@ -59,8 +66,20 @@ throw new Error('Method not implemented.');
         console.log(this.previousWeekWeeklyStartDate, this.previousWeekWeeklyEndDate);
       }
     });
+    this.fetchBackend();
+  }
 
-    this.loadGeoJSON();
+
+  async fetchBackend() {
+    let data = {
+      startDate : '2024-05-24',
+      endDate :  '2024-05-29'
+    }
+    this.stateService.fetchData(data).subscribe(res => {
+      this.districtdatacum = res.data;
+      console.log('fbdudusdubsudbsud', res.data);
+      this.loadGeoJSON();
+    })
   }
 
   filter = (node: HTMLElement) => {
@@ -68,9 +87,24 @@ throw new Error('Method not implemented.');
     return !exclusionClasses.some((classname) => node.classList?.contains(classname));
 };
 
+
+findMatchingData(id: number): any | null {
+
+  const matchedData = this.districtdatacum?.find((data: any) => {
+    return data.district_code === id.toString()
+  },
+  );
+  if (matchedData) {
+    return matchedData;
+  }
+  else {
+    return null;
+  }
+}
+
 async downloadMapImage() {
     try {
-        const mapElement = document.getElementById('map') as HTMLElement;
+        const mapElement = document.getElementById('map-state') as HTMLElement;
         if (!mapElement) {
             throw new Error('Map element not found');
         }
@@ -126,13 +160,17 @@ async downloadMapImage() {
     }
 }
 
+  ngOnInit(){
+    this.initMap();
+
+  }
 
   ngAfterViewInit(): void {
-    this.initMap();
+    this.loadGeoJSON();
   }
 
   private initMap(): void {
-    this.map = L.map('map', {
+    this.map = L.map('map-state', {
       center: [23, 76.9629],
       zoom: this.initialZoom,
       scrollWheelZoom: false
@@ -159,11 +197,11 @@ async downloadMapImage() {
   }
 
   private toggleLogoPosition(isFullscreen: boolean): void {
-    const logoImage = this.elRef.nativeElement.querySelector('#logoImage');
+    const logoImage = this.elRef.nativeElement.querySelector('#logoImage1');
     const Header = this.elRef.nativeElement.querySelector('#middle-header');
     const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow')
     const btn = this.elRef.nativeElement.querySelector('#all-btn')
-    const legendsColor = this.elRef.nativeElement.querySelector('#legends');
+    const legendsColor = this.elRef.nativeElement.querySelector('#legends-state');
 
     if (isFullscreen) {
        this.map.setZoom(this.initialZoom + 1);
@@ -215,25 +253,60 @@ async downloadMapImage() {
   }
 
   private loadGeoJSON(): void {
-    this.http.get('assets/geojson/INDIA_DISTRICT.json').subscribe((res: any) => {
-      L.geoJSON(res, {
+    this.http.get('assets/geojson/INDIA_STATE.json').subscribe((res: any) => {
+      const districtLayer = L.geoJSON(res, {
         style: (feature: any) => {
+          const id2 = feature.properties['district_c'];
+          const matchedData = this.findMatchingData(id2);
+          let rainfall: any;
+          if (matchedData) {
+            if (Number.isNaN(matchedData.actual_rainfall)) {
+              rainfall = ' ';
+            }
+            else {
+              rainfall = matchedData.departure;
+            }
+          }
+          else {
+            rainfall = -100
+          }
+          const color = this.getColorForRainfall1(rainfall);
+
           return {
-            fillColor: '#ffff',
-            weight: 0.5,
-            opacity: 2,
+            fillColor: color,
+            weight: 1,
+            opacity: 1.5,
             color: 'black',
-            fillOpacity: 0.7
+            fillOpacity: 100
           };
+
         },
         onEachFeature: (feature: any, layer: any) => {
           const id1 = feature.properties['district'];
+          const id2 = feature.properties['district_c'];
+          const matchedData = this.findMatchingData(id2);
+          let rainfall: any;
+          if (matchedData) {
+            if (Number.isNaN(matchedData.actual_rainfall)) {
+              rainfall = "NA";
+            }
+            else {
+              rainfall = matchedData.departure?.toFixed(2);
+            }
+          }
+          else {
+            rainfall = -100
+          }
+          const dailyrainfall = matchedData && matchedData.actual_rainfall !== null && matchedData.actual_rainfall != undefined && !Number.isNaN(matchedData.actual_rainfall) ? matchedData.actual_rainfall.toFixed(2) : 'NA';
+          const normalrainfall = matchedData && !Number.isNaN(matchedData.normal_rainfall) ? matchedData.normal_rainfall : 'NA';
           const popupContent = `
-            <div style="background-color: white; padding: 5px; font-family: Arial, sans-serif;">
-              <div style="color: #002467; font-weight: bold; font-size: 10px;">DISTRICT: ${id1}</div>
-              <div style="color: #002467; font-weight: bold; font-size: 10px;">DAILY RAINFALL: 00 </div>
-            </div>
-          `;
+          <div style="background-color: white; padding: 5px; font-family: Arial, sans-serif;">
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">DISTRICT: ${id1}</div>
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">DAILY RAINFALL: ${dailyrainfall}</div>
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">NORMAL RAINFALL: ${normalrainfall}</div>
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">DEPARTURE: ${rainfall}% </div>
+          </div>
+        `;
           layer.bindPopup(popupContent);
           layer.on('mouseover', () => {
             layer.openPopup();
@@ -245,6 +318,47 @@ async downloadMapImage() {
       }).addTo(this.map);
     });
 
+
     console.log('loading is successful');
+  }
+  getColorForRainfall1(rainfall: any): string {
+    const numericId = rainfall;
+    let cat = '';
+    let count = 0
+    if (numericId == ' ') {
+      return '#c0c0c0';
+    }
+    if (numericId >= 60) {
+      cat = 'LE';
+      return '#0393ff';
+    }
+    if (numericId >= 20 && numericId < 60) {
+      cat = 'E';
+      return '#69bef7';
+    }
+    if (numericId >= -19 && numericId < 20) {
+      cat = 'N';
+      return '#68dd58';
+    }
+    if (numericId >= -59 && numericId < -19) {
+      cat = 'D';
+      return '#fb4111';
+    }
+    if (numericId >= -99 && numericId < -59) {
+      cat = 'LD';
+      return '#ffff00';
+    }
+
+    if (numericId == -100) {
+      cat = 'NR';
+      count = count + 1;
+      return '#ffffff';
+    }
+
+    else {
+      cat = 'ND';
+      return '#c0c0c0';
+    }
+
   }
 }

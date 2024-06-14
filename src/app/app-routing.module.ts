@@ -68,8 +68,8 @@ import { RainfallGraphsPostmonsoonCentralindiaregionComponent } from './rainfall
 import { VerificationPageHQComponent } from './verification-page-hq/verification-page-hq.component';
 import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AllMapsComponent } from './all-maps/all-maps.component';
-import { DistrictMapComponent } from './district-map/district-map.component';
+import { AllMapsComponent } from '../app/main/all-maps/all-maps.component';
+// import { DistrictMapComponent } from './district-map/district-map.component';
 
 const routes: Routes = [
   { path: 'all-maps', component: AllMapsComponent, canActivate: [AuthGuard] },
