@@ -75,17 +75,17 @@ async downloadMapImage() {
             throw new Error('Map element not found');
         }
 
-        const scale = 4; // Increase the scale to improve resolution
+        const scale = 10; // Increase the scale to improve resolution
         const originalWidth = mapElement.clientWidth;
         const originalHeight = mapElement.clientHeight;
         const width = originalWidth * scale;
         const height = originalHeight * scale;
 
         // Set dimensions for the cropped area
-        const cropWidth = width / 2;
-        const cropHeight = height;
+        const cropWidth = 850 * scale;
+        const cropHeight = originalHeight * scale;
         const cropX = (width - cropWidth) / 2;
-        const cropY = (height - cropHeight);
+        const cropY = 0
 
         // Create a temporary canvas to crop the image
         const tempCanvas = document.createElement('canvas');
@@ -125,6 +125,8 @@ async downloadMapImage() {
         console.error('Error downloading map image:', error);
     }
 }
+
+  
 
 
   ngAfterViewInit(): void {
