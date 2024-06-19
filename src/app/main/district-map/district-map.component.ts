@@ -1,4 +1,4 @@
-import { Component, Input, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, Renderer2, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 import * as htmlToImage from 'html-to-image';
@@ -41,7 +41,7 @@ export class DistrictMapComponent implements AfterViewInit {
   selectedDate: Date = new Date();
   inputValue: string = '';
   inputValue1: string = '';
-  private initialZoom = 4.3;
+  private initialZoom = 3.8;
   private map: L.Map = {} as L.Map;
 
   constructor(
@@ -65,6 +65,7 @@ export class DistrictMapComponent implements AfterViewInit {
         console.log(this.previousWeekWeeklyStartDate, this.previousWeekWeeklyEndDate);
       }
     });
+    this.calculateInitialZoom();
     this.fetchBackend();
   }
 
@@ -100,125 +101,6 @@ findMatchingData(id: number): any | null {
     return null;
   }
 }
-
-
-
-// async downloadMapImage() {
-//   try {
-//       const mapElement = document.getElementById('map') as HTMLElement;
-//       if (!mapElement) {
-//           throw new Error('Map element not found');
-//       }
-
-//       const scale = 4; // Increase the scale to improve resolution
-//       const originalWidth = mapElement.clientWidth;
-//       const originalHeight = mapElement.clientHeight;
-//       const width = originalWidth * scale;
-//       const height = originalHeight * scale;
-
-//       // Set dimensions for the cropped area in portrait orientation
-//       const cropWidth = 800 * scale;
-//       const cropHeight = height;
-//       const cropX = (width - cropWidth) / 2;
-//       const cropY = 0;
-
-
-//       // Create a temporary canvas to crop the image
-//       const tempCanvas = document.createElement('canvas');
-//       tempCanvas.width = cropWidth;
-//       tempCanvas.height = cropHeight;
-//       const tempContext = tempCanvas.getContext('2d');
-
-//       const dataUrl = await htmlToImage.toJpeg(mapElement, {
-//           quality: 0.95,
-//           filter: this.filter,
-//           width: width,
-//           height: height,
-//           style: {
-//               transform: `scale(${scale})`,
-//               transformOrigin: 'top left',
-//               width: `${width}px`,
-//               height: `${height}px`
-//           }
-//       });
-
-//       // Load the captured image onto the temporary canvas
-//       const image = new Image();
-//       image.src = dataUrl;
-//       image.onload = () => {
-//           tempContext?.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-          
-//           // Convert the cropped canvas back to a data URL
-//           const croppedDataUrl = tempCanvas.toDataURL('image/jpeg', 0.95);
-
-//           // Trigger download
-//           const link = document.createElement('a');
-//           link.download = 'DISTRICT_RAINFALL_MAP_COUNTRY_INDIA_cd.jpeg';
-//           link.href = croppedDataUrl;
-//           link.click();
-//       };
-//   } catch (error) {
-//       console.error('Error downloading map image:', error);
-//   }
-// }
-
-// async downloadMapImage() {
-//   try {
-//       const mapElement = document.getElementById('map') as HTMLElement;
-//       if (!mapElement) {
-//           throw new Error('Map element not found');
-//       }
-
-//       const scale = 9; // Increase the scale to improve resolution
-//       const originalWidth = mapElement.clientWidth;
-//       const originalHeight = mapElement.clientHeight;
-//       const width = originalWidth * scale;
-//       const height = originalHeight * scale;
-
-//       // Set dimensions for the cropped area in portrait orientation
-//       const cropWidth = 850 * scale;
-//       const cropHeight = originalHeight * scale;
-//       const cropX = (width - cropWidth) / 2; // Center the crop horizontally
-//       const cropY = 0;
-
-//       // Create a temporary canvas to crop the image
-//       const tempCanvas = document.createElement('canvas');
-//       tempCanvas.width = cropWidth;
-//       tempCanvas.height = cropHeight;
-//       const tempContext = tempCanvas.getContext('2d');
-
-//       const dataUrl = await htmlToImage.toJpeg(mapElement, {
-//           quality: 0.95,
-//           filter: this.filter,
-//           width: width,
-//           height: height,
-//           style: {
-//               transform: `scale(${scale})`,
-//               transformOrigin: 'top left',
-//               width: `${width}px`,
-//               height: `${height}px`
-//           }
-//       });
-
-//       // Load the captured image onto the temporary canvas
-//       const image = new Image();
-//       image.src = dataUrl;
-//       image.onload = () => {
-//           tempContext?.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-          
-//           // Convert the cropped canvas back to a data URL
-//           const croppedDataUrl = tempCanvas.toDataURL('image/jpeg', 0.95);
-
-//           // Trigger download
-//           const link = document.createElement('a');
-//           link.download = 'DISTRICT_RAINFALL_MAP_COUNTRY_INDIA_cd.jpeg';
-//           link.href = croppedDataUrl;
-//           link.click();
-//       };
-//   } catch (error) {
-//       console.error('Error downloading map image:', error);
-//   }
-// }
 
 async downloadMapImage() {
   try {
@@ -291,13 +173,51 @@ async downloadMapImage() {
     this.loadGeoJSON();
   }
 
+
+
+
+
+
+
+
+  private calculateInitialZoom(): void {
+    const cardWidth = window.innerWidth * 0.9;
+    const cardHeight = window.innerHeight * 0.7; 
+    this.initialZoom = this.calculateZoomLevel(cardWidth, cardHeight);
+  }
+  
+  private calculateZoomLevel(width: number, height: number): number {
+    const zoomLevel = Math.log2(Math.max(width, height) / 90); 
+
+    return zoomLevel;
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    if(!this.isFullscreen()){
+      this.calculateInitialZoom();
+      if (this.map) {
+        this.map.setZoom(this.initialZoom);
+      }
+    }
+
+  }
+
+
+
+
+
+
+
   private initMap(): void {
+    
+
     this.map = L.map('map', {
-      center: [23, 76.9629],
+      center: [24, 80.9629],
       zoom: this.initialZoom,
-      scrollWheelZoom: false,
-      zoomSnap: 0.1, // Allow zooming in increments of 0.1
-      zoomDelta: 0.1 // Set zoom step size to 0.1
+      scrollWheelZoom: true,
+      zoomSnap: 0.1,
+      zoomDelta: 0.1
     });
 
     this.map.on('fullscreenchange', () => {
@@ -320,61 +240,57 @@ async downloadMapImage() {
       document.fullscreenElement || document.fullscreenElement);
   }
 
-  private toggleLogoPosition(isFullscreen: boolean): void {
-    const logoImage = this.elRef.nativeElement.querySelector('#logoImage');
-    const Header = this.elRef.nativeElement.querySelector('#middle-header');
-    const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow')
-    const btn = this.elRef.nativeElement.querySelector('#all-btn')
-    const legendsColor = this.elRef.nativeElement.querySelector('#legends-district');
+ private toggleLogoPosition(isFullscreen: boolean): void {
+  const logoImage = this.elRef.nativeElement.querySelector('#logoImage');
+  const Header = this.elRef.nativeElement.querySelector('#middle-header');
+  const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow');
+  const btn = this.elRef.nativeElement.querySelector('#all-btn');
+  const legendsColor = this.elRef.nativeElement.querySelector('#legends-district');
 
-    if (isFullscreen) {
-       this.map.setZoom(this.initialZoom + 0.6);
-      this.renderer.setStyle(logoImage, 'position', 'absolute');
-      this.renderer.setStyle(logoImage, 'left', '32%');
-      this.renderer.setStyle(logoImage, 'top', '3.25%');
+  if (isFullscreen) {
+    this.map.setZoom(this.initialZoom + 1);
 
-      this.renderer.setStyle(Header, 'position', 'absolute');
-      this.renderer.setStyle(Header, 'left', '240px');
-      this.renderer.setStyle(Header, 'top', '60px');
+    this.renderer.setStyle(logoImage, 'position', 'absolute');
+    this.renderer.setStyle(logoImage, 'left', '26%');
+    this.renderer.setStyle(logoImage, 'top', '3.25%');
 
-      this.renderer.setStyle(directionCompass, 'position', 'absolute');
-      this.renderer.setStyle(directionCompass, 'right', '670px');
-      this.renderer.setStyle(directionCompass, 'top', '160px');
-      
-      this.renderer.setStyle(btn, 'position', 'absolute');
-      this.renderer.setStyle(btn, 'right', '210px');
-      this.renderer.setStyle(btn, 'top', '60px');
+    this.renderer.setStyle(Header, 'position', 'absolute');
+    this.renderer.setStyle(Header, 'left', '10%');
+    this.renderer.setStyle(Header, 'top', '5%');
 
-      // this.renderer.setStyle(legendsColor, 'position', 'absolute');
-      this.renderer.setStyle(legendsColor, 'right', '-640px');
-      this.renderer.setStyle(legendsColor, 'bottom', '18px');
-      this.renderer.setStyle(legendsColor, 'width', '680px');
-      this.renderer.setStyle(legendsColor, 'font-size', '50px');
+    this.renderer.setStyle(directionCompass, 'position', 'absolute');
+    this.renderer.setStyle(directionCompass, 'right', '40%');
+    this.renderer.setStyle(directionCompass, 'top', '20%');
+    
+    this.renderer.setStyle(btn, 'position', 'absolute');
+    this.renderer.setStyle(btn, 'right', '10%');
+    this.renderer.setStyle(btn, 'top', '5%');
 
-     } else {
-      this.map.setZoom(this.initialZoom);
-      this.renderer.removeStyle(logoImage, 'position');
-      this.renderer.removeStyle(logoImage, 'left');
-      this.renderer.removeStyle(logoImage, 'top');
 
-      this.renderer.removeStyle(Header, 'position');
-      this.renderer.removeStyle(Header, 'left');
-      this.renderer.removeStyle(Header, 'top');
 
-      this.renderer.removeStyle(directionCompass, 'position');
-      this.renderer.removeStyle(directionCompass, 'right');
-      this.renderer.removeStyle(directionCompass, 'top');
+  } else {
+    this.map.setZoom(this.initialZoom);
 
-      this.renderer.removeStyle(btn, 'position');
-      this.renderer.removeStyle(btn, 'right');
-      this.renderer.removeStyle(btn, 'top');
+    this.renderer.removeStyle(logoImage, 'position');
+    this.renderer.removeStyle(logoImage, 'left');
+    this.renderer.removeStyle(logoImage, 'top');
 
-      this.renderer.removeStyle(legendsColor, 'right');
-      this.renderer.removeStyle(legendsColor, 'bottom');
-      this.renderer.removeStyle(legendsColor, 'width');
+    this.renderer.removeStyle(Header, 'position');
+    this.renderer.removeStyle(Header, 'left');
+    this.renderer.removeStyle(Header, 'top');
 
-    }
+    this.renderer.removeStyle(directionCompass, 'position');
+    this.renderer.removeStyle(directionCompass, 'right');
+    this.renderer.removeStyle(directionCompass, 'top');
+
+    this.renderer.removeStyle(btn, 'position');
+    this.renderer.removeStyle(btn, 'right');
+    this.renderer.removeStyle(btn, 'top');
+
+
   }
+}
+
 
   private loadGeoJSON(): void {
     this.http.get('assets/geojson/INDIA_DISTRICT.json').subscribe((res: any) => {
@@ -443,37 +359,19 @@ async downloadMapImage() {
     });
 
 
+    //     this.http.get('assets/geojson/INDIA_STATE.json').subscribe(
+//       (stateRes: any) => {
+//       const stateLayer = L.geoJSON(stateRes, {
+//         style: {
+//           weight: 1,
+//           opacity: 100,
+//           color: 'black',
+//           fillOpacity: 0
+//         }
 
-
-    // this.http.get('assets/geojson/INDIA_DISTRICT.json').subscribe((res: any) => {
-    //   L.geoJSON(res, {
-    //     style: (feature: any) => {
-    //       return {
-    //         fillColor: '#ffff',
-    //         weight: 0.5,
-    //         opacity: 2,
-    //         color: 'black',
-    //         fillOpacity: 0.7
-    //       };
-    //     },
-    //     onEachFeature: (feature: any, layer: any) => {
-    //       const id1 = feature.properties['district'];
-    //       const popupContent = `
-    //         <div style="background-color: white; padding: 5px; font-family: Arial, sans-serif;">
-    //           <div style="color: #002467; font-weight: bold; font-size: 10px;">DISTRICT: ${id1}</div>
-    //           <div style="color: #002467; font-weight: bold; font-size: 10px;">DAILY RAINFALL: 00 </div>
-    //         </div>
-    //       `;
-    //       layer.bindPopup(popupContent);
-    //       layer.on('mouseover', () => {
-    //         layer.openPopup();
-    //       });
-    //       layer.on('mouseout', () => {
-    //         layer.closePopup();
-    //       });
-    //     }
-    //   }).addTo(this.map);
-    // });
+//       }).
+//       addTo(this.map);
+//     })
 
     console.log('loading is successful');
   }

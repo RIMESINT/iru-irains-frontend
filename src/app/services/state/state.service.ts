@@ -11,7 +11,7 @@ export class StateService {
 
   constructor(private http: HttpClient) {}
 
-  fetchData(data:any) {
+  fetchData(data:any): Observable<any> {
     const url = `${this.baseUrl}/api/v1/fetchStateData`;
     return this.http.post<any>(url, data);
   }

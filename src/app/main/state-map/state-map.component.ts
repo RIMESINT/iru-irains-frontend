@@ -1,4 +1,4 @@
-import { Component, Input, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, Renderer2, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 import * as htmlToImage from 'html-to-image';
@@ -13,7 +13,7 @@ import {StateService} from 'src/app/services/state/state.service'
 
 
 export class StateMapComponent implements AfterViewInit {
-  districtdatacum: any[] = [];
+  stateDataCum: any[] = [];
 
   downloadMapData
   () {
@@ -42,7 +42,7 @@ export class StateMapComponent implements AfterViewInit {
   selectedDate: Date = new Date();
   inputValue: string = '';
   inputValue1: string = '';
-  private initialZoom = 4.3;
+  private initialZoom = 3.8;
   private map: L.Map = {} as L.Map;
 
   constructor(
@@ -66,6 +66,8 @@ export class StateMapComponent implements AfterViewInit {
         console.log(this.previousWeekWeeklyStartDate, this.previousWeekWeeklyEndDate);
       }
     });
+
+    this.calculateInitialZoom()
     this.fetchBackend();
   }
 
@@ -76,7 +78,7 @@ export class StateMapComponent implements AfterViewInit {
       endDate :  '2024-05-29'
     }
     this.stateService.fetchData(data).subscribe(res => {
-      this.districtdatacum = res.data;
+      this.stateDataCum = res.data;
       console.log('fbdudusdubsudbsud', res.data);
       this.loadGeoJSON();
     })
@@ -89,11 +91,14 @@ export class StateMapComponent implements AfterViewInit {
 
 
 findMatchingData(id: number): any | null {
+  console.log(this.stateDataCum[0].state_code, typeof this.stateDataCum[0].state_code, id)
 
-  const matchedData = this.districtdatacum?.find((data: any) => {
-    return data.district_code === id.toString()
+  const matchedData = this.stateDataCum?.find((data: any) => {
+    return data.state_code === id
   },
   );
+  console.log(matchedData)
+
   if (matchedData) {
     return matchedData;
   }
@@ -146,7 +151,6 @@ async downloadMapImage() {
         image.onload = () => {
             tempContext?.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
             
-            // Convert the cropped canvas back to a data URL
             const croppedDataUrl = tempCanvas.toDataURL('image/jpeg', 0.95);
 
             // Trigger download
@@ -169,11 +173,37 @@ async downloadMapImage() {
     this.loadGeoJSON();
   }
 
+  private calculateInitialZoom(): void {
+    const cardWidth = window.innerWidth * 0.9;
+    const cardHeight = window.innerHeight * 0.7; 
+    this.initialZoom = this.calculateZoomLevel(cardWidth, cardHeight);
+  }
+
+  private calculateZoomLevel(width: number, height: number): number {
+    const zoomLevel = Math.log2(Math.max(width, height) / 90); 
+
+    return zoomLevel;
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+   if(!this.isFullscreen()){
+      this.calculateInitialZoom();
+      if (this.map) {
+        this.map.setZoom(this.initialZoom);
+      }
+    }
+  }
+
   private initMap(): void {
+    
+
     this.map = L.map('map-state', {
-      center: [23, 76.9629],
+      center: [24, 80.9629],
       zoom: this.initialZoom,
-      scrollWheelZoom: false
+      scrollWheelZoom: true,
+      zoomSnap: 0.1,
+      zoomDelta: 0.1
     });
 
     this.map.on('fullscreenchange', () => {
@@ -204,59 +234,54 @@ async downloadMapImage() {
     const legendsColor = this.elRef.nativeElement.querySelector('#legends-state');
 
     if (isFullscreen) {
-       this.map.setZoom(this.initialZoom + 1);
+      this.map.setZoom(this.initialZoom + 1);
+  
       this.renderer.setStyle(logoImage, 'position', 'absolute');
-      this.renderer.setStyle(logoImage, 'left', '600px');
-      this.renderer.setStyle(logoImage, 'top', '36px');
-
+      this.renderer.setStyle(logoImage, 'left', '26%');
+      this.renderer.setStyle(logoImage, 'top', '3.25%');
+  
       this.renderer.setStyle(Header, 'position', 'absolute');
-      this.renderer.setStyle(Header, 'left', '240px');
-      this.renderer.setStyle(Header, 'top', '60px');
-
+      this.renderer.setStyle(Header, 'left', '10%');
+      this.renderer.setStyle(Header, 'top', '5%');
+  
       this.renderer.setStyle(directionCompass, 'position', 'absolute');
-      this.renderer.setStyle(directionCompass, 'right', '670px');
-      this.renderer.setStyle(directionCompass, 'top', '160px');
+      this.renderer.setStyle(directionCompass, 'right', '40%');
+      this.renderer.setStyle(directionCompass, 'top', '20%');
       
       this.renderer.setStyle(btn, 'position', 'absolute');
-      this.renderer.setStyle(btn, 'right', '210px');
-      this.renderer.setStyle(btn, 'top', '60px');
-
-      // this.renderer.setStyle(legendsColor, 'position', 'absolute');
-      this.renderer.setStyle(legendsColor, 'right', '-640px');
-      this.renderer.setStyle(legendsColor, 'bottom', '18px');
-      this.renderer.setStyle(legendsColor, 'width', '680px');
-      this.renderer.setStyle(legendsColor, 'font-size', '50px');
-
-     } else {
+      this.renderer.setStyle(btn, 'right', '10%');
+      this.renderer.setStyle(btn, 'top', '5%');
+  
+  
+  
+    } else {
       this.map.setZoom(this.initialZoom);
+  
       this.renderer.removeStyle(logoImage, 'position');
       this.renderer.removeStyle(logoImage, 'left');
       this.renderer.removeStyle(logoImage, 'top');
-
+  
       this.renderer.removeStyle(Header, 'position');
       this.renderer.removeStyle(Header, 'left');
       this.renderer.removeStyle(Header, 'top');
-
+  
       this.renderer.removeStyle(directionCompass, 'position');
       this.renderer.removeStyle(directionCompass, 'right');
       this.renderer.removeStyle(directionCompass, 'top');
-
+  
       this.renderer.removeStyle(btn, 'position');
       this.renderer.removeStyle(btn, 'right');
       this.renderer.removeStyle(btn, 'top');
-
-      this.renderer.removeStyle(legendsColor, 'right');
-      this.renderer.removeStyle(legendsColor, 'bottom');
-      this.renderer.removeStyle(legendsColor, 'width');
-
+  
+  
     }
   }
 
   private loadGeoJSON(): void {
     this.http.get('assets/geojson/INDIA_STATE.json').subscribe((res: any) => {
-      const districtLayer = L.geoJSON(res, {
+      const StateLayer = L.geoJSON(res, {
         style: (feature: any) => {
-          const id2 = feature.properties['district_c'];
+          const id2 = feature.properties['state_code'];
           const matchedData = this.findMatchingData(id2);
           let rainfall: any;
           if (matchedData) {
@@ -282,12 +307,12 @@ async downloadMapImage() {
 
         },
         onEachFeature: (feature: any, layer: any) => {
-          const id1 = feature.properties['district'];
-          const id2 = feature.properties['district_c'];
+          const id1 = feature.properties['state_name'];
+          const id2 = feature.properties['state_code'];
           const matchedData = this.findMatchingData(id2);
           let rainfall: any;
           if (matchedData) {
-            if (Number.isNaN(matchedData.actual_rainfall)) {
+            if (Number.isNaN(matchedData.actual_state_rainfall)) {
               rainfall = "NA";
             }
             else {
@@ -297,8 +322,8 @@ async downloadMapImage() {
           else {
             rainfall = -100
           }
-          const dailyrainfall = matchedData && matchedData.actual_rainfall !== null && matchedData.actual_rainfall != undefined && !Number.isNaN(matchedData.actual_rainfall) ? matchedData.actual_rainfall.toFixed(2) : 'NA';
-          const normalrainfall = matchedData && !Number.isNaN(matchedData.normal_rainfall) ? matchedData.normal_rainfall : 'NA';
+          const dailyrainfall = matchedData && matchedData.actual_state_rainfall !== null && matchedData.actual_state_rainfall != undefined && !Number.isNaN(matchedData.actual_state_rainfall) ? matchedData.actual_state_rainfall.toFixed(2) : 'NA';
+          const normalrainfall = matchedData && !Number.isNaN(matchedData.rainfall_normal_value) ? matchedData.rainfall_normal_value : 'NA';
           const popupContent = `
           <div style="background-color: white; padding: 5px; font-family: Arial, sans-serif;">
             <div style="color: #002467; font-weight: bold; font-size: 10px;">DISTRICT: ${id1}</div>
@@ -317,8 +342,6 @@ async downloadMapImage() {
         }
       }).addTo(this.map);
     });
-
-
     console.log('loading is successful');
   }
   getColorForRainfall1(rainfall: any): string {
