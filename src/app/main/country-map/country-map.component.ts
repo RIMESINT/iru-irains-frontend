@@ -1,22 +1,27 @@
-import { Component, Input, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
-import { DataService } from '../data.service';
+import { Component, ElementRef, Input, Renderer2 } from '@angular/core';
 import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 import * as htmlToImage from 'html-to-image';
+import { DataService } from 'src/app/data.service';
+import { CountryService } from 'src/app/services/country/country.service';
 
 @Component({
-  selector: 'app-district-map',
-  templateUrl: './district-map.component.html',
-  styleUrls: ['./district-map.component.css']
+  selector: 'app-country-map',
+  templateUrl: './country-map.component.html',
+  styleUrls: ['./country-map.component.css']
 })
-export class DistrictMapComponent implements AfterViewInit {
-downloadMapData //             });
-() {
-throw new Error('Method not implemented.');
-}
-downloadMappdf() {
-throw new Error('Method not implemented.');
-}
+export class CountryMapComponent {
+
+  countrydatacum: any[] = [];
+
+  downloadMapData
+  () {
+    throw new Error('Method not implemented.');
+  }
+  downloadMappdf() {
+    throw new Error('Method not implemented.');
+  }
+
   @Input() fromDate: any;
   @Input() endDate: any;
 
@@ -30,37 +35,69 @@ throw new Error('Method not implemented.');
     { color: '#c0c0c0', text: 'No Data', fontSize: '13px' },
   ];
 
-  previousWeekWeeklyEndDate: any;
   formatteddate: any;
-  previousWeekWeeklyStartDate: any;
+  StartDate: any;
+  EndDate: any;
   selectedDate: Date = new Date();
   inputValue: string = '';
   inputValue1: string = '';
-  private initialZoom = 4;
+  private initialZoom = 4.3;
   private map: L.Map = {} as L.Map;
 
   constructor(
     private http: HttpClient,
     private dataService: DataService,
     private renderer: Renderer2,
-    private elRef: ElementRef
+    private elRef: ElementRef,
+    private countryService : CountryService,
   ) {
-    var currentDate = new Date();
-    var dd = String(currentDate.getDate());
-    var mon = String(currentDate.getMonth());
-    var year = String(currentDate.getFullYear());
-    this.formatteddate = `${dd.padStart(2, '0')}-${mon.padStart(2, '0')}-${year}`;
+    // var currentDate = new Date();
+    // var dd = String(currentDate.getDate());
+    // var mon = String(currentDate.getMonth());
+    // var year = String(currentDate.getFullYear());
+    // this.formatteddate = `${dd.padStart(2, '0')}-${mon.padStart(2, '0')}-${year}`;
+
+  const currentDate = new Date();
+  const dd = String(currentDate.getDate()).padStart(2, '0');
+  const mon = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+  const year = String(currentDate.getFullYear());
+  this.formatteddate = `${dd}-${mon}-${year}`;
 
     this.dataService.fromAndToDate$.subscribe((value) => {
       if (value) {
         let fromAndToDates = JSON.parse(value);
-        this.previousWeekWeeklyStartDate = fromAndToDates.fromDate;
-        this.previousWeekWeeklyEndDate = fromAndToDates.toDate;
-        console.log(this.previousWeekWeeklyStartDate, this.previousWeekWeeklyEndDate);
+        this.StartDate = fromAndToDates.fromDate;
+        this.EndDate = fromAndToDates.toDate;
+        // console.log(this.previousWeekWeeklyStartDate, this.previousWeekWeeklyEndDate);
       }
+      else {
+      // If no value is emitted, use the current date as the default
+      this.StartDate = `${year}-${mon}-${dd}`;
+      this.EndDate = `${year}-${mon}-${dd}`;
+        // console.log(this.StartDate);
+        // console.log(this.EndDate);
+      }
+      this.fetchBackend();
     });
+  }
 
-    this.loadGeoJSON();
+
+  async fetchBackend() {
+  const currentDate = new Date();
+  const dd = String(currentDate.getDate()).padStart(2, '0');
+  const mon = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+  const year = String(currentDate.getFullYear());
+
+  const data = {
+    startDate: this.StartDate || `${year}-${mon}-${dd}`,
+    endDate: this.EndDate || `${year}-${mon}-${dd}`
+  };
+    
+    this.countryService.fetchData(data).subscribe(res => {
+      this.countrydatacum = res.data;
+      console.log('COUNTRY DATA', res.data);
+      this.loadGeoJSON();
+    })
   }
 
   filter = (node: HTMLElement) => {
@@ -70,7 +107,7 @@ throw new Error('Method not implemented.');
 
 async downloadMapImage() {
     try {
-        const mapElement = document.getElementById('map') as HTMLElement;
+        const mapElement = document.getElementById('map-country') as HTMLElement;
         if (!mapElement) {
             throw new Error('Map element not found');
         }
@@ -117,7 +154,7 @@ async downloadMapImage() {
 
             // Trigger download
             const link = document.createElement('a');
-            link.download = 'STATE_RAINFALL_MAP_COUNTRY_INDIA_cd.jpeg';
+            link.download = 'RAINFALL_MAP_COUNTRY_INDIA_cd.jpeg';
             link.href = croppedDataUrl;
             link.click();
         };
@@ -126,15 +163,16 @@ async downloadMapImage() {
     }
 }
 
-  
-
-
-  ngAfterViewInit(): void {
+  ngOnInit(){
     this.initMap();
   }
 
+  ngAfterViewInit(): void {
+    this.loadGeoJSON();
+  }
+
   private initMap(): void {
-    this.map = L.map('map', {
+    this.map = L.map('map-country', {
       center: [23, 76.9629],
       zoom: this.initialZoom,
       scrollWheelZoom: false
@@ -161,11 +199,11 @@ async downloadMapImage() {
   }
 
   private toggleLogoPosition(isFullscreen: boolean): void {
-    const logoImage = this.elRef.nativeElement.querySelector('#logoImage');
-    const Header = this.elRef.nativeElement.querySelector('#middle-header');
-    const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow')
-    const btn = this.elRef.nativeElement.querySelector('#all-btn')
-    const legendsColor = this.elRef.nativeElement.querySelector('#legends');
+    const logoImage = this.elRef.nativeElement.querySelector('#logoImage4');
+    const Header = this.elRef.nativeElement.querySelector('#middle-header-country');
+    const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow-country')
+    const btn = this.elRef.nativeElement.querySelector('#all-btn-country')
+    const legendsColor = this.elRef.nativeElement.querySelector('#legends-country');
 
     if (isFullscreen) {
        this.map.setZoom(this.initialZoom + 1);
@@ -217,25 +255,66 @@ async downloadMapImage() {
   }
 
   private loadGeoJSON(): void {
-    this.http.get('assets/geojson/INDIA_DISTRICT.json').subscribe((res: any) => {
-      L.geoJSON(res, {
+    this.http.get('assets/geojson/INDIA_COUNTRY.json').subscribe((res: any) => {
+      const districtLayer = L.geoJSON(res, {
         style: (feature: any) => {
+          // const id2 = feature.properties['region_cod'];
+          // console.log('country code', id2)
+          const matchedData = this.countrydatacum[0];
+          // console.log('matchedData',matchedData)
+          let rainfall: any;
+          if (matchedData) {
+            if (Number.isNaN(matchedData.actual_rainfall)) {
+              rainfall = ' ';
+            }
+            else {
+              rainfall = matchedData.departure;
+            }
+          }
+          else {
+            rainfall = -100
+          }
+          const color = this.getColorForRainfall1(rainfall);
+
           return {
-            fillColor: '#ffff',
-            weight: 0.5,
-            opacity: 2,
+            fillColor: color,
+            weight: 1,
+            opacity: 1.5,
             color: 'black',
-            fillOpacity: 0.7
+            fillOpacity: 100
           };
+
         },
         onEachFeature: (feature: any, layer: any) => {
-          const id1 = feature.properties['district'];
+          const id1 = feature.properties['name'];
+          // const id2 = feature.properties['region_cod'];
+          // console.log('country ID' , id2)
+          const matchedData = this.countrydatacum[0];
+          // console.log('matchedData', matchedData)
+          let rainfall: any;
+          if (matchedData) {
+            if (Number.isNaN(matchedData.actual_rainfall)) {
+              rainfall = "NA";
+            }
+            else {
+              rainfall = matchedData.departure?.toFixed(2);
+            }
+          }
+          else {
+            rainfall = -100
+          }
+          const dailyrainfall = matchedData && matchedData.actual_rainfall !== null && matchedData.actual_rainfall != undefined && !Number.isNaN(matchedData.actual_rainfall) ? matchedData.actual_rainfall.toFixed(2) : 'NA';
+          const normalrainfall = matchedData && !Number.isNaN(matchedData.rainfall_normal_value) ? matchedData.rainfall_normal_value : 'NA';
+          // console.log('country DAILY RAINFALL', dailyrainfall)
+          // console.log('country normalrainfall', normalrainfall)
           const popupContent = `
-            <div style="background-color: white; padding: 5px; font-family: Arial, sans-serif;">
-              <div style="color: #002467; font-weight: bold; font-size: 10px;">DISTRICT: ${id1}</div>
-              <div style="color: #002467; font-weight: bold; font-size: 10px;">DAILY RAINFALL: 00 </div>
-            </div>
-          `;
+          <div style="background-color: white; padding: 5px; font-family: Arial, sans-serif;">
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">REGION: ${id1}</div>
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">DAILY RAINFALL: ${dailyrainfall}</div>
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">NORMAL RAINFALL: ${normalrainfall}</div>
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">DEPARTURE: ${rainfall}% </div>
+          </div>
+        `;
           layer.bindPopup(popupContent);
           layer.on('mouseover', () => {
             layer.openPopup();
@@ -247,6 +326,45 @@ async downloadMapImage() {
       }).addTo(this.map);
     });
 
-    console.log('loading is successful');
+  }
+  getColorForRainfall1(rainfall: any): string {
+    const numericId = rainfall;
+    let cat = '';
+    let count = 0
+    if (numericId == ' ') {
+      return '#c0c0c0';
+    }
+    if (numericId >= 60) {
+      cat = 'LE';
+      return '#0393ff';
+    }
+    if (numericId >= 20 && numericId < 60) {
+      cat = 'E';
+      return '#69bef7';
+    }
+    if (numericId >= -19 && numericId < 20) {
+      cat = 'N';
+      return '#68dd58';
+    }
+    if (numericId >= -59 && numericId < -19) {
+      cat = 'D';
+      return '#fb4111';
+    }
+    if (numericId >= -99 && numericId < -59) {
+      cat = 'LD';
+      return '#ffff00';
+    }
+
+    if (numericId == -100) {
+      cat = 'NR';
+      count = count + 1;
+      return '#ffffff';
+    }
+
+    else {
+      cat = 'ND';
+      return '#c0c0c0';
+    }
+
   }
 }

@@ -106,6 +106,7 @@ export class DataService {
 
   private fromAndToDateSubject = new BehaviorSubject<string>('');
   public fromAndToDate$ = this.fromAndToDateSubject.asObservable();
+  
   setfromAndToDate(newfromAndToDate: string) {
     this.fromAndToDateSubject.next(newfromAndToDate);
   }

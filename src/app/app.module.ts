@@ -16,6 +16,8 @@ import { PaginatorModule } from "primeng/paginator";
 import { StationLevelDataComponent } from './station-level-data/station-level-data.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
@@ -99,8 +101,15 @@ import { VerificationPageHQComponent } from './verification-page-hq/verification
 import { StateWiseComponent } from './state-wise/state-wise.component';
 import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { AllMapsComponent } from './all-maps/all-maps.component';
-import { DistrictMapComponent } from './district-map/district-map.component';
+import { AllMapsComponent } from '../app/main/all-maps/all-maps.component';
+import { StateMapComponent } from '../app/main/state-map/state-map.component';
+import { DistrictMapComponent } from './main/district-map/district-map.component';
+import { SubdivisionMapComponent } from './main/subdivision-map/subdivision-map.component';
+import { RegionMapComponent } from './main/region-map/region-map.component';
+import { CountryMapComponent } from './main/country-map/country-map.component';
+// import { DistrictMapComponent } from './app';
+// import { AppDistrictMapComponent } from './app-district-map/app-district-map.component';
+// import { DistrictMapComponent } from './district-map/district-map.component';
 
 @NgModule({
   declarations: [
@@ -178,7 +187,11 @@ import { DistrictMapComponent } from './district-map/district-map.component';
     RainfallDataCmComponent,
     PageNotFoundComponent,
     AllMapsComponent,
-    DistrictMapComponent
+    DistrictMapComponent,
+    StateMapComponent,
+    SubdivisionMapComponent,
+    RegionMapComponent,
+    CountryMapComponent,
   ],
   imports: [
     PdfViewerModule,
@@ -208,6 +221,7 @@ import { DistrictMapComponent } from './district-map/district-map.component';
     MatTabsModule,
     MultiSelectModule
   ],
+
   providers: [AuthGuard, DatePipe],
   bootstrap: [AppComponent]
 })

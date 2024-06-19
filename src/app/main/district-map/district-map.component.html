@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row">
-    <div class="col-6" id="mapdiv1">
+    <div class="col-12" id="mapdiv1">
       <div class="map-container">
         <div class="map-frame">
           <div
@@ -37,8 +37,8 @@
                       style="font-family: Arial; font-size: 14px;"
                     >
                       Date :
-                      {{ previousWeekWeeklyStartDate | date: 'dd-MM-yyyy' }} to
-                      {{ previousWeekWeeklyEndDate | date: 'dd-MM-yyyy' }}
+                      {{ previousWeekWeeklyStartDate }} to
+                      {{ previousWeekWeeklyEndDate  }}
                     </label>
                     <label
                       *ngIf="
@@ -48,7 +48,7 @@
                       class="text-black fw-bold"
                       style="font-family: Arial; font-size: 14px;"
                     >
-                      Date : {{ previousWeekWeeklyStartDate | date: 'dd-MM-yyyy' }}
+                      Date : {{ previousWeekWeeklyStartDate}}
                     </label>
                   </div>
                   <div>
@@ -87,7 +87,7 @@
             <div class="leaflet-bottom">
               <div
                 class="info_legend leaflet-control d-flex align-items-center flex-wrap mb-3"
-                id="legends"
+                id="legends-district"
                 style="width: auto; height: 30px;"
               >
                 <div
