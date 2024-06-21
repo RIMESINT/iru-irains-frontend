@@ -51,11 +51,7 @@ export class CountryMapComponent {
     private elRef: ElementRef,
     private countryService : CountryService,
   ) {
-    // var currentDate = new Date();
-    // var dd = String(currentDate.getDate());
-    // var mon = String(currentDate.getMonth());
-    // var year = String(currentDate.getFullYear());
-    // this.formatteddate = `${dd.padStart(2, '0')}-${mon.padStart(2, '0')}-${year}`;
+
 
   const currentDate = new Date();
   const dd = String(currentDate.getDate()).padStart(2, '0');

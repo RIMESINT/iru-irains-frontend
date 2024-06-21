@@ -1,4 +1,4 @@
-import { Component, Input, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, Renderer2, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 import * as htmlToImage from 'html-to-image';
@@ -52,11 +52,11 @@ export class StateMapComponent implements AfterViewInit {
     private elRef: ElementRef,
     private stateService : StateService
   ) {
-    var currentDate = new Date();
-    var dd = String(currentDate.getDate());
-    var mon = String(currentDate.getMonth());
-    var year = String(currentDate.getFullYear());
-    this.formatteddate = `${dd.padStart(2, '0')}-${mon.padStart(2, '0')}-${year}`;
+    const currentDate = new Date();
+    const dd = String(currentDate.getDate()).padStart(2, '0');
+    const mon = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+    const year = String(currentDate.getFullYear());
+    this.formatteddate = `${dd}-${mon}-${year}`;
 
     this.dataService.fromAndToDate$.subscribe((value) => {
       if (value) {
@@ -65,16 +65,30 @@ export class StateMapComponent implements AfterViewInit {
         this.EndDate = fromAndToDates.toDate;
         // console.log(this.previousWeekWeeklyStartDate, this.previousWeekWeeklyEndDate);
       }
+      else {
+      // If no value is emitted, use the current date as the default
+      this.StartDate = `${year}-${mon}-${dd}`;
+      this.EndDate = `${year}-${mon}-${dd}`;
+        // console.log(this.StartDate);
+        // console.log(this.EndDate);
+      }
+      this.calculateInitialZoom();
+      this.fetchBackend();
     });
-    this.fetchBackend();
   }
 
 
   async fetchBackend() {
-    let data = {
-      startDate : '2024-05-24',
-      endDate :  '2024-05-29'
-    }
+
+    const currentDate = new Date();
+    const dd = String(currentDate.getDate()).padStart(2, '0');
+    const mon = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+    const year = String(currentDate.getFullYear());
+  
+    const data = {
+      startDate: this.StartDate || `${year}-${mon}-${dd}`,
+      endDate: this.EndDate || `${year}-${mon}-${dd}`
+    };
     this.stateService.fetchData(data).subscribe(res => {
       this.statedatacum = res.data;
       // console.log('fbdudusdubsudbsud', res.data);
@@ -168,11 +182,36 @@ async downloadMapImage() {
     this.loadGeoJSON();
   }
 
+
+  private calculateInitialZoom(): void {
+    const cardWidth = window.innerWidth * 0.9;
+    const cardHeight = window.innerHeight * 0.7; 
+    this.initialZoom = this.calculateZoomLevel(cardWidth, cardHeight);
+  }
+
+  private calculateZoomLevel(width: number, height: number): number {
+    const zoomLevel = Math.log2(Math.max(width, height) / 90); 
+
+    return zoomLevel;
+  }
+
+  @HostListener('window:resize')
+  onWindowResize() {
+   if(!this.isFullscreen()){
+      this.calculateInitialZoom();
+      if (this.map) {
+        this.map.setZoom(this.initialZoom);
+      }
+    }
+  }
+
   private initMap(): void {
     this.map = L.map('map-state', {
-      center: [23, 76.9629],
+      center: [24, 80.9629],
       zoom: this.initialZoom,
-      scrollWheelZoom: false
+      scrollWheelZoom: true,
+      zoomSnap: 0.1,
+      zoomDelta: 0.1
     });
 
     this.map.on('fullscreenchange', () => {
@@ -196,61 +235,53 @@ async downloadMapImage() {
   }
 
   private toggleLogoPosition(isFullscreen: boolean): void {
-    const logoImage = this.elRef.nativeElement.querySelector('#logoImage1');
-    const Header = this.elRef.nativeElement.querySelector('#middle-header');
-    const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow')
-    const btn = this.elRef.nativeElement.querySelector('#all-btn')
-    const legendsColor = this.elRef.nativeElement.querySelector('#legends-state');
+    const logoImage = this.elRef.nativeElement.querySelector('#logoImage4');
+    const Header = this.elRef.nativeElement.querySelector('#middle-header-country');
+    const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow-country')
+    const btn = this.elRef.nativeElement.querySelector('#all-btn-country')
+    const legendsColor = this.elRef.nativeElement.querySelector('#legends-country');
 
     if (isFullscreen) {
-       this.map.setZoom(this.initialZoom + 1);
+      this.map.setZoom(this.initialZoom + 1);
+  
       this.renderer.setStyle(logoImage, 'position', 'absolute');
-      this.renderer.setStyle(logoImage, 'left', '600px');
-      this.renderer.setStyle(logoImage, 'top', '36px');
-
+      this.renderer.setStyle(logoImage, 'left', '26%');
+      this.renderer.setStyle(logoImage, 'top', '3.25%');
+  
       this.renderer.setStyle(Header, 'position', 'absolute');
-      this.renderer.setStyle(Header, 'left', '240px');
-      this.renderer.setStyle(Header, 'top', '60px');
-
+      this.renderer.setStyle(Header, 'left', '10%');
+      this.renderer.setStyle(Header, 'top', '5%');
+  
       this.renderer.setStyle(directionCompass, 'position', 'absolute');
-      this.renderer.setStyle(directionCompass, 'right', '670px');
-      this.renderer.setStyle(directionCompass, 'top', '160px');
+      this.renderer.setStyle(directionCompass, 'right', '40%');
+      this.renderer.setStyle(directionCompass, 'top', '20%');
       
       this.renderer.setStyle(btn, 'position', 'absolute');
-      this.renderer.setStyle(btn, 'right', '210px');
-      this.renderer.setStyle(btn, 'top', '60px');
-
-      // this.renderer.setStyle(legendsColor, 'position', 'absolute');
-      this.renderer.setStyle(legendsColor, 'right', '-640px');
-      this.renderer.setStyle(legendsColor, 'bottom', '18px');
-      this.renderer.setStyle(legendsColor, 'width', '680px');
-      this.renderer.setStyle(legendsColor, 'font-size', '50px');
-
-     } else {
+      this.renderer.setStyle(btn, 'right', '10%');
+      this.renderer.setStyle(btn, 'top', '5%');
+  
+    } else {
       this.map.setZoom(this.initialZoom);
+  
       this.renderer.removeStyle(logoImage, 'position');
       this.renderer.removeStyle(logoImage, 'left');
       this.renderer.removeStyle(logoImage, 'top');
-
+  
       this.renderer.removeStyle(Header, 'position');
       this.renderer.removeStyle(Header, 'left');
       this.renderer.removeStyle(Header, 'top');
-
+  
       this.renderer.removeStyle(directionCompass, 'position');
       this.renderer.removeStyle(directionCompass, 'right');
       this.renderer.removeStyle(directionCompass, 'top');
-
+  
       this.renderer.removeStyle(btn, 'position');
       this.renderer.removeStyle(btn, 'right');
       this.renderer.removeStyle(btn, 'top');
-
-      this.renderer.removeStyle(legendsColor, 'right');
-      this.renderer.removeStyle(legendsColor, 'bottom');
-      this.renderer.removeStyle(legendsColor, 'width');
-
+  
+  
     }
   }
-
   private loadGeoJSON(): void {
     this.http.get('assets/geojson/INDIA_STATE.json').subscribe((res: any) => {
       const districtLayer = L.geoJSON(res, {
