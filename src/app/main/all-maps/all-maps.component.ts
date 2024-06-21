@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import * as L from 'leaflet';
 import { DataService } from 'src/app/data.service';
-
+// import { DistrictMapComponent } from '../district-map/district-map.component';
+// import { StateMapComponent } from '../state-map/state-map.component';
+// import { SubdivisionMapComponent } from '../subdivision-map/subdivision-map.component';
 
 @Component({
   selector: 'app-all-maps',

@@ -1297,16 +1297,25 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
 
   downloadMapData(): void {
     this.sortedDataArray = [];
+
+
+
     const data = this.districtdatacum.sort((a, b) => a.subdivorder - b.subdivorder);
     const data1 = this.subdivisionfetchedDatadepcum;
     console.log("after data1", data1);
     // console.log("before data1", data1);
     const data2 = this.statefetchedDatadepcum;
+
+
+
     const doc = new jsPDF() as any;
+
+
     const columns1 = [' ', ' ', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, colSpan: 4 }, { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-06-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-06-2024 To ' + this.formatteddate, colSpan: 4 }]
     const columns1forexcel = ['', '', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate }, '', '', '', { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 edit4 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 edit5 To ' + this.formatteddate}]
     const columns = ['S.No', 'MET.SUBDIVISION/UT/STATE/DISTRICT', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.'];
     const rows: any[][] = [];
+
     let previousstateName: string;
     let previoussubdivName: string;
     let stateIndex = 0;
@@ -1801,7 +1810,11 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
     const data1 = this.regionfetchedDatadepcum.sort((a, b) => a.regionid - b.regionid);
     const data2 = this.countryfetchedDatadepcum;
     const doc = new jsPDF() as any;
-    const columns1 = [' ', ' ', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, colSpan: 4 }, { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-06-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-06-2024 To ' + this.formatteddate, colSpan: 4 }]
+    const columns1 = [' ', ' ', 
+      { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate, 
+      colSpan: 4 },
+       { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-06-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-06-2024 To ' + this.formatteddate, 
+       colSpan: 4 }]
     const columns1forexcel = ['', '', { content: 'Day : ' + this.previousWeekWeeklyStartDate != '' && this.previousWeekWeeklyEndDate != '' ? this.datePipe.transform(this.previousWeekWeeklyStartDate, 'dd-MM-yyyy') + ' To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : this.formatteddate }, '', '', '', { content: this.previousWeekWeeklyEndDate != '' ? 'Period:01-03-2024 To ' + this.datePipe.transform(this.previousWeekWeeklyEndDate, 'dd-MM-yyyy') : 'Period:01-03-2024 To ' + this.formatteddate}]
     const columns = ['S.No', 'MET.SUBDIVISION/UT/STATE/DISTRICT', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.', 'ACTUAL(mm)', 'NORMAL(mm)', '%DEP.', 'CAT.'];
     const rows: any[][] = [];
@@ -2295,6 +2308,7 @@ export class DepartureMapComponent implements OnInit, AfterViewInit {
       ['Not Available', 'ND', { content: '', styles: { fillColor: '#c0c0c0' } }],
       ['Note : ', { content: 'The rainfall values are rounded off up to one place of decimal.', colSpan: 2 }]
     ];
+
     const options2: any = {
       startY: doc.autoTable.previous.finalY + 10, // Start below the first table
       margin: { left: marginLeft },

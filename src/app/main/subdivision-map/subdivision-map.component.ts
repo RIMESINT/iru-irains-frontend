@@ -3,29 +3,27 @@ import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 import * as htmlToImage from 'html-to-image';
 import { DataService } from 'src/app/data.service';
-import { DistrictService } from 'src/app/services/district/district.service';
-import { DownloadPdf } from 'src/app/services/district/pdfdownload.service';
-
+import { SubdivisionService } from 'src/app/services/subDivision/subDivision.service';
 
 @Component({
-  selector: 'app-district-map',
-  templateUrl: './district-map.component.html',
-  styleUrls: ['./district-map.component.css']
+  selector: 'app-subdivision-map',
+  templateUrl: './subdivision-map.component.html',
+  styleUrls: ['./subdivision-map.component.css']
 })
-export class DistrictMapComponent implements AfterViewInit {
-  districtdatacum: any[] = [];
-  StartDate: any;
-  EndDate: any;
+export class SubdivisionMapComponent {
+
+   subdivisiondatacum: any[] = [];
 
   downloadMapData
   () {
     throw new Error('Method not implemented.');
   }
   downloadMappdf() {
-    this.downloadPdf$.getData()
-    this.downloadPdf$.downloadPdf()
     throw new Error('Method not implemented.');
   }
+
+  @Input() fromDate: any;
+  @Input() endDate: any;
 
   legendItems = [
     { color: '#0096ff', text: 'Large Excess [60% or more]', fontSize: '13px' },
@@ -38,6 +36,8 @@ export class DistrictMapComponent implements AfterViewInit {
   ];
 
   formatteddate: any;
+  StartDate: any;
+  EndDate: any;
   selectedDate: Date = new Date();
   inputValue: string = '';
   inputValue1: string = '';
@@ -49,42 +49,41 @@ export class DistrictMapComponent implements AfterViewInit {
     private dataService: DataService,
     private renderer: Renderer2,
     private elRef: ElementRef,
-    private district : DistrictService,
-    private downloadPdf$ : DownloadPdf
+    private subdivisionService : SubdivisionService,
   ) {
     // var currentDate = new Date();
     // var dd = String(currentDate.getDate());
     // var mon = String(currentDate.getMonth());
     // var year = String(currentDate.getFullYear());
     // this.formatteddate = `${dd.padStart(2, '0')}-${mon.padStart(2, '0')}-${year}`;
-
-    const currentDate = new Date();
-    const dd = String(currentDate.getDate()).padStart(2, '0');
-    const mon = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
-    const year = String(currentDate.getFullYear());
-    this.formatteddate = `${dd}-${mon}-${year}`;
+  const currentDate = new Date();
+  const dd = String(currentDate.getDate()).padStart(2, '0');
+  const mon = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+  const year = String(currentDate.getFullYear());
+  this.formatteddate = `${dd}-${mon}-${year}`;
 
     this.dataService.fromAndToDate$.subscribe((value) => {
       if (value) {
         let fromAndToDates = JSON.parse(value);
         this.StartDate = fromAndToDates.fromDate;
         this.EndDate = fromAndToDates.toDate;
-        // console.log(this.previousWeekWeeklyStartDate, this.previousWeekWeeklyEndDate);
+        // console.log(typeof this.StartDate, this.EndDate);
       }
-      else {
+       else {
       // If no value is emitted, use the current date as the default
       this.StartDate = `${year}-${mon}-${dd}`;
       this.EndDate = `${year}-${mon}-${dd}`;
-        // console.log(this.StartDate);
-        // console.log(this.EndDate);
+        console.log(this.StartDate);
+        console.log(this.EndDate);
       }
       this.calculateInitialZoom();
-      this.fetchBackend();
+      this.fetchBackend(); 
     });
   }
 
 
   async fetchBackend() {
+    
   const currentDate = new Date();
   const dd = String(currentDate.getDate()).padStart(2, '0');
   const mon = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
@@ -94,12 +93,13 @@ export class DistrictMapComponent implements AfterViewInit {
     startDate: this.StartDate || `${year}-${mon}-${dd}`,
     endDate: this.EndDate || `${year}-${mon}-${dd}`
   };
-    this.district.fetchData(data).subscribe(res => {
-      this.districtdatacum = res.data;
-      console.log('fbdudusdubsudbsud', res.data);
+    
+    this.subdivisionService.fetchData(data).subscribe(res => {
+      this.subdivisiondatacum = res.data;
+      // console.log('SUBDIV DATA', res.data);
+      // console.log(typeof data.startDate, typeof data.endDate)
       this.loadGeoJSON();
     })
-  
   }
 
   filter = (node: HTMLElement) => {
@@ -110,10 +110,9 @@ export class DistrictMapComponent implements AfterViewInit {
 
 findMatchingData(id: number): any | null {
 
-  const matchedData = this.districtdatacum?.find((data: any) => {
-    return data.district_code === id.toString()
-  },
-  );
+  const matchedData = this.subdivisiondatacum?.find((data: any) => {
+    return data.s_code === id
+  },);
   if (matchedData) {
     return matchedData;
   }
@@ -122,143 +121,102 @@ findMatchingData(id: number): any | null {
   }
 }
 
-async downloadMapImage() {
-  try {
-    const mapElement = document.getElementById('map') as HTMLElement;
-    if (!mapElement) {
-      throw new Error('Map element not found');
+private calculateInitialZoom(): void {
+  const cardWidth = window.innerWidth * 0.9;
+  const cardHeight = window.innerHeight * 0.7; 
+  this.initialZoom = this.calculateZoomLevel(cardWidth, cardHeight);
+}
+
+private calculateZoomLevel(width: number, height: number): number {
+  const zoomLevel = Math.log2(Math.max(width, height) / 90); 
+
+  return zoomLevel;
+}
+
+@HostListener('window:resize')
+onWindowResize() {
+  if(!this.isFullscreen()){
+    this.calculateInitialZoom();
+    if (this.map) {
+      this.map.setZoom(this.initialZoom);
     }
-
-    // Calculate the scale based on the height of the system screen and map element
-    const screenHeight = window.innerHeight;
-    const mapElementRect = mapElement.getBoundingClientRect();
-    const scale = screenHeight / mapElementRect.height;
-
-    // Calculate the scaled dimensions
-    const width = mapElementRect.width * scale;
-    const height = mapElementRect.height * scale;
-
-    // Set dimensions for the cropped area in portrait orientation
-    const cropWidth = 850 * scale;
-    const cropHeight = mapElementRect.height * scale;
-    const cropX = (width - cropWidth) / 2; // Center the crop horizontally
-    const cropY = 0;
-
-    // Create a temporary canvas to crop the image
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = cropWidth;
-    tempCanvas.height = cropHeight;
-    const tempContext = tempCanvas.getContext('2d');
-
-    // Capture the map element as an image
-    const dataUrl = await htmlToImage.toJpeg(mapElement, {
-      quality: 0.95,
-      filter: this.filter,
-      width: width,
-      height: height,
-      style: {
-        transform: `scale(${scale})`,
-        transformOrigin: 'top left',
-        width: `${width}px`,
-        height: `${height}px`
-      }
-    });
-
-    // Load the captured image onto the temporary canvas
-    const image = new Image();
-    image.src = dataUrl;
-    image.onload = () => {
-      tempContext?.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-      
-      // Convert the cropped canvas back to a data URL
-      const croppedDataUrl = tempCanvas.toDataURL('image/jpeg', 0.95);
-
-      // Trigger download
-      const link = document.createElement('a');
-      link.download = 'DISTRICT_RAINFALL_MAP_COUNTRY_INDIA_cd.jpeg';
-      link.href = croppedDataUrl;
-      link.click();
-    };
-  } catch (error) {
-    console.error('Error downloading map image:', error);
   }
+
+}
+
+
+
+async downloadMapImage() {
+    try {
+        const mapElement = document.getElementById('map-subdivision') as HTMLElement;
+        if (!mapElement) {
+            throw new Error('Map element not found');
+        }
+
+        const scale = 10; // Increase the scale to improve resolution
+        const originalWidth = mapElement.clientWidth;
+        const originalHeight = mapElement.clientHeight;
+        const width = originalWidth * scale;
+        const height = originalHeight * scale;
+
+        // Set dimensions for the cropped area
+        const cropWidth = 850 * scale;
+        const cropHeight = originalHeight * scale;
+        const cropX = (width - cropWidth) / 2;
+        const cropY = 0
+
+        // Create a temporary canvas to crop the image
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = cropWidth;
+        tempCanvas.height = cropHeight;
+        const tempContext = tempCanvas.getContext('2d');
+
+        const dataUrl = await htmlToImage.toJpeg(mapElement, {
+            quality: 0.95,
+            filter: this.filter,
+            width: width,
+            height: height,
+            style: {
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left',
+                width: `${width}px`,
+                height: `${height}px`
+            }
+        });
+
+        // Load the captured image onto the temporary canvas
+        const image = new Image();
+        image.src = dataUrl;
+        image.onload = () => {
+            tempContext?.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+            
+            // Convert the cropped canvas back to a data URL
+            const croppedDataUrl = tempCanvas.toDataURL('image/jpeg', 0.95);
+
+            // Trigger download
+            const link = document.createElement('a');
+            link.download = 'SUBDIVISION_RAINFALL_MAP_COUNTRY_INDIA_cd.jpeg';
+            link.href = croppedDataUrl;
+            link.click();
+        };
+    } catch (error) {
+        console.error('Error downloading map image:', error);
+    }
 }
 
   ngOnInit(){
     this.initMap();
-
   }
 
   ngAfterViewInit(): void {
     this.loadGeoJSON();
   }
 
-
-
-
-
-
-
-
-  // private calculateInitialZoom(): void {
-  //   const cardWidth = window.innerWidth * 0.9;
-  //   const cardHeight = window.innerHeight * 0.7; 
-  //   this.initialZoom = this.calculateZoomLevel(cardWidth, cardHeight);
-  // }
-  
-  // private calculateZoomLevel(width: number, height: number): number {
-  //   const zoomLevel = Math.log2(Math.max(width, height) / 90); 
-
-  //   return zoomLevel;
-  // }
-
-  // @HostListener('window:resize')
-  // onWindowResize() {
-  //   if(!this.isFullscreen()){
-  //     this.calculateInitialZoom();
-  //     if (this.map) {
-  //       this.map.setZoom(this.initialZoom);
-  //     }
-  //   }
-
-  // }
-
-
-
-
-
-
-
-
-
-  private calculateInitialZoom(): void {
-    const cardWidth = window.innerWidth * 0.9;
-    const cardHeight = window.innerHeight * 0.7; 
-    this.initialZoom = this.calculateZoomLevel(cardWidth, cardHeight);
-  }
-  
-  private calculateZoomLevel(width: number, height: number): number {
-    const zoomLevel = Math.log2(Math.max(width, height) / 90); 
-
-    return zoomLevel;
-  }
-
-  @HostListener('window:resize')
-  onWindowResize() {
-    if(!this.isFullscreen()){
-      this.calculateInitialZoom();
-      if (this.map) {
-        this.map.setZoom(this.initialZoom);
-      }
-    }
-
-  }
-
   private initMap(): void {
-    this.map = L.map('map', {
+    this.map = L.map('map-subdivision', {
       center: [24, 80.9629],
       zoom: this.initialZoom,
-      scrollWheelZoom: true,
+      scrollWheelZoom: false,
       zoomSnap: 0.1,
       zoomDelta: 0.1
     });
@@ -283,12 +241,12 @@ async downloadMapImage() {
       document.fullscreenElement || document.fullscreenElement);
   }
 
- private toggleLogoPosition(isFullscreen: boolean): void {
-  const logoImage = this.elRef.nativeElement.querySelector('#logoImage');
-  const Header = this.elRef.nativeElement.querySelector('#middle-header');
-  const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow');
-  const btn = this.elRef.nativeElement.querySelector('#all-btn');
-  const legendsColor = this.elRef.nativeElement.querySelector('#legends-district');
+  private toggleLogoPosition(isFullscreen: boolean): void {
+    const logoImage = this.elRef.nativeElement.querySelector('#logoImage2');
+    const Header = this.elRef.nativeElement.querySelector('#middle-header-subdiv');
+    const directionCompass = this.elRef.nativeElement.querySelector('#compassArrow-subdiv')
+    const btn = this.elRef.nativeElement.querySelector('#all-btn-subdiv')
+    const legendsColor = this.elRef.nativeElement.querySelector('#legends-subdiv');
 
     if (isFullscreen) {
       this.map.setZoom(this.initialZoom + 1);
@@ -306,11 +264,12 @@ async downloadMapImage() {
       this.renderer.setStyle(directionCompass, 'top', '20%');
       
       this.renderer.setStyle(btn, 'position', 'absolute');
-      this.renderer.setStyle(btn, 'right', '210px');
-      this.renderer.setStyle(btn, 'top', '60px');
-
-
-     } else {
+      this.renderer.setStyle(btn, 'right', '10%');
+      this.renderer.setStyle(btn, 'top', '5%');
+  
+  
+  
+    } else {
       this.map.setZoom(this.initialZoom);
   
       this.renderer.removeStyle(logoImage, 'position');
@@ -328,18 +287,18 @@ async downloadMapImage() {
       this.renderer.removeStyle(btn, 'position');
       this.renderer.removeStyle(btn, 'right');
       this.renderer.removeStyle(btn, 'top');
-
-
+  
+  
+    }
   }
-}
-
 
   private loadGeoJSON(): void {
-    this.http.get('assets/geojson/INDIA_DISTRICT.json').subscribe((res: any) => {
+    this.http.get('assets/geojson/INDIA_SUB_DIVISION.json').subscribe((res: any) => {
       const districtLayer = L.geoJSON(res, {
         style: (feature: any) => {
-          const id2 = feature.properties['district_c'];
+          const id2 = feature.properties['SubDiv_Cod'];
           const matchedData = this.findMatchingData(id2);
+          // console.log('matchedData',matchedData)
           let rainfall: any;
           if (matchedData) {
             if (Number.isNaN(matchedData.actual_rainfall)) {
@@ -364,12 +323,14 @@ async downloadMapImage() {
 
         },
         onEachFeature: (feature: any, layer: any) => {
-          const id1 = feature.properties['district'];
-          const id2 = feature.properties['district_c'];
+          const id1 = feature.properties['subdivisio'];
+          const id2 = feature.properties['SubDiv_Cod'];
+          // console.log('SUBDIV ID' , id2)
           const matchedData = this.findMatchingData(id2);
+          // console.log('matchedData', matchedData)
           let rainfall: any;
           if (matchedData) {
-            if (Number.isNaN(matchedData.actual_rainfall)) {
+            if (Number.isNaN(matchedData.actual_subdiv_rainfall)) {
               rainfall = "NA";
             }
             else {
@@ -379,11 +340,13 @@ async downloadMapImage() {
           else {
             rainfall = -100
           }
-          const dailyrainfall = matchedData && matchedData.actual_rainfall !== null && matchedData.actual_rainfall != undefined && !Number.isNaN(matchedData.actual_rainfall) ? matchedData.actual_rainfall.toFixed(2) : 'NA';
-          const normalrainfall = matchedData && !Number.isNaN(matchedData.normal_rainfall) ? matchedData.normal_rainfall : 'NA';
+          const dailyrainfall = matchedData && matchedData.actual_subdiv_rainfall !== null && matchedData.actual_subdiv_rainfall != undefined && !Number.isNaN(matchedData.actual_subdiv_rainfall) ? matchedData.actual_subdiv_rainfall.toFixed(2) : 'NA';
+          const normalrainfall = matchedData && !Number.isNaN(matchedData.rainfall_normal_value) ? matchedData.rainfall_normal_value : 'NA';
+          // console.log('SUB DIV DAILY RAINFALL', dailyrainfall)
+          // console.log('SUB DIV normalrainfall', normalrainfall)
           const popupContent = `
           <div style="background-color: white; padding: 5px; font-family: Arial, sans-serif;">
-            <div style="color: #002467; font-weight: bold; font-size: 10px;">DISTRICT: ${id1}</div>
+            <div style="color: #002467; font-weight: bold; font-size: 10px;">SUB DIVISION: ${id1}</div>
             <div style="color: #002467; font-weight: bold; font-size: 10px;">DAILY RAINFALL: ${dailyrainfall}</div>
             <div style="color: #002467; font-weight: bold; font-size: 10px;">NORMAL RAINFALL: ${normalrainfall}</div>
             <div style="color: #002467; font-weight: bold; font-size: 10px;">DEPARTURE: ${rainfall}% </div>
@@ -400,22 +363,6 @@ async downloadMapImage() {
       }).addTo(this.map);
     });
 
-
-    //     this.http.get('assets/geojson/INDIA_STATE.json').subscribe(
-//       (stateRes: any) => {
-//       const stateLayer = L.geoJSON(stateRes, {
-//         style: {
-//           weight: 1,
-//           opacity: 100,
-//           color: 'black',
-//           fillOpacity: 0
-//         }
-
-//       }).
-//       addTo(this.map);
-//     })
-
-    console.log('loading is successful');
   }
   getColorForRainfall1(rainfall: any): string {
     const numericId = rainfall;

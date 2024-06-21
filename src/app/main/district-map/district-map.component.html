@@ -20,7 +20,7 @@
                   </div>
                   <div>
                     <label
-                      *ngIf="!previousWeekWeeklyStartDate && !previousWeekWeeklyEndDate"
+                      *ngIf="!StartDate && !EndDate"
                       class="text-black fw-bold"
                       style="font-family: Arial; font-size: 14px;"
                     >
@@ -28,26 +28,26 @@
                     </label>
                     <label
                       *ngIf="
-                        previousWeekWeeklyStartDate &&
-                        previousWeekWeeklyEndDate &&
-                        previousWeekWeeklyStartDate != previousWeekWeeklyEndDate
+                        StartDate &&
+                        EndDate &&
+                        StartDate != EndDate
                       "
                       class="text-black fw-bold"
                       style="font-family: Arial; font-size: 14px;"
                     >
                       Date :
-                      {{ previousWeekWeeklyStartDate }} to
-                      {{ previousWeekWeeklyEndDate  }}
+                      {{ StartDate }} to
+                      {{ EndDate  }}
                     </label>
                     <label
                       *ngIf="
-                        previousWeekWeeklyStartDate &&
-                        previousWeekWeeklyStartDate == previousWeekWeeklyEndDate
+                        StartDate &&
+                        StartDate == EndDate
                       "
                       class="text-black fw-bold"
                       style="font-family: Arial; font-size: 14px;"
                     >
-                      Date : {{ previousWeekWeeklyStartDate}}
+                      Date : {{ StartDate}}
                     </label>
                   </div>
                   <div>
@@ -63,10 +63,10 @@
                   style="width: 150px; height: 150px;"
                   src="../../assets/images/—Pngtree—compass_6028609.png"
                   alt=""
-                  id="compassArrow"
+                  id="compassArrow-district"
                 />
               </div>
-              <div id="all-btn" class="d-flex flex-column me-2 text-start w-25">
+              <div id="all-btn-district" class="d-flex flex-column me-2 text-start w-25">
                 <div class="d-flex">
                   <button class="download" style="margin-right: 5px;" (click)="downloadMapImage()">
                     IMG
