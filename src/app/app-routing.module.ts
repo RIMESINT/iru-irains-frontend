@@ -67,9 +67,17 @@ import { RainfallGraphsPostmonsoonSouthpeninsularregionComponent } from './rainf
 import { RainfallGraphsPostmonsoonCentralindiaregionComponent } from './rainfall-graphs/post-monsoon/rainfall-graphs-postmonsoon-centralindiaregion/rainfall-graphs-postmonsoon-centralindiaregion.component';
 import { VerificationPageHQComponent } from './verification-page-hq/verification-page-hq.component';
 import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AllMapsComponent } from '../app/main/all-maps/all-maps.component';
+// import { DistrictMapComponent } from './district-map/district-map.component';
+import { DataEntryComponent } from './main/data-entry/data-entry.component';
+import { VerificationComponent } from './main/verification/verification.component';
 
 const routes: Routes = [
-
+  { path: 'all-maps', component: AllMapsComponent, canActivate: [AuthGuard] },
+  // { path: 'district-map', component: DistrictMapComponent, canActivate: [AuthGuard]},
+  {path: 'dataentrypage', component: DataEntryComponent, canActivate: [AuthGuard]},
+  {path: 'newverification', component: VerificationComponent, canActivate: [AuthGuard]},
   { path: 'login', component: LoginComponent },
   { path: 'data-entry', component: DataentryComponent, canActivate: [AuthGuard] },
   { path: 'station-level-data', component: StationLevelDataComponent, canActivate: [AuthGuard] },
@@ -153,6 +161,11 @@ const routes: Routes = [
     ]
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+  { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
+  { path: 'app', loadChildren: () => import('./core/core.module').then(m => m.CoreModule) },
+  { path: '**', component: PageNotFoundComponent },
+  
 ];
 
 @NgModule({

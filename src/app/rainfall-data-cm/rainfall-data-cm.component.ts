@@ -55,17 +55,7 @@ export class RainfallDataCmComponent implements OnInit{
   goBack() {
       window.history.back();
   }
-  
-  validateDateRange() {
-    var fromDate = this.fromDate;
-    var toDate = this.toDate
-
-    if (fromDate > toDate) {
-      alert('From date cannot be greater than To date');
-      this.fromDate = toDate;
-    }
-  }
-  
+    
   exportAsXLSX(): void {
     console.log(this.filteredItems)
     this.exportAsExcelFile(this.sampleFile(), 'Significant_RainFall_Data');
@@ -140,7 +130,7 @@ export class RainfallDataCmComponent implements OnInit{
         // Process the data returned by the API
         console.log(data);
         if (this.loggedInUser.data[0].mcorhq === "mc") {
-          this.filteredDataForRainfall = data.filter((it: any) => it.rmc_mc.toLowerCase() == this.loggedInUser.data[0].name.toLowerCase());
+          this.filteredDataForRainfall = data.filter((it: any) => it.rmc_mc?.toLowerCase() == this.loggedInUser.data[0].name?.toLowerCase());
           console.log('if cond', this.filteredDataForRainfall)
         }
         else {
@@ -156,10 +146,22 @@ export class RainfallDataCmComponent implements OnInit{
   }
 
     filterData() {
-     // Format the filter date to match the backend format (e.g., 02_Jan_24)
-    const formattedDate = format(new Date(this.filterDate), 'dd_MMM_yy');
-    console.log(formattedDate)
-    const rainfallInMM = this.filterRainfall * 10; // Convert cm to mm
+      // Format the filter date to match the backend format (e.g., 02_Jan_24)
+      const filterDate = new Date(this.filterDate); 
+      const currentDate = new Date();
+     const formattedDate = format(new Date(this.filterDate), 'dd_MMM_yy');
+     const rainfallInMM = this.filterRainfall * 10; // Convert cm to mm
+     
+      console.log(this.filteredItems)
+   if (filterDate > currentDate) {
+    // Store the execution with an alert
+     alert('The date is greater than the current date.');
+     return;
+   }
+   else if (this.filteredItems.length == 0) {
+     alert('For this Date data is not available');
+     return;
+   }
 
      this.filteredItems = this.filteredDataForRainfall.filter(x => {
           return  x[formattedDate] >= rainfallInMM;
@@ -172,19 +174,18 @@ export class RainfallDataCmComponent implements OnInit{
     //   return item.date === formattedDate && item.rainfall >= rainfallInMM;
     // });
       
-      console.log(this.filteredItems)
     }
   
-    dateCalculation() {
-      const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ];
-      let newDate = new Date(this.selectedDate);
-      let dd = String(newDate.getDate());
-      const year = newDate.getFullYear();
-      const currmonth = months[newDate.getMonth()];
-      const selectedYear = String(year).slice(-2);
-      return `${dd.padStart(2, '0')}_${currmonth}_${selectedYear}`;
-    }
+    // dateCalculation() {
+    //   const months = [
+    //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    //   ];
+    //   let newDate = new Date(this.selectedDate);
+    //   let dd = String(newDate.getDate());
+    //   const year = newDate.getFullYear();
+    //   const currmonth = months[newDate.getMonth()];
+    //   const selectedYear = String(year).slice(-2);
+    //   return `${dd.padStart(2, '0')}_${currmonth}_${selectedYear}`;
+    // }
 }

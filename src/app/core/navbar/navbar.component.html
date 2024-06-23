@@ -1,0 +1,99 @@
+<nav class="navbar navbar-expand-lg bg-primary sticky-top" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <!-- <img style="filter: drop-shadow(0px 1px 2px #333);" src="assets/images/logoimage.png" alt="iRAINS" height="36" > -->
+      <strong class="text-white"
+        ><i class="bi bi-cloud-rain"></i> iRAINS</strong
+      >
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" routerLink="/app/dashboard" routerLinkActive="active">Applications</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="about" routerLinkActive="active">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="contact" routerLinkActive="active">Contact</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <div class="dropdown">
+          <button
+            class="btn btn-outline-light dropdown-toggle btn-sm"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Md Mobinur Rahman
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" routerLink="/app">Profile</a></li>
+            <li><a class="dropdown-item" routerLink="/app">Status</a></li>
+            <hr />
+            <li><a class="dropdown-item" routerLink="/app">Logout</a></li>
+          </ul>
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="d-flex gap-2 p-4 m-3 border flex-wrap">
+
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="rainfall_map">Rainfall Map</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="rainfall_graph">Rainfall Graph</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">NWP Rainfall Product</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Rainfall Statistics</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Rainfall Departures</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Spatial Analysis</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Info Upload</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">QPF Verification Report</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Design Storm Analysis</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Rainfall Report</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Data Entry</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Significant Rainfall</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Verification</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Verification HQ</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Dissemination</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Station Statistics</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Yearly Station Statistics</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">Log Info</button>
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="nwp_rainfall_product">About</button>
+  
+
+</div>
+<mat-menu #rainfall_map="matMenu">
+  <button mat-menu-item>Daily Departure</button>
+  <button mat-menu-item>Weekly Departure</button>
+  <button mat-menu-item>Daily</button>
+  <button mat-menu-item>Cumulative</button>
+  <button mat-menu-item>Normal Rainfall Map</button>
+  <button mat-menu-item>Weekly Departure</button>
+</mat-menu>
+
+<mat-menu #rainfall_graph="matMenu">
+  <button mat-menu-item>Insects</button>
+  <button mat-menu-item>Molluscs</button>
+  <button mat-menu-item>Crustaceans</button>
+  <button mat-menu-item>Corals</button>
+  <button mat-menu-item>Arachnids</button>
+  <button mat-menu-item>Velvet worms</button>
+  <button mat-menu-item>Horseshoe crabs</button>
+</mat-menu>
+
+<mat-menu #nwp_rainfall_product="matMenu">
+  <button mat-menu-item>QPF/WRF</button>
+</mat-menu>

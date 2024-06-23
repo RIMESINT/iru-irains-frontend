@@ -16,6 +16,8 @@ import { PaginatorModule } from "primeng/paginator";
 import { StationLevelDataComponent } from './station-level-data/station-level-data.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
@@ -27,7 +29,6 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { DepartureMapComponent } from './main_page/departure-map/departure-map.component';
 import { DailyMapComponent } from './main_page/daily-map/daily-map.component';
 import { FrontPageComponent } from './main_page/front-page/front-page.component';
-import { HeaderComponent } from './main_page/header/header.component';
 import { NavbarComponent } from './main_page/navbar/navbar.component';
 import { NormalMapComponent } from './main_page/normal-map/normal-map.component';
 import { WeeklyDepartureMapComponent } from './main_page/weekly-departure-map/weekly-departure-map.component';
@@ -98,6 +99,20 @@ import { RainfallGraphsPostmonsoonNorthwestregionComponent } from './rainfall-gr
 import { VerificationPageHQComponent } from './verification-page-hq/verification-page-hq.component';
 import { StateWiseComponent } from './state-wise/state-wise.component';
 import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AllMapsComponent } from '../app/main/all-maps/all-maps.component';
+import { StateMapComponent } from '../app/main/state-map/state-map.component';
+import { DistrictMapComponent } from './main/district-map/district-map.component';
+import { SubdivisionMapComponent } from './main/subdivision-map/subdivision-map.component';
+import { RegionMapComponent } from './main/region-map/region-map.component';
+import { CountryMapComponent } from './main/country-map/country-map.component';
+import { DataEntryComponent } from './main/data-entry/data-entry.component';
+// import { HeaderComponent } from './main_page/header/header.component';
+import { HeaderComponent } from './main/utils/header/header.component';
+import { VerificationComponent } from './main/verification/verification.component';
+// import { DistrictMapComponent } from './app';
+// import { AppDistrictMapComponent } from './app-district-map/app-district-map.component';
+// import { DistrictMapComponent } from './district-map/district-map.component';
 
 @NgModule({
   declarations: [
@@ -110,6 +125,7 @@ import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.com
     StationLevelDataComponent,
     DepartureMapComponent,
     DailyMapComponent,
+    // HeaderComponent,
     HeaderComponent,
     NavbarComponent,
     WeeklyDepartureMapComponent,
@@ -172,7 +188,16 @@ import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.com
     VerificationPageMcComponent,
     VerificationPageHQComponent,
     StateWiseComponent,
-    RainfallDataCmComponent
+    RainfallDataCmComponent,
+    PageNotFoundComponent,
+    AllMapsComponent,
+    DistrictMapComponent,
+    StateMapComponent,
+    SubdivisionMapComponent,
+    RegionMapComponent,
+    CountryMapComponent,
+    DataEntryComponent,
+    VerificationComponent,
   ],
   imports: [
     PdfViewerModule,
@@ -202,6 +227,7 @@ import { RainfallDataCmComponent } from './rainfall-data-cm/rainfall-data-cm.com
     MatTabsModule,
     MultiSelectModule
   ],
+
   providers: [AuthGuard, DatePipe],
   bootstrap: [AppComponent]
 })
