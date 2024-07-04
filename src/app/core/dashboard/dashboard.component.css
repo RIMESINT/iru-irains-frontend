@@ -1,0 +1,5 @@
+/* dashboard.component.css */
+.huechange {
+    filter: hue-rotate(120deg); /* Adjust hue-rotate value as needed */
+  }
+  

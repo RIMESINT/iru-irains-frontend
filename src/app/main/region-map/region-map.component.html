@@ -1,0 +1,121 @@
+
+<div class="container">
+    <div class="row">
+      <div class="col-12" id="mapdiv3">
+        <div class="map-container">
+          <div class="map-frame">
+            <div
+              id="map-region"
+              class="border border-dark text-center my-3 shadow-sm p-3" style="width: 90%; height: 70vh;"
+
+            >
+              <div class="d-flex w-100">
+                <div class="text-center ms-2" style="width: 15%;">
+                  <img id="logoImage3" class="logo" src="/assets/images/IMDlogo_Ipart-iris.png" alt="" />
+                </div>
+                <div id="middle-header-region" class="text-center" style="width: 72%;">
+                  <div class="d-flex flex-column align-items-center ps-4">
+                    <div>
+                      <label class="text-black fw-bold" style="font-family: Arial; font-size: 14px;">
+                        REGION RAINFALL MAP (mm)
+                      </label>
+                    </div>
+                    <div>
+                      <label
+                        *ngIf="!StartDate && !EndDate"
+                        class="text-black fw-bold"
+                        style="font-family: Arial; font-size: 14px;"
+                      >
+                        Date : {{ formatteddate }}
+                      </label>
+                      <label
+                        *ngIf="
+                          StartDate &&
+                          EndDate &&
+                          StartDate != EndDate
+                        "
+                        class="text-black fw-bold"
+                        style="font-family: Arial; font-size: 14px;"
+                      >
+                        Date :
+                        {{ StartDate }} to
+                        {{ EndDate  }}
+                      </label>
+                      <label
+                        *ngIf="
+                          StartDate &&
+                          StartDate == EndDate
+                        "
+                        class="text-black fw-bold"
+                        style="font-family: Arial; font-size: 14px;"
+                      >
+                        Date : {{ StartDate}}
+                      </label>
+                    </div>
+                    <div>
+                      <label class="text-black fw-bold" style="font-family: Arial; font-size: 12px;">
+                        INDIA METEOROLOGICAL DEPARTMENT, NEW DELHI
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div id="celebrations-region" *ngIf="isFullscreen()" class="text-center mt-3 ms-1">
+                  <img class="logo" src="assets/images/IMD150(BGR).png" alt="" />
+                </div>
+                <div>
+                  <img
+                    class="mt-2 ms-1"
+                    style="width: 150px; height: 150px;"
+                    src="../../assets/images/—Pngtree—compass_6028609.png"
+                    alt=""
+                    id="compassArrow-region"
+                  />
+                </div>
+                <div id="all-btn-region" class="d-flex flex-column me-2 text-start w-25">
+                  <div class="d-flex">
+                    <button class="download" style="margin-right: 5px;" (click)="downloadMapImage(false)">
+                      IMG
+                    </button>
+                    <button class="download" style="margin-left: 5px;" (click)="downloadMappdf()">
+                      PDF
+                    </button>
+                  </div>
+                  <div class="mt-1 text-start">
+                    <button class="download" style="margin-left: 10px;" (click)="downloadMapData()">
+                      Statistics
+                    </button>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="leaflet-bottom" id="leaflet-bottom-region">
+                <div
+                class="info_legend leaflet-control justify-content-center d-flex align-items-center flex-wrap mb-3"
+                id="legends-region"
+                  style="width: auto; height: 30px;"
+                >
+                  <div
+                    *ngFor="let item of legendItems"
+                    class="d-flex align-items-center me-3"
+                  >
+                    <div
+                      [style.background-color]="item.color"
+                      class="d-inline-block"
+                      style="width: 11px; height: 11px;"
+                    ></div>
+                    <div
+                      [style.font-size]="item.fontSize"
+                      class="text-black fw-bold mx-2"
+                    >
+                      {{ item.text }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,342 @@
+<app-header></app-header>
+
+<div class="mt-3 mb-0 p-3 bg-light rounded">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-6">
+    <!-- Region -->
+    <div *ngIf="currentUserType == 'hq'" class="col mb-2">
+      <p-multiSelect
+      [(ngModel)]="selectedRegion"
+      [options]="regions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Select Regions"
+      (onChange)="onRegionChange()"
+      [showToggleAll]="false"
+     ></p-multiSelect>
+    </div>
+    <div *ngIf="currentUserType == 'mc' || currentUserType == 'rmc'" class="col mb-2 mt-2">
+      <div class="col mb-2 fw-bolder fs-5">
+        {{ this.regionName }}
+      </div>
+    </div>
+
+    <!-- MC -->
+    <div *ngIf="currentUserType == 'hq'; else showUserName" class="col mb-2">
+        <p-multiSelect
+        [(ngModel)]="selectedMC"
+        [options]="centersMC1"
+        optionLabel="centre_name"
+        placeholder="Select MCs"
+        (onChange)="onMcChange($event)"
+        [disabled]="mcDisabled"
+        [showToggleAll]="false"    
+        ></p-multiSelect>
+      </div>
+      <ng-template #showUserName>
+        <div class="col mb-2 mt-2 px-3 fw-bolder fs-5">
+          {{ this.currentUserName }}
+        </div>
+      </ng-template>
+
+    <!-- RMC -->
+    <div *ngIf="currentUserType == 'hq'" class="col mb-2">
+      <p-multiSelect
+      [(ngModel)]="selectedRMC"
+      [options]="centersRMC1"
+      optionLabel="centre_name"
+      placeholder="Select RMCs"
+      (onChange)="onRMcChange($event)"
+      [disabled]="rmcDisabled"
+      [showToggleAll]="false"
+      ></p-multiSelect>
+    </div>
+
+    <!-- States -->
+    <div class="col mb-2">
+      <p-multiSelect 
+             [(ngModel)]="selectedState"
+             [options]="filterStates"
+             optionLabel="state_name"
+             placeholder="Select States"
+             (onChange)="onStateChange($event)"
+             [showToggleAll]="false"
+      ></p-multiSelect>
+    </div>
+
+    <!-- District -->
+    <div class="col mb-2">
+      <p-multiSelect 
+           [options]="filterDistrict"          
+           optionLabel="district_name"
+           placeholder="Select Districts"
+           (onChange)="onDistrictChange($event)"
+           [showToggleAll]="false"
+           ></p-multiSelect>
+    </div>
+
+    <!-- Date -->
+    <div class="col mb-2">
+      <input type="date" class="form-control" (change)="onDateChange($event)">
+    </div>
+
+    <!-- Submit Button -->
+    <div class="col mb-2 mx-auto">
+      <button class="btn btn-success w-50" type="button" (click)="filterStationData()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div style="text-align: center; padding-top: 40px;">
+    <div class="dataentry">
+      <div class="row">
+        <div class="col-md-3 col-sm-6 mb-3">
+          <h3>STATIONS DATA</h3>
+        </div>
+        <div class="col-md-1 col-sm-6 mb-3">
+          <button class="btn btn-primary" (click)="exportAsXLSX()">Download</button>
+        </div>
+        <div class="col-md-2 col-sm-6 mb-3">
+          <input class="form-control" type="file" #fileInput (change)="onFileSelected($event)">
+        </div>
+        <div class="col-md-2 col-sm-6 mb-3">
+          <button (click)="uploadFile()" class="btn btn-success">Upload Stations</button> <br>
+          <!-- <a href="javascript:void(0)" (click)="downloadStationInstructionFile()">Instruction</a> -->
+          <a href="javascript:void(0)" style="margin-left: 10px;" (click)="downloadStationSampleFile()">Sample File</a>
+        </div>
+        <div class="col-md-2 col-sm-6 mb-3">
+          <input [disabled]="loggedInUserObject.data[0].mcorhq == 'mc'" class="form-control" type="file"
+            #rainfallFileInput (change)="onFileSelected($event)">
+        </div>
+        <div class="col-md-2 col-sm-6 mb-3">
+          <button [disabled]="loggedInUserObject.data[0].mcorhq == 'mc'" (click)="uploadRainFallFile()"
+            class="btn btn-success">Upload Rainfall</button> <br>
+          <a *ngIf="loggedInUserObject.data[0].mcorhq == 'hq'" href="javascript:void(0)"
+            (click)="downloadRainfallSampleFile()">Sample File</a>
+        </div>
+      </div>
+      <br />
+      <!-- <form> -->
+      <div class="overflow-x-scroll">
+       <table style=" margin: auto; border-collapse: collapse; width: 90%; border: 1px solid black;">
+        <thead>
+          <tr>
+            <th style="border: 1px solid black">S.NO</th>
+            <th style="border: 1px solid black">STATION ID</th>
+            <th style="border: 1px solid black">STATION NAME</th>
+            <th style="border: 1px solid black">RAINFALL</th>
+            <!-- <th style="border: 1px solid black">DATE</th>
+            <th style="border: 1px solid black">TIME</th> -->
+            <th style="border: 1px solid black">TYPE</th>
+            <th style="border: 1px solid black">NEW/OLD</th>
+            <th style="border: 1px solid black">LAT° N <br> Eg : 21.3463</th>
+            <th style="border: 1px solid black">LNG° E <br> Eg : 26.3453</th>
+            <th style="border: 1px solid black">YEAR OF ACTIVATION</th>
+            <th style="border: 1px solid black">ACTION</th>
+          </tr>
+        </thead>
+        <div *ngIf="isLoading">Loading ...</div>
+        <tbody *ngIf="filteredData && filteredData.length > 0">
+          <tr *ngFor="let station of filteredData; let i = index">
+            <td style="border: 1px solid black">{{ i + 1 }}</td>
+            <td style="border: 1px solid black">{{ station.station_code }}</td>
+            <td style="border: 1px solid black">{{ station.station_name }}</td>
+            <td style="border: 1px solid black">
+              <input type="text" id="rainfall" #rainFallElementRef name="rainfall" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1').replace(/(\.\d{1}).+/g, '$1');"  [(ngModel)]="station.data"
+                required style="border: none;" step="0.1" (blur)="updateRainfallValueData(station.station_code, station.data)" (keyup.enter)="rainFallElementRef.blur()" (input)="showMessage(rainFallElementRef)">
+            </td>
+
+            <!-- <td style="border: 1px solid black"><input type="date" [(ngModel)]="todayDate" id="date" name="date"
+                required style="border: none;"></td>
+            <td style="border: 1px solid black"><input type="time" id="time" name="time" required style="border: none;">
+            </td> -->
+            <td style="border: 1px solid black"><button value="AWS"
+                [ngClass]="{'selectedOptionolor': station.station_type === 'AWS'}">AWS</button><button value="ORG"
+                [ngClass]="{'selectedOptionolor': station.station_type === 'ORG'}">ORG</button><button value="ARG"
+                [ngClass]="{'selectedOptionolor': station.station_type === 'ARG'}">ARG</button></td>
+            <td style="border: 1px solid black"><button
+                [ngClass]="{'selectedOptionolor': station.is_new_station === 0}">OLD</button><button
+                [ngClass]="{'selectedOptionolor': station.is_new_station === 1}">NEW</button></td>
+            <!-- <td style="border: 1px solid black"><input type="number" disabled required style="border: none; width: 50px" [(ngModel)]="station.lat"></td>
+              <td style="border: 1px solid black"><input type="number" disabled required style="border: none; width: 50px" [(ngModel)]="station.lng"></td> -->
+            <td style="border: 1px solid black">{{station.latitude}}</td>
+            <td style="border: 1px solid black">{{station.longitude}}</td>
+            <td style="border: 1px solid black">{{station.activationdate | date: 'dd-MM-yyyy'}}</td>
+            <td style="border: 1px solid black">
+              <button class="edit" (click)="editStation(station)">Edit</button>
+              <button class="delete" (click)="deleteStationdata(i)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <button *ngIf="loggedInUserObject.data[0].mcorhq == 'hq'" class="enter" (click)="Addstation()">Add
+        Station</button>
+      <!-- <button type="submit" class="enter" (click)="submit()">Submit</button> -->
+      <!-- </form> -->
+
+      <div *ngIf="message">
+        <p>{{ message }}</p>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div *ngIf="showPopup" class="popup">
+    <button class="close-btn" (click)="cancelAddStation()">X</button>
+    <h2>Add New Station Data</h2>
+    <form>
+      <div class="overflow-x-scroll">
+      <table style="
+          margin: auto;
+          border-collapse: collapse;
+          width: 90%;
+          border: 1px solid black;
+          background-color: white;
+        ">
+        <thead>
+          <tr>
+            <th style="border: 1px solid black">S.NO</th>
+            <th style="border: 1px solid black">STATION NAME</th>
+            <th style="border: 1px solid black">STATION ID</th>
+
+            <th *ngIf="currentUserType=='hq'" style="border: 1px solid black">MC or RMC</th>
+            <th *ngIf="currentUserType=='hq'" style="border: 1px solid black">CENTER NAME</th>
+
+            <th style="border: 1px solid black">TYPE</th>
+            <th style="border: 1px solid black">NEW/OLD</th>
+            <th style="border: 1px solid black">LAT° N</th>
+            <th style="border: 1px solid black">LNG° E</th>
+            <th style="border: 1px solid black">YEAR OF ACTIVATION</th>
+          </tr>
+        </thead>
+        <tbody class="container-fluid">
+          <tr class="container">
+            <td style="border: 1px solid black"></td>
+            <td style="border: 1px solid black"><input id="field1" name="field1" [(ngModel)]="data.stationName" required
+                style="border: none;"></td>
+            <td style="border: 1px solid black"><input id="field2" name="field2" [(ngModel)]="data.stationId" required
+                style="border: none;"></td>
+
+            <td *ngIf="currentUserType=='hq'" style="border: 1px solid black">
+              <input type="radio" id="MC" name="MC" value="MC" [(ngModel)]="data.center_type">
+                <label for="MC">MC</label><br>
+              <input type="radio" id="RMC" name="RMC" value="RMC" [(ngModel)]="data.center_type">
+                <label for="MC">RMC</label><br>
+            </td>
+
+            <td *ngIf="currentUserType=='hq'" style="border: 1px solid black"><input id="field3" name="field3" [(ngModel)]="data.center_name" required
+              style="border: none;"></td>
+
+            <td style="border: 1px solid black">
+              <input type="radio" id="aws" name="aws" value="aws" [(ngModel)]="data.stationType">
+                <label for="aws">AWS</label><br>
+              <input type="radio" id="org" name="org" value="org" [(ngModel)]="data.stationType">
+                <label for="org">ORG</label><br>
+              <input type="radio" id="arg" name="arg" value="arg" [(ngModel)]="data.stationType">
+                <label for="arg">ARG</label><br>
+            </td>
+
+            <td style="border: 1px solid black">
+              <input type="radio" id="new" name="new" value="new" [(ngModel)]="data.newOrOld">
+                <label for="new">NEW</label><br>
+              <input type="radio" id="old" name="Old" value="old" [(ngModel)]="data.newOrOld">
+                <label for="old">OLD</label><br>
+            </td>
+            <!-- <td style="border: 1px solid black"><input type="number" name="lat" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1').replace(/(\.\d{4}).+/g, '$1');" required
+                style="border: none; width: 50px" [(ngModel)]="data.lat"></td>
+            <td style="border: 1px solid black"><input type="number" name="lng" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..?)\../g, '$1').replace(/(\.\d{4}).+/g, '$1');" required
+                style="border: none; width: 50px" [(ngModel)]="data.lng"></td> -->
+              <td style="border: 1px solid black"><input type="number" name="lat" required
+                  style="border: none; width: 50px" [(ngModel)]="data.lat"></td>
+              <td style="border: 1px solid black"><input type="number" name="lng" required
+                  style="border: none; width: 50px" [(ngModel)]="data.lng"></td>
+            <td style="border: 1px solid black"><input type="date" name="activationDate" style="border: none;"
+                [ngModel]="data.activationDate | date:'yyyy-MM-dd'" (ngModelChange)="data.activationDate = $event"></td>
+          </tr>
+        </tbody>
+      </table>
+     </div>
+      <button class="enter" (click)="addData()">Add Station</button>
+    </form>
+  </div>
+  <div *ngIf="showEditPopup" class="edit-popup">
+    <form (submit)="updateData()">
+      <button class="close-btn" (click)="cancelEdit()">X</button>
+      <h2>Edit Station</h2>
+      <table style="
+          margin: auto;
+          border-collapse: collapse;
+          width: 90%;
+          border: 1px solid black;
+          background-color: white;
+        ">
+        <thead>
+          <tr>
+            <th style="border: 1px solid black">STATION NAME</th>
+            <th style="border: 1px solid black">STATION ID</th>
+
+            <th *ngIf="currentUserType=='hq'" style="border: 1px solid black">MC or RMC</th>
+            <th *ngIf="currentUserType=='hq'" style="border: 1px solid black">CENTER NAME</th>            
+
+            <th style="border: 1px solid black">TYPE</th>
+            <th style="border: 1px solid black">NEW/OLD</th>
+            <th style="border: 1px solid black">LAT° N</th>
+            <th style="border: 1px solid black">LNG° E</th>
+            <th style="border: 1px solid black">YEAR OF ACTIVATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border: 1px solid black"><input type="name" id="stationname" name="stationname"
+                [(ngModel)]="editData.station_name" [attr.placeholder]="editData.station_name" required></td>
+            <td style="border: 1px solid black"> <input type="number" id="stationid" name="stationid"
+                [(ngModel)]="editData.station_code" required></td>
+
+            <td *ngIf="currentUserType=='hq'" style="border: 1px solid black">
+              <input type="radio" id="MC" name="MC" value="MC" [(ngModel)]="editData.center_type">
+                <label for="MC">MC</label><br>
+              <input type="radio" id="RMC" name="RMC" value="RMC" [(ngModel)]="editData.center_type">
+                <label for="MC">RMC</label><br>
+            </td>
+
+            <td *ngIf="currentUserType=='hq'" style="border: 1px solid black"><input id="field3" name="field3" [(ngModel)]="editData.center_name" required
+              style="border: none;"></td>
+
+
+            <td style="border: 1px solid black">
+              <input type="radio" id="aws" name="aws" value="aws" [(ngModel)]="editData.stationType">
+                <label for="aws">AWS</label><br>
+              <input type="radio" id="org" name="org" value="org" [(ngModel)]="editData.stationType">
+                <label for="org">ORG</label><br>
+              <input type="radio" id="arg" name="arg" value="arg" [(ngModel)]="editData.stationType">
+                <label for="arg">ARG</label><br>
+            </td>
+            <td style="border: 1px solid black">
+              <input type="radio" id="new" name="new" value="new" [(ngModel)]="editData.newOrOld">
+                <label for="new">NEW</label><br>
+              <input type="radio" id="old" name="Old" value="old" [(ngModel)]="editData.newOrOld">
+                <label for="old">OLD</label><br>
+            </td>
+            <td style="border: 1px solid black"><input type="number" name="lat" required
+                  style="border: none; width: 50px" [(ngModel)]="editData.lat"></td>
+            <td style="border: 1px solid black"><input type="number" name="lng" required
+                  style="border: none; width: 50px" [(ngModel)]="editData.lng"></td>
+            <td style="border: 1px solid black"><input type="date" name="activationDate" style="border: none;"
+                [ngModel]="editData.activationDate | date:'yyyy-MM-dd'"
+                (ngModelChange)="editData.activationDate = $event"></td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    <button class="enter" (click)="updateData()">Update</button>
+  </div>
+  <div *ngIf="showdeletePopup" class="delete-popup">
+    <button class="close-btn" (click)="canceldelete()">X</button>
+    <h2>DELETE THE {{ deleteData.stationname }} STATION</h2>
+    <button class="enter" (click)="deletestation()">DELETE</button>
+  </div>
+
+  <br>
+</div>

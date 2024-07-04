@@ -1,0 +1,146 @@
+<app-header></app-header>
+
+<div class="mt-3 mb-0 p-3 bg-light rounded">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-6 d-flex justify-content-center">
+    <!-- Region -->
+    <div *ngIf="currentUserType == 'hq'" class="col mb-2">
+      <p-multiSelect
+      [(ngModel)]="selectedRegion"
+      [options]="regions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Select Regions"
+      (onChange)="onRegionChange()"
+      [showToggleAll]="false"
+     ></p-multiSelect>
+    </div>
+    <div *ngIf="currentUserType == 'mc' || currentUserType == 'rmc'" class="col mb-2 mt-2">
+      <div class="col mb-2 fw-bolder fs-5">
+        {{ this.regionName }}
+      </div>
+    </div>
+  
+
+    <!-- MC -->
+    <div *ngIf="currentUserType == 'hq'; else showUserName" class="col mb-2">
+        <p-multiSelect
+        [(ngModel)]="selectedMC"
+        [options]="centersMC1"
+        optionLabel="centre_name"
+        placeholder="Select MCs"
+        (ngModelChange)="onMcChange($event)"
+        [disabled]="mcDisabled"
+        [showToggleAll]="false"    
+        ></p-multiSelect>
+      </div>
+      <ng-template #showUserName>
+        <div class="col mb-2 mt-2 px-3 fw-bolder fs-5">
+          {{ this.currentUserName }}
+        </div>
+      </ng-template>
+
+    <!-- RMC -->
+    <div *ngIf="currentUserType == 'hq'" class="col mb-2">
+      <p-multiSelect
+      [(ngModel)]="selectedRMC"
+      [options]="centersRMC1"
+      optionLabel="centre_name"
+      placeholder="Select RMCs"
+      (ngModelChange)="onRMcChange($event)"
+      [disabled]="rmcDisabled"
+      [showToggleAll]="false"
+      ></p-multiSelect>
+    </div>
+
+    <!-- States -->
+    <div class="col mb-2">
+      <p-multiSelect 
+             [(ngModel)]="selectedState"
+             [options]="filterStates"
+             optionLabel="state_name"
+             placeholder="Select States"
+             (onChange)="onStateChange($event)"
+             [showToggleAll]="false"
+      ></p-multiSelect>
+    </div>
+
+    <!-- District -->
+    <div class="col mb-2">
+      <p-multiSelect 
+           [options]="filterDistrict"          
+           optionLabel="district_name"
+           placeholder="Select Districts"
+           (onChange)="onDistrictChange($event)"
+           [showToggleAll]="false"
+           ></p-multiSelect>
+    </div>
+
+    <!-- Date -->
+    <!-- <div class="col mb-2">
+      <input type="date" class="form-control" (change)="onDateChange($event)">
+    </div> -->
+
+  </div>
+</div>
+
+<div class="mt-3 mb-0 p-3 bg-light rounded">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-6 d-flex justify-content-center">
+      <!-- From Date -->
+  
+    <div class="col mb-2">
+        <label for="fromDate" class="form-label">From Date</label>
+        <input id="fromDate" type="date" class="form-control" (change)="onDateChangeFromDate($event)">
+      </div>
+      
+      <!-- To Date -->
+      <div class="col mb-2">
+        <label for="toDate" class="form-label">To Date</label>
+        <input id="toDate" type="date" class="form-control" (change)="onDateChangeEndDate($event)">
+      </div>
+    </div>
+
+    
+    <!-- Submit Button -->
+    <div class="col mb-2 mx-auto w-25 d-flex justify-content-center mt-3">
+        <button class="btn btn-success w-50" type="button" (click)="filterStationData()">Submit</button>
+    </div>
+
+</div>
+
+<div class="container-fluid">
+  <div style="text-align: center; padding-top: 40px;">
+    <div class="dataentry">
+      <br />
+      <!-- <form> -->
+      <div class="overflow-x-scroll">
+       <table style=" margin: auto; border-collapse: collapse; width: 90%; border: 1px solid black;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid black">S No.</th>
+                <th style="border: 1px solid black">Region</th>
+                <th style="border: 1px solid black">State</th>
+                <th style="border: 1px solid black">District</th>
+                <th style="border: 1px solid black">Station</th>
+                <!-- <th style="border: 1px solid black">Date</th> -->
+                <th style="border: 1px solid black">Rainfall(mm)</th>
+              </tr>
+        </thead>
+        <div *ngIf="isLoading">Loading ...</div>
+        <tbody *ngIf="filteredData && filteredData.length > 0">
+          <tr *ngFor="let item of filteredData; let i = index;">
+            <td style="border: 1px solid black">{{i+1}}</td>
+            <td style="border: 1px solid black">{{item.region_name}}</td>
+            <td style="border: 1px solid black">{{item.state_name}}</td>
+            <td style="border: 1px solid black">{{item.district_name}}</td>
+            <td style="border: 1px solid black">{{item.station_name}}</td>
+            <!-- <td style="border: 1px solid black">{{item.activationdate | date:'yyyy-MM-dd' }}</td> -->
+            <td style="border: 1px solid black">{{(item.data).toFixed(2)}}</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <br>
+</div>
