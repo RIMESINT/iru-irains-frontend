@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
 export class DataService {
 
   // private baseUrl = 'http://203.156.108.107:3000';
@@ -37,7 +38,7 @@ export class DataService {
   }
   existingstationdata(): Observable<any> {
     const url = `${this.baseUrl}`+'/existingstationdata';
-    return this.http.get(url);
+     return this.http.get(url);
   }
   fetchData(): Observable<any> {
     const url = `${this.baseUrl}`+'/districtdep';
@@ -51,10 +52,7 @@ export class DataService {
   //   const url = `${this.baseUrl}`+'/subdivdaily';
   //   return this.http.get(url);
   // }
-  // fetchData3(): Observable<any> {
-  //   const url = `${this.baseUrl}`+'/regiondaily';
-  //   return this.http.get(url);
-  // }
+
   fetchData4(): Observable<any> {
     const url = `${this.baseUrl}`+'/statenormal';
     return this.http.get(url);
