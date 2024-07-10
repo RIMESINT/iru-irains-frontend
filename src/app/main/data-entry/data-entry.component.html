@@ -159,8 +159,8 @@
                 [ngClass]="{'selectedOptionolor': station.is_new_station === 1}">NEW</button></td>
             <!-- <td style="border: 1px solid black"><input type="number" disabled required style="border: none; width: 50px" [(ngModel)]="station.lat"></td>
               <td style="border: 1px solid black"><input type="number" disabled required style="border: none; width: 50px" [(ngModel)]="station.lng"></td> -->
-            <td style="border: 1px solid black">{{station.latitude}}</td>
-            <td style="border: 1px solid black">{{station.longitude}}</td>
+            <td style="border: 1px solid black">{{formatLatitude(station.latitude)}}</td>
+            <td style="border: 1px solid black">{{formatLongitude(station.longitude)}}</td>
             <td style="border: 1px solid black">{{station.activationdate | date: 'dd-MM-yyyy'}}</td>
             <td style="border: 1px solid black">
               <button class="edit" (click)="editStation(station)">Edit</button>

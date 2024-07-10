@@ -15,4 +15,9 @@ export class StateService {
     const url = `${this.baseUrl}/api/v1/fetchStateData`;
     return this.http.post<any>(url, data);
   }
+
+  fetchDataFtp(data:any): Observable<any> {
+    const url = `${this.baseUrl}/api/v1/fetchStateDataFtp`;
+    return this.http.post<any>(url, data);
+  }
 }

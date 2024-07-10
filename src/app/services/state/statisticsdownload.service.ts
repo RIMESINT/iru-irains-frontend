@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EMPTY, Observable, concatMap } from 'rxjs';
 import { environment } from 'src/environment/environment';
@@ -16,7 +16,7 @@ import { StateService } from './state.service';
 })
 
 export class StateDownloadStatistics {
-
+  isView : boolean = false
   private baseUrl: string = environment.baseUrl;
 
   statedepCurrdate: any[] = [];
@@ -40,25 +40,64 @@ export class StateDownloadStatistics {
   }
 
 
+  async updateandViewpdf(){
+    this.isView = true
+    const currDate = new Date();
+    this.data = this.constants.getRangeFromDateRange();
+    this.seasonPeriodDate = this.constants.getCurrentMonthSeasonFromAndTodate(currDate);
+    await this.updateCurrDateData(this.data, this.seasonPeriodDate)
+  }
+
   async updateCurrDateData(data:any, seasonPeriodDate:any ){
 
-    this.stateservice.fetchData(data).pipe(
+    // this.stateservice.fetchData(data).pipe(
+    //   concatMap(stateData => {
+    //     this.statedepCurrdate = stateData.data;
+    //     console.log('indownloading---->',this.statedepCurrdate)
+    //     return this.regionService.fetchData(data);
+    //   }),
+    //   concatMap(region => {
+    //     this.regiondepCurrdate = region.data;
+    //     console.log('indownloading---->',this.regiondepCurrdate)
+    //     return this.stateservice.fetchData(seasonPeriodDate); // or any observable to complete the chain
+    //   }),
+
+    //   concatMap(seasonstateData => {
+    //     this.statedepSeasondate = seasonstateData.data;
+    //     console.log('indownloading---->',this.statedepSeasondate)
+
+    //     return this.regionService.fetchData(seasonPeriodDate);
+    //   }),    
+    //   concatMap(seasonregionData => {
+    //     this.regiondepSeasondate = seasonregionData.data;
+    //     console.log('indownloading---->', this.regiondepSeasondate)
+    //     this.downloadPdf()
+    //     return EMPTY
+    //   }),
+
+    // ).subscribe(
+    //   () => { },
+    //   (error:any) => console.error('Error fetching data:', error)
+    // );
+
+
+    this.stateservice.fetchDataFtp(data).pipe(
       concatMap(stateData => {
         this.statedepCurrdate = stateData.data;
         console.log('indownloading---->',this.statedepCurrdate)
-        return this.regionService.fetchData(data);
+        return this.regionService.fetchDataFtp(data);
       }),
       concatMap(region => {
         this.regiondepCurrdate = region.data;
         console.log('indownloading---->',this.regiondepCurrdate)
-        return this.stateservice.fetchData(seasonPeriodDate); // or any observable to complete the chain
+        return this.stateservice.fetchDataFtp(seasonPeriodDate); // or any observable to complete the chain
       }),
 
       concatMap(seasonstateData => {
         this.statedepSeasondate = seasonstateData.data;
         console.log('indownloading---->',this.statedepSeasondate)
 
-        return this.regionService.fetchData(seasonPeriodDate);
+        return this.regionService.fetchDataFtp(seasonPeriodDate);
       }),    
       concatMap(seasonregionData => {
         this.regiondepSeasondate = seasonregionData.data;
@@ -127,7 +166,7 @@ export class StateDownloadStatistics {
 
     const columns1 = ['', '', 
       {
-        content : `Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
+        content : this.data.startDate==this.data.endDate ? `Selected Date ${this.data.startDate}`:`Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
       },
       {
         content : `Present Season ${this.seasonPeriodDate.startDate} to ${this.seasonPeriodDate.endDate}`, colSpan:4
@@ -135,7 +174,7 @@ export class StateDownloadStatistics {
     ]
     const columns1forexcel = ['', '',
     {
-      content : `Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
+      content : this.data.startDate==this.data.endDate ? `Selected Date ${this.data.startDate}`:`Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
     }, '', '', '',    
     {
       content : `Present Season ${this.seasonPeriodDate.startDate} to ${this.seasonPeriodDate.endDate}`, colSpan:4
@@ -240,10 +279,18 @@ export class StateDownloadStatistics {
     // DISTRIBUTION_COUNTRY_INDIA_cd.pdf
     const filename = `DISTRIBUTION_STATE_INDIA_cd.pdf`;
 
-    setTimeout(()=>{
-      doc.save(filename);
-      this.exportAsExcelFile(newArr, `DISTRICT_RAINFALL_DISTRIBUTION_STATE_INDIA_cd`, columns, newcolumns1);
-    },15000)
+    if(this.isView){
+      const pdfBlob = doc.output('blob');
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl);
+    }else{
+      setTimeout(()=>{
+        doc.save(filename);
+        this.exportAsExcelFile(newArr, `DISTRICT_RAINFALL_DISTRIBUTION_STATE_INDIA_cd`, columns, newcolumns1);
+      },3000)
+    }
+
+
     
    
   

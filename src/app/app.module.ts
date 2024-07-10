@@ -118,6 +118,13 @@ import { EmailDisseminationPageComponent } from './main/email-dissemination-page
 import { EmailLogPageComponent } from './main/email-log-page/email-log-page.component';
 import { SendEmailPageComponent } from './main/send-email-page/send-email-page.component';
 import { AutoEmailSetupPageComponent } from './main/auto-email-setup-page/auto-email-setup-page.component';
+import { AllMapsDupComponent } from './main/all-maps-dup/all-maps-dup.component';
+import { CountryMapDupComponent } from './main/country-map-dup/country-map-dup.component';
+import { DistrictMapDupComponent } from './main/district-map-dup/district-map-dup.component';
+import { RegionMapDupComponent } from './main/region-map-dup/region-map-dup.component';
+import { StateMapDupComponent } from './main/state-map-dup/state-map-dup.component';
+import { SubdivisionMapDupComponent } from './main/subdivision-map-dup/subdivision-map-dup.component';
+import { RainfallStatisticsComponent } from './main/rainfall-statistics/rainfall-statistics.component';
 // import { DistrictMapComponent } from './app';
 // import { AppDistrictMapComponent } from './app-district-map/app-district-map.component';
 // import { DistrictMapComponent } from './district-map/district-map.component';
@@ -213,6 +220,13 @@ import { AutoEmailSetupPageComponent } from './main/auto-email-setup-page/auto-e
     EmailLogPageComponent,
     SendEmailPageComponent,
     AutoEmailSetupPageComponent,
+    AllMapsDupComponent,
+    CountryMapDupComponent,
+    DistrictMapDupComponent,
+    RegionMapDupComponent,
+    StateMapDupComponent,
+    SubdivisionMapDupComponent,
+    RainfallStatisticsComponent,
   ],
   imports: [
     PdfViewerModule,

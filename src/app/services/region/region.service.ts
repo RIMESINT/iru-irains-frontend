@@ -15,4 +15,9 @@ export class RegionService {
     const url = `${this.baseUrl}/api/v1/fetchRegionData`;
     return this.http.post<any>(url, data);
   }
+
+  fetchDataFtp(data:any): Observable<any> {
+    const url = `${this.baseUrl}/api/v1/fetchRegionDataFtp`;
+    return this.http.post<any>(url, data);
+  }
 }

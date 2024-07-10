@@ -1228,6 +1228,17 @@ export class DataEntryComponent implements OnInit {
     }
   }
 
+  formatLatitude(lat: string): string {
+    const latitude = parseFloat(lat);
+    return isNaN(latitude) ? 'Invalid' : latitude.toFixed(4);
+  }
+
+  // Method to convert and format longitude
+  formatLongitude(lon: string): string {
+    const longitude = parseFloat(lon);
+    return isNaN(longitude) ? 'Invalid' : longitude.toFixed(4);
+  }
+
 
 
 

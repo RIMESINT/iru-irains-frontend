@@ -15,4 +15,9 @@ export class CountryService {
     const url = `${this.baseUrl}/api/v1/fetchCountryData`;
     return this.http.post<any>(url, data);
   }
+
+  fetchDataFtp(data:any): Observable<any> {
+    const url = `${this.baseUrl}/api/v1/fetchCountryDataFtp`;
+    return this.http.post<any>(url, data);
+  }
 }

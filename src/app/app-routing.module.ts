@@ -81,6 +81,8 @@ import { SendEmailPageComponent } from './main/send-email-page/send-email-page.c
 import { AutoEmailSetupPageComponent } from './main/auto-email-setup-page/auto-email-setup-page.component';
 import { DefinedEmailGroupPageComponent } from './main/defined-email-group-page/defined-email-group-page.component';
 import { EmailLogPageComponent } from './main/email-log-page/email-log-page.component';
+import { AllMapsDupComponent } from './main/all-maps-dup/all-maps-dup.component';
+import { RainfallStatisticsComponent } from './main/rainfall-statistics/rainfall-statistics.component';
 // import { DistrictMapComponent } from './district-map/district-map.component';
 
 const routes: Routes = [
@@ -94,6 +96,13 @@ const routes: Routes = [
   { path: 'station-level-data', component: StationLevelDataComponent, canActivate: [AuthGuard] },
   { path: 'station-statistics', component: StationStatisticsPageComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+
+  { path: 'daily-state-rf-distribution', component: RainfallStatisticsComponent, data:{category : 'STATE'}, canActivate: [AuthGuard] },
+  { path: 'daily-subdivision-rf-distribution', component: RainfallStatisticsComponent,  data:{category : 'SUBDIVISION'},canActivate: [AuthGuard] },
+  { path: 'daily-district-rf-distribution', component: RainfallStatisticsComponent, data:{category : 'DISTRICT'}, canActivate: [AuthGuard] },
+  { path: 'daily-homogenous-rf-distribution', component: RainfallStatisticsComponent,  data:{category : 'REGION '},canActivate: [AuthGuard] },
+  { path: 'daily-country-rf-distribution', component: RainfallStatisticsComponent,  data:{category : 'COUNTRY'},canActivate: [AuthGuard] },
+
 
   { path: 'daily-departure-district-map', component: DailyWeeklyDistrictDepartureMapComponent, canActivate: [AuthGuard] },
   { path: 'daily-departure-state-map', component: DailyWeeklyStateDepartureMapComponent, canActivate: [AuthGuard] },
@@ -177,13 +186,20 @@ const routes: Routes = [
    },
   { path: 'front-page', component: FrontPageComponent, canActivate: [AuthGuard], children:
     [
-      { path: 'departure', component: AllMapsComponent },
+      { path: 'dupdeparture', component: AllMapsDupComponent },
       { path: 'weekly-departure', component: WeeklyDepartureMapComponent },
       { path: 'normal', component: NormalMapComponent },
       { path: 'daily', component: DailyMapComponent },
-      { path: '', redirectTo: 'departure', pathMatch: 'full' }
+      { path: '', redirectTo: 'dupdeparture', pathMatch: 'full' }
     ]
   },
+
+  // { path: 'dup-front-page', component: FrontPageComponent, canActivate: [AuthGuard], children:
+  //   [
+  //     { path: 'dupdeparture', component: AllMapsDupComponent },
+  //     { path: '', redirectTo: 'dupdeparture', pathMatch: 'full' }
+  //   ]
+  // },
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 

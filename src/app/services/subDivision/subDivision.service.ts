@@ -15,4 +15,9 @@ export class SubdivisionService {
     const url = `${this.baseUrl}/api/v1/fetchSubDivisionData`;
     return this.http.post<any>(url, data);
   }
+
+  fetchDataFtp(data:any) {
+    const url = `${this.baseUrl}/api/v1/fetchSubDivisionDataFtp`;
+    return this.http.post<any>(url, data);
+  }
 }

@@ -2,12 +2,15 @@
 	<div [class.full-width]="!isSideNavOpen" class="map-container position-relative">
 		<div class="data-bars-container">
 			<div class="d-flex gap-1">
-				<div class="p-2 data-bars">Date : {{selected_Date | date: 'dd-MM-yyyy HH:mm'}}</div>
+				<div class="p-2 data-bars">Date : {{selected_Date | date: 'dd-MM-yyyy'}}</div>
 			</div>
 		</div>
 
-		<button mat-button class="mx-ato" style="background-color:#4050b5; color:white; margin:0px 10px 0px 10px;"
-			(click)="toggleMapDisplay()" class="toggle-map-button">Toggle Map</button>
+		<!-- <button mat-button class="mx-ato" style="background-color:#4050b5; color:white; margin:0px 10px 0px 10px;"
+			(click)="toggleMapDisplay()" class="toggle-map-button">Toggle Map</button> -->
+			<button mat-button type="button" class="mx-ato" style="background-color:#4050b5; color:white; margin:0px 10px 0px 10px;" 
+				(click)="compareCharts()" class="toggle-map-button"> Compare </button>
+				
 		<div class="main-map" style="height: 100vh;" id="map_observations"></div>
 		<div class="main-map1" style="height: 100vh; display: none;" id="map_observations1"></div>
 	</div>
@@ -18,8 +21,8 @@
 			<div class="my-3" style="gap: 1.2em; padding-left:1em;"
 				[ngClass]="{'d-flex justify-content-around items-center': isSideNavOpen}">
 				<span><mat-icon class="time-bg bg-light-green">access_time</mat-icon></span>
-				<input class="form-control" type="datetime-local" id="birthdaytime"
-					[ngModel]="selected_Date | date:'yyyy-MM-dd HH:mm'" (ngModelChange)="selected_Date = $event"
+				<input class="form-control" type="date" id="birthdaytime"
+					[ngModel]="selected_Date | date:'yyyy-MM-dd'" (change)="onDateChange($event)"
 					name="birthdaytime">
 
 				<div>
@@ -174,7 +177,74 @@
 			</div>
 
 			<mat-divider></mat-divider>
+			<div style="text-align: center; font-weight: bold;">
+				<label>Day Statistics</label>
+			</div>
+			<div style="padding: 10px;">
+				<div style="display: inline-block;">
 
+				
+
+          <input style="margin-right: 7px;" type="checkbox" [(ngModel)]="dayStatistics.veryLightRainFallStations.isVeryLightRainFall">
+					<div style="width: 20px;
+		  height: 10px;
+		  background-color: #AAF200;
+		  display: inline-block;
+		  vertical-align: middle; margin-right: 10px;"></div>
+					<span>Very Light Rainfall : {{dayStatistics.veryLightRainFallStations.isVeryLightRainFall? dayStatistics.veryLightRainFallStations.count : ''}}</span>
+				</div>
+				<div style="display: inline-block;">
+
+
+          <input style="margin-right: 7px;" type="checkbox" [(ngModel)]="dayStatistics.lightRainfallStations.isLightRainfall">
+					<div style="width: 20px;
+		  height: 10px;
+		  background-color: #00FF00;
+		  display: inline-block;
+		  vertical-align: middle; margin-right: 10px;"></div>
+					<span>Light Rainfall : {{dayStatistics.lightRainfallStations.isLightRainfall? dayStatistics.lightRainfallStations.count : ''}}</span>
+				</div>
+				<div style="display: inline-block;">
+          <input style="margin-right: 7px;" type="checkbox" [(ngModel)]="dayStatistics.modrateRainFallStations.isModrateRainFall">
+					<div style="width: 20px;
+		  height: 10px;
+		  background-color: #00FFFF;
+		  display: inline-block;
+		  vertical-align: middle; margin-right: 10px;"></div>
+					<span>Moderate Rainfall : {{dayStatistics.modrateRainFallStations.isModrateRainFall? dayStatistics.modrateRainFallStations.count: ''}}</span>
+				</div>
+				<div style="display: inline-block;">
+          <input style="margin-right: 7px;" type="checkbox" [(ngModel)]="dayStatistics.heavyRainFallStations.isHeavyRainFall">
+					<div style="width: 20px;
+			height: 10px;
+			background-color: #FFFF00;
+			display: inline-block;
+			vertical-align: middle; margin-right: 10px;"></div>
+					<span>Heavy Rainfall : {{dayStatistics.heavyRainFallStations.isHeavyRainFall? dayStatistics.heavyRainFallStations.count : ''}}</span>
+				</div>
+				<div style="display: inline-block;">
+          <input style="margin-right: 7px;" type="checkbox" [(ngModel)]="dayStatistics.veryHeavyRainfallStations.isVeryHeavyRainfall">
+					<div style="width: 20px;
+			height: 10px;
+			background-color: #FF8C00;
+			display: inline-block;
+			vertical-align: middle; margin-right: 10px;"></div>
+					<span>Very Heavy Rainfall : {{dayStatistics.veryHeavyRainfallStations.isVeryHeavyRainfall? dayStatistics.veryHeavyRainfallStations.count:''}}</span>
+				</div>
+				<div style="display: inline-block;">
+          <input style="margin-right: 7px;" type="checkbox" [(ngModel)]="dayStatistics.extremelyHeavyRainfallStations.isExtremelyHeavyRainfall">
+					<div style="width: 20px;
+			height: 10px;
+			background-color: #FF0000;
+			display: inline-block;
+			vertical-align: middle; margin-right: 10px;"></div>
+					<span>Extremely Heavy Rainfall : {{dayStatistics.extremelyHeavyRainfallStations.isExtremelyHeavyRainfall? dayStatistics.extremelyHeavyRainfallStations.count:''}}</span>
+				</div>
+				<label>Highest recorded rainfall : {{maxStationRainfall}}</label>
+				<label>Lowest recorded rainfall : {{minStationRainfall}}</label>
+				<label>No of Station received : {{TotalStationsRecieved}}</label>
+				<label>No of Station Pending :  {{TotalStationsPending}}</label>
+			</div>
 			<div class="my-3 d-flex justify-content-center">
 
 				<button mat-button type="button" class="mx-auto" [class.hidden]="!isSideNavOpen"
@@ -186,80 +256,13 @@
 					style="background-color:#4050b5; color:white" (click)="showStationData()">
 					Show Station Data
 				</button> -->
-				<button mat-button type="button" class="mx-auto" [class.hidden]="!isSideNavOpen"
+				<!-- <button mat-button type="button" class="mx-auto" [class.hidden]="!isSideNavOpen"
 					style="background-color:#4050b5; color:white; margin:0px 10px 0px 10px;" (click)="compareCharts()">
 					Compare
-				</button>
+				</button> -->
 			</div>
 
 			<mat-divider></mat-divider>
-
-			<div style="text-align: center; font-weight: bold;">
-				<label>Day Statistics</label>
-			</div>
-			<div style="padding: 10px;">
-				<div style="display: inline-block;">
-
-          <input style="margin-right: 7px;" type="checkbox">
-					<div style="width: 20px;
-		  height: 10px;
-		  background-color: #808080;
-		  display: inline-block;
-		  vertical-align: middle; margin-right: 10px;"></div>
-					<span>Very Light Rainfall : {{veryLightRainFallStationCount}}</span>
-				</div>
-				<div style="display: inline-block;">
-
-
-          <input style="margin-right: 7px;" type="checkbox">
-					<div style="width: 20px;
-		  height: 10px;
-		  background-color: #add8e6;
-		  display: inline-block;
-		  vertical-align: middle; margin-right: 10px;"></div>
-					<span>Light Rainfall : {{lightRainfallStationCount}}</span>
-				</div>
-				<div style="display: inline-block;">
-          <input style="margin-right: 7px;" type="checkbox">
-					<div style="width: 20px;
-		  height: 10px;
-		  background-color: #ffd700;
-		  display: inline-block;
-		  vertical-align: middle; margin-right: 10px;"></div>
-					<span>Moderate Rainfall : {{modrateRainFallStationCount}}</span>
-				</div>
-				<div style="display: inline-block;">
-          <input style="margin-right: 7px;" type="checkbox">
-					<div style="width: 20px;
-			height: 10px;
-			background-color: #ff8c00;
-			display: inline-block;
-			vertical-align: middle; margin-right: 10px;"></div>
-					<span>Heavy Rainfall : {{heavyRainFallStationCount}}</span>
-				</div>
-				<div style="display: inline-block;">
-          <input style="margin-right: 7px;" type="checkbox">
-					<div style="width: 20px;
-			height: 10px;
-			background-color: #ff0000;
-			display: inline-block;
-			vertical-align: middle; margin-right: 10px;"></div>
-					<span>Very Heavy Rainfall : {{veryHeavyRainfallStationCount}}</span>
-				</div>
-				<div style="display: inline-block;">
-          <input style="margin-right: 7px;" type="checkbox">
-					<div style="width: 20px;
-			height: 10px;
-			background-color: #800000;
-			display: inline-block;
-			vertical-align: middle; margin-right: 10px;"></div>
-					<span>Extremely Heavy Rainfall : {{extremelyHeavyRainfallStationCount}}</span>
-				</div>
-				<label>Highest recorded rainfall : {{highestrecorded}}</label>
-				<label>Lowest recorded rainfall : {{lowestrecorded}}</label>
-				<label>No {{receivedata}} Station received</label>
-				<label>No {{pendingdata}} Station Pending</label>
-			</div>
 
 		</div>
 	</div>
@@ -287,72 +290,75 @@
 			<ng-container *ngIf="selectedOption === 'station_details'">
 				<div class="d-flex flex-column justify-content-center align-items-center p-2 mb-3"
 					style=" width:35%; max-height:80%;">
-					<Span class="h5">Station Details</Span>
+					<Span class="h5">{{showSelectedStation}} DETAILS</Span>
 
 					<div style="overflow-y:scroll; width:100%; padding:1em;">
 
 						<div class="py-2 d-flex justify-content-between station-data-table w-100">
 							<span>Station</span>
-							<span>{{selectedStation}}</span>
+							<span>{{showSelectedStation}}</span>
 						</div>
 
 						<div class="py-2 d-flex justify-content-between station-data-table w-100">
 							<span>How many days data</span>
-							<span>200</span>
+							<span>{{StationTotalEntries}}</span>
 						</div>
 						<div class="py-2 d-flex justify-content-between station-data-table w-100">
 							<span>How many missing</span>
-							<span>08</span>
+							<span>{{StationsMissingEntries}}</span>
 						</div>
 						<div class="py-2 d-flex justify-content-between station-data-table w-100">
 							<span>Highest Rainfall Record</span>
-							<span>800</span>
+							<span>{{StationHighestRecord}}</span>
 						</div>
 						<div class="py-2 d-flex justify-content-between station-data-table w-100">
 							<span>Lowest Rainfall Record</span>
-							<span>0</span>
+							<span>{{StationLowestRecord}}</span>
 						</div>
 						<div class="py-2 d-flex justify-content-between station-data-table w-100">
 							<span>Recorded from</span>
-							<span>2023-10-01</span>
+							<span>{{StationFirstDate}}</span>
 						</div>
 					</div>
 				</div>
 			</ng-container>
 			<ng-container *ngIf="selectedOption === 'compare_charts' && showCompareData">
-				<div class="d-flex flex-column justify-content-center align-items-center p-2 mb-3"
-					style=" width:35%; max-height:80%;">
+				<div class="d-flex flex-column justify-content-center align-items-center p-2 mb-3" style=" width:35%; max-height:80%;">
 					<div>
 						<Span class="h5">Compare Stations</Span>
 					</div>
-					<div style="overflow-y:scroll; width:100%; padding:1em;">
-						<div class="py-2 d-flex justify-content-between station-data-table w-100">
-              <app-multi-select-dropdown [list]="filteredStations" [type]="'Station'"
-              (shareCheckedList)="shareCheckedList($event)"
-              (shareIndividualCheckedList)="onSelectStations($event)">
-              </app-multi-select-dropdown>
-            </div>
+					<div class="py-2 d-flex justify-content-center align-items-center station-data-table w-100">
+						<div class="col mb-2 d-flex justify-content-center">
+						  <p-multiSelect 
+							[(ngModel)]="comparingselectedStations"
+							[options]="comparefilteredStations"          
+							optionLabel="station_name"
+							placeholder="Select Stations"
+							(onChange)="onCompareStationChange($event)"
+							[showToggleAll]="false">
+						  </p-multiSelect>
+						</div>
+					</div>
+					<div>
+
+						<button mat-button type="button" class="mx-auto" [class.hidden]="!isSideNavOpen"
+							style="background-color:#4050b5; color:white" (click)="prepareCompareStatistics()"> 
+							Submit
+						</button>
 					</div>
 				</div>
 			</ng-container>
 			<div style="max-height:80%; width:70%;" class="my-auto">
 				<div *ngIf="chart" [chart]="chart" style="height: 232px; width:57em;" class="chart-container"></div>
 				<div class="station-data-options">
-					<div *ngFor="let weatherOptions of stationWeatherParameters" class="station-data-sub-options p-2"
+					<div *ngFor="let weatherOptions of stationWeatherParametersnew" class="station-data-sub-options p-2"
 						[class.clicked]="toggleDataParameter(weatherOptions.text)"
-						(click)="updateChart(weatherOptions)">
+						(click)="updateChartNew(weatherOptions)">
 						{{ weatherOptions.text }}
 					</div>
-					<!-- <button mat-button style="background-color:#4050b5; color:white; margin:0px 10px 0px 10px;">
-						Historical Data
-					</button> -->
+
 				</div>
 			</div>
 		</div>
-
-
-
-
-
 	</div>
 </div>

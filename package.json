@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.0.3",
-    "@angular/cli": "^16.1.7",
+    "@angular/cli": "^16.2.14",
     "@angular/compiler-cli": "^16.0.0",
     "@types/file-saver": "^2.0.7",
     "@types/html2canvas": "^1.0.0",

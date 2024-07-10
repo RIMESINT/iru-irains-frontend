@@ -66,4 +66,10 @@ export class FetchStationDataService {
     return this.http.get<any>(url);
   }
 
+
+  fetchAllDatesAndDataOfStation(body:any){
+    let url = `${this.baseUrl}/api/v1/fetchAllDatesAndDataOfStation`;
+    return this.http.post<any>(url, body);    
+  }
+
 }

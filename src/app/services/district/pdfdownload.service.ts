@@ -16,6 +16,7 @@ import * as FileSaver from 'file-saver';
 export class DownloadPdf {
 
   private baseUrl: string = environment.baseUrl;
+  isView : boolean = false
 
   districtdepCurrdate: any[] = [];
   statedepCurrdate: any[] = [];
@@ -37,6 +38,14 @@ export class DownloadPdf {
     this.data = this.constants.getRangeFromDateRange();
     this.seasonPeriodDate = this.constants.getCurrentMonthSeasonFromAndTodate(currDate);
     this.updateCurrDateData(this.data, this.seasonPeriodDate)
+  }
+  
+  async updateandViewpdf(){
+    this.isView = true
+    const currDate = new Date();
+    this.data = this.constants.getRangeFromDateRange();
+    this.seasonPeriodDate = this.constants.getCurrentMonthSeasonFromAndTodate(currDate);
+    await this.updateCurrDateData(this.data, this.seasonPeriodDate)
   }
 
 
@@ -83,21 +92,37 @@ export class DownloadPdf {
     );
   }
 
+  // fetchDistrictData(data: any): Observable<any> {
+  //   const url = `${this.baseUrl}/api/v1/fetchDistrictData`;
+  //   return this.http.post<any>(url, data);
+  // }
+
+  // fetchStateData(data: any): Observable<any> {
+  //   const url = `${this.baseUrl}/api/v1/fetchStateData`;
+  //   return this.http.post<any>(url, data);
+  // }
+
+  // fetchSubdivData(data: any): Observable<any> {
+  //   const url = `${this.baseUrl}/api/v1/fetchSubDivisionData`;
+  //   return this.http.post<any>(url, data);
+  // }
+
+
+
   fetchDistrictData(data: any): Observable<any> {
-    const url = `${this.baseUrl}/api/v1/fetchDistrictData`;
+    const url = `${this.baseUrl}/api/v1/fetchDistrictDataFtp`;
     return this.http.post<any>(url, data);
   }
 
   fetchStateData(data: any): Observable<any> {
-    const url = `${this.baseUrl}/api/v1/fetchStateData`;
+    const url = `${this.baseUrl}/api/v1/fetchStateDataFtp`;
     return this.http.post<any>(url, data);
   }
 
   fetchSubdivData(data: any): Observable<any> {
-    const url = `${this.baseUrl}/api/v1/fetchSubDivisionData`;
+    const url = `${this.baseUrl}/api/v1/fetchSubDivisionDataFtp`;
     return this.http.post<any>(url, data);
   }
-
 
   getData(){
   }
@@ -150,9 +175,11 @@ export class DownloadPdf {
   
   public async downloadPdf(){
 
+    console.log(this.data.startDate, this.data.endDate, this.data.startDate==this.data.endDate)
+
     const columns1 = ['', '', 
       {
-        content : `Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
+      content : this.data.startDate==this.data.endDate ? `Selected Date ${this.data.startDate}`:`Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
       },
       {
         content : `Present Season ${this.seasonPeriodDate.startDate} to ${this.seasonPeriodDate.endDate}`, colSpan:4
@@ -160,7 +187,7 @@ export class DownloadPdf {
     ]
     const columns1forexcel = ['', '',
     {
-      content : `Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
+      content : this.data.startDate==this.data.endDate ? `Selected Date ${this.data.startDate}`:`Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
     }, '', '', '',    
     {
       content : `Present Season ${this.seasonPeriodDate.startDate} to ${this.seasonPeriodDate.endDate}`, colSpan:4
@@ -265,12 +292,18 @@ export class DownloadPdf {
     // DISTRIBUTION_COUNTRY_INDIA_cd.pdf
     const filename = `DISTRIBUTION_DISTRICT_INDIA_cd.pdf`;
 
-    setTimeout(()=>{
-      doc.save(filename);
-      this.exportAsExcelFile(newArr, `DISTRICT_RAINFALL_DISTRIBUTION_COUNTRY_INDIA_cd`, columns, newcolumns1);
-    },15000)
+    if(this.isView){
+      const pdfBlob = doc.output('blob');
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl);
+    }else{
+      setTimeout(()=>{
+        doc.save(filename);
+        this.exportAsExcelFile(newArr, `DISTRICT_RAINFALL_DISTRIBUTION_COUNTRY_INDIA_cd`, columns, newcolumns1);
+      },3000)
+    }
+
     
-   
   
   }
 

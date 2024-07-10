@@ -14,7 +14,6 @@ import { getStateService } from 'src/app/services/state/getState.service';
 import { getDistrictService } from 'src/app/services/district/getdistrict.service';
 import { FetchStationDataService } from 'src/app/services/station/station.service';
 
-
 @Component({
   selector: 'app-station-statistics-page',
   templateUrl: './station-statistics-page.component.html',
@@ -48,40 +47,63 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;  
   stationData: any;  // Variable to hold the fetched data
   filteredStations:any[]=[];
+  comparefilteredStations:any[]=[];
   selectedStation: any;
+  comparingselectedStations:any;
   selectedDistrict: any;
   selectedstations: any[]=[];
   filteredData: any;
   isAwsSelected: boolean = true;
   isOrgSelected: boolean = true;
   isArgSelected: boolean = true;
+  dayStatistics:any = {
+    veryLightRainFallStations: {
+      count:0,
+      isVeryLightRainFall : true,
+    },
+    lightRainfallStations:  {
+      count:0,
+      isLightRainfall : true,
+    },
+    modrateRainFallStations: {
+      count:0,
+      isModrateRainFall : true,
+    },
+    heavyRainFallStations: {
+      count:0,
+      isHeavyRainFall : true,
+    },
+    veryHeavyRainfallStations: {
+      count:0,
+      isVeryHeavyRainfall : true,
+    },
+    extremelyHeavyRainfallStations: {
+      count:0,
+      isExtremelyHeavyRainfall : true,
+    },
+  }
+  maxStationRainfall = 0;
+  minStationRainfall = 0;
+  TotalStationsRecieved = 0;
+  TotalStationsPending = 0;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  stationWeatherParametersnew = [
+    {
+      text : 'Daily Data',
+      data :[]
+    },
+    {
+      text : 'Historical Data',
+      data :[]
+    }
+  ]
+  seriesDailyData: any[]=[];
+  showSelectedStation : any = '';
+  seriesHistoricalData: any[] = [];
+  StationTotalEntries: any = '';
+  StationsMissingEntries: any = '';
+  StationHighestRecord: any = '';
+  StationFirstDate: any = '';
 
   // ------------------------------------------------------
   showStationDetails: boolean = false;
@@ -90,9 +112,8 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   showSecondMap: boolean = false;
   stationType: any;
   selectedRMCData: any;
-
-
-
+  markers: any[] = [];
+  StationLowestRecord: any;
 
 
 
@@ -103,6 +124,9 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
     this.toggleBottomNav();
     this.showCompareData = true;
   }
+
+
+
   toggleCompareSection(): void {
     this.selectedOption = this.selectedOption === 'compare_charts' ? 'station_details' : 'compare_charts';
     this.showCompareData = !this.showCompareData;
@@ -124,12 +148,8 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   pendingdata: number = 0;
   highestrecorded: number = 0;
   lowestrecorded: number = 0;
-  veryLightRainFallStationCount: number = 0;
-  lightRainfallStationCount: number = 0;
-  modrateRainFallStationCount: number = 0;
-  heavyRainFallStationCount: number = 0;
-  veryHeavyRainfallStationCount: number = 0;
-  extremelyHeavyRainfallStationCount: number = 0;
+
+
   loading = false;
   private stationObservationMap: any;
   type: any = 'rainfall';
@@ -346,7 +366,7 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   selectedOption: string = 'station_details';
   selectedParameter: any;
   selectedCategory: any;
-  selected_Date: Date = new Date();
+  selected_Date: any = this.formatDate(new Date());
   current_Date: any;
   manual_date_time: any;
   isSideNavOpen: boolean = true;
@@ -387,12 +407,11 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
 
     this.initStationObservationMap();
     this.getCurrentDate();
-    this.fetchDataFromBackend();
+    // this.fetchDataFromBackend();
     this.loadGeoJSON();
 
+    this.fetchStationData(this.selected_Date);
     
-
-    this.fetchStationData("2024-05-01");
     this.fetchRegionData();
     this.getAllMCData();
     this.getAllRMCData();
@@ -455,7 +474,6 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
     })
     let tempfilteredStations = Array.from(new Set(tempStations.map(a => a.station)));
     this.filteredStations = tempfilteredStations.map(a => { return {name: a}});
-    console.log(this.filteredStations, "ppppppppppp")
 
     this.selectedStation = ''
   }
@@ -472,10 +490,8 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   }
 
   shareCheckedList(item:any[]){
-    console.log(item);
   }
   shareIndividualCheckedList(item:any){
-    console.log(item);
   }
 
   showStationDailyData(){
@@ -607,9 +623,7 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
     this.dataTypeSlider = event.checked;
 
     if (!this.dataTypeSlider) {
-      console.log('daily');
     } else {
-      console.log('historical');
     }
   }
 
@@ -621,17 +635,23 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
 
   formatDate(date: any) {
     const dateObject = new Date(date);
-    const formattedDateString = this.datePipe.transform(
-      dateObject,
-      'dd MMM yyyy'
-    );
 
-    const formattedTimeString = this.datePipe.transform(dateObject, 'h:mm a');
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
 
-    return {
-      date: formattedDateString,
-      time: formattedTimeString,
-    };
+    // const formattedDateString = this.datePipe.transform(
+    //   dateObject,
+    //   'dd MMM yyyy'
+    // );
+
+    // const formattedTimeString = this.datePipe.transform(dateObject, 'h:mm a');
+
+    // return {
+    //   date: formattedDateString,
+    //   time: formattedTimeString,
+    // };
   }
 
   preventButtonBehaviour(event: Event) {
@@ -640,13 +660,11 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
 
   selectParameter(parameterObj: any) {
     this.selectedParameter = parameterObj;
-    console.log('this.selectedParameter', this.selectedParameter);
     this.selectCategory(parameterObj.categoryOptions[0].text);
   }
 
   selectCategory(category: String) {
     this.selectedCategory = category;
-    console.log('category', category);
   }
   toggleBottomNav() {
     this.isBottomNavOpen = true;
@@ -664,123 +682,123 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
     return `${dd.padStart(2, '0')}_${currmonth}_${selectedYear}`;
   }
 
-  fetchDataFromBackend(): void {
-    this.notreceivedata = 0;
-    this.receivedata = 0;
-    this.pendingdata = 0;
-    this.dataService.existingstationdata().subscribe({
-      next: value => {
-        this.existingstationdata = value;
-        value.forEach((location:any) => {
-          var markerCoords:any = [location.lat, location.lng];
-          var markerOptions = {
-              radius: 10, // Adjust the size of the marker here
-              color: 'black', // Change the color of the marker here
-              fillColor: this.getColorForRainfall1(location[this.dateCalculation()]), // Change the fill color of the marker here
-              fillOpacity: 2.0 // Adjust the opacity of the fill color
-          };
+  // fetchDataFromBackend(): void {
+  //   this.notreceivedata = 0;
+  //   this.receivedata = 0;
+  //   this.pendingdata = 0;
+  //   this.dataService.existingstationdata().subscribe({
+  //     next: value => {
+  //       this.existingstationdata = value;
+  //       value.forEach((location:any) => {
+  //         var markerCoords:any = [location.lat, location.lng];
+  //         var markerOptions = {
+  //             radius: 10, // Adjust the size of the marker here
+  //             color: 'black', // Change the color of the marker here
+  //             fillColor: this.getColorForRainfall1(location[this.dateCalculation()]), // Change the fill color of the marker here
+  //             fillOpacity: 2.0 // Adjust the opacity of the fill color
+  //         };
 
-          // Create the circle marker and add it to the map
-          var marker = L.circleMarker(markerCoords, markerOptions).addTo(this.stationObservationMap);
-          // const marker = L.marker([location.lat, location.lng]).addTo(this.stationObservationMap)
-          marker.bindPopup(location.station + '   ' + (location[this.dateCalculation()] != undefined ? location[this.dateCalculation()] : "-999.9"));
-          // Show popup on marker hover
-          marker.on('mouseover', function (e) {
-            marker.openPopup();
-          });
+  //         // Create the circle marker and add it to the map
+  //         var marker = L.circleMarker(markerCoords, markerOptions).addTo(this.stationObservationMap);
+  //         // const marker = L.marker([location.lat, location.lng]).addTo(this.stationObservationMap)
+  //         marker.bindPopup(location.station + '   ' + (location[this.dateCalculation()] != undefined ? location[this.dateCalculation()] : "-999.9"));
+  //         // Show popup on marker hover
+  //         marker.on('mouseover', function (e) {
+  //           marker.openPopup();
+  //         });
 
-          // Hide popup when mouse leaves marker
-          marker.on('mouseout', function (e) {
-            marker.closePopup();
-          });
-        });
+  //         // Hide popup when mouse leaves marker
+  //         marker.on('mouseout', function (e) {
+  //           marker.closePopup();
+  //         });
+  //       });
 
-        let maxNumber = this.existingstationdata[0][this.dateCalculation()];
-        for (let i = 1; i < this.existingstationdata.length; i++) {
-          if (this.existingstationdata[i][this.dateCalculation()] > maxNumber) {
-            maxNumber = this.existingstationdata[i][this.dateCalculation()];
-          }
-        }
-        this.highestrecorded = maxNumber;
+  //       let maxNumber = this.existingstationdata[0][this.dateCalculation()];
+  //       for (let i = 1; i < this.existingstationdata.length; i++) {
+  //         if (this.existingstationdata[i][this.dateCalculation()] > maxNumber) {
+  //           maxNumber = this.existingstationdata[i][this.dateCalculation()];
+  //         }
+  //       }
+  //       this.highestrecorded = maxNumber;
 
-        let totalstationdata:any = this.existingstationdata.filter(x => x[this.dateCalculation()] > 0);
-        if(totalstationdata && totalstationdata.length > 0){
-          let minNumber = totalstationdata[0][this.dateCalculation()];
-          for (let i = 1; i < totalstationdata.length; i++) {
-            if (totalstationdata[i][this.dateCalculation()] < minNumber) {
-              minNumber = totalstationdata[i][this.dateCalculation()];
-            }
-          }
-          this.lowestrecorded = minNumber;
-        }
+  //       let totalstationdata:any = this.existingstationdata.filter(x => x[this.dateCalculation()] > 0);
+  //       if(totalstationdata && totalstationdata.length > 0){
+  //         let minNumber = totalstationdata[0][this.dateCalculation()];
+  //         for (let i = 1; i < totalstationdata.length; i++) {
+  //           if (totalstationdata[i][this.dateCalculation()] < minNumber) {
+  //             minNumber = totalstationdata[i][this.dateCalculation()];
+  //           }
+  //         }
+  //         this.lowestrecorded = minNumber;
+  //       }
 
-        this.existingstationdata.forEach((element:any) => {
-          if(element[this.dateCalculation()] == -999.9){
-            this.notreceivedata = this.notreceivedata + 1;
-          }
-          if(element[this.dateCalculation()] > 0){
-            this.receivedata = this.receivedata + 1;
-          }
-          if(element[this.dateCalculation()] == 0){
-            this.pendingdata = this.pendingdata + 1;
-          }
-          if(element[this.dateCalculation()] > 0 && element[this.dateCalculation()] <= 2.4){
-            this.veryLightRainFallStationCount = this.veryLightRainFallStationCount + 1;
-          }
-          if(element[this.dateCalculation()] >= 2.5 && element[this.dateCalculation()] <= 15.5){
-            this.lightRainfallStationCount = this.lightRainfallStationCount + 1;
-          }
-          if(element[this.dateCalculation()] >= 15.6 && element[this.dateCalculation()] <= 64.4){
-            this.modrateRainFallStationCount = this.modrateRainFallStationCount + 1;
-          }
-          if(element[this.dateCalculation()] >= 64.5 && element[this.dateCalculation()] <= 115.5){
-            this.heavyRainFallStationCount = this.heavyRainFallStationCount + 1;
-          }
-          if(element[this.dateCalculation()] >= 115.6 && element[this.dateCalculation()] <= 204.4){
-            this.veryHeavyRainfallStationCount = this.veryHeavyRainfallStationCount + 1;
-          }
-          if(element[this.dateCalculation()] >= 204.5){
-            this.extremelyHeavyRainfallStationCount = this.extremelyHeavyRainfallStationCount + 1;
-          }
-        });
-        let regionList = Array.from(new Set(this.existingstationdata.map(a => a.region)));
-        this.regionList = regionList.map(x => {
-          return {name: x}
-        })
+  //       this.existingstationdata.forEach((element:any) => {
+  //         if(element[this.dateCalculation()] == -999.9){
+  //           this.notreceivedata = this.notreceivedata + 1;
+  //         }
+  //         if(element[this.dateCalculation()] > 0){
+  //           this.receivedata = this.receivedata + 1;
+  //         }
+  //         if(element[this.dateCalculation()] == 0){
+  //           this.pendingdata = this.pendingdata + 1;
+  //         }
+  //         if(element[this.dateCalculation()] > 0 && element[this.dateCalculation()] <= 2.4){
+  //           this.veryLightRainFallStationCount = this.veryLightRainFallStationCount + 1;
+  //         }
+  //         if(element[this.dateCalculation()] >= 2.5 && element[this.dateCalculation()] <= 15.5){
+  //           this.lightRainfallStationCount = this.lightRainfallStationCount + 1;
+  //         }
+  //         if(element[this.dateCalculation()] >= 15.6 && element[this.dateCalculation()] <= 64.4){
+  //           this.modrateRainFallStationCount = this.modrateRainFallStationCount + 1;
+  //         }
+  //         if(element[this.dateCalculation()] >= 64.5 && element[this.dateCalculation()] <= 115.5){
+  //           this.heavyRainFallStationCount = this.heavyRainFallStationCount + 1;
+  //         }
+  //         if(element[this.dateCalculation()] >= 115.6 && element[this.dateCalculation()] <= 204.4){
+  //           this.veryHeavyRainfallStationCount = this.veryHeavyRainfallStationCount + 1;
+  //         }
+  //         if(element[this.dateCalculation()] >= 204.5){
+  //           this.extremelyHeavyRainfallStationCount = this.extremelyHeavyRainfallStationCount + 1;
+  //         }
+  //       });
+  //       let regionList = Array.from(new Set(this.existingstationdata.map(a => a.region)));
+  //       this.regionList = regionList.map(x => {
+  //         return {name: x}
+  //       })
 
-      },
-      error: err => console.error('Error fetching data:', err)
-    });
-  }
+  //     },
+  //     error: err => console.error('Error fetching data:', err)
+  //   });
+  // }
 
-  filterByDate(){
-    this.fetchDataFromBackend();
-    // if(this.selectedDistrict){
-    //   this.filteredStations = this.existingstationdata.filter(s =>  s.district == this.selectedDistrict);
-    // }
-    // else if (this.selectedState) {
-    //   this.filteredStations = this.existingstationdata.filter(s => s.state == this.selectedState);
-    // }
-    // else if (this.selectedRegion) {
-    //   this.filteredStations = this.existingstationdata.filter(s => s.region == this.selectedRegion);
-    // }
-    // this.filteredStations.map(x => {
-    //   return x.RainFall = x[this.dateCalculation()];
-    // })
-    // this.filteredStations.map(x => {
-    //   return x.name = x.station;
-    // })
+  // filterByDate(){
+  //   this.fetchDataFromBackend();
+  //   // if(this.selectedDistrict){
+  //   //   this.filteredStations = this.existingstationdata.filter(s =>  s.district == this.selectedDistrict);
+  //   // }
+  //   // else if (this.selectedState) {
+  //   //   this.filteredStations = this.existingstationdata.filter(s => s.state == this.selectedState);
+  //   // }
+  //   // else if (this.selectedRegion) {
+  //   //   this.filteredStations = this.existingstationdata.filter(s => s.region == this.selectedRegion);
+  //   // }
+  //   // this.filteredStations.map(x => {
+  //   //   return x.RainFall = x[this.dateCalculation()];
+  //   // })
+  //   // this.filteredStations.map(x => {
+  //   //   return x.name = x.station;
+  //   // })
 
-    // this.totalstations = this.filteredStations.length;
-    // this.filteredStations.forEach((element: any) => {
-    //   if (element.RainFall == -999.9) {
-    //     this.notreceivedata = this.notreceivedata + 1;
-    //   }
-    //   if (element.RainFall > 0) {
-    //     this.receivedata = this.receivedata + 1;
-    //   }
-    // });
-  }
+  //   // this.totalstations = this.filteredStations.length;
+  //   // this.filteredStations.forEach((element: any) => {
+  //   //   if (element.RainFall == -999.9) {
+  //   //     this.notreceivedata = this.notreceivedata + 1;
+  //   //   }
+  //   //   if (element.RainFall > 0) {
+  //   //     this.receivedata = this.receivedata + 1;
+  //   //   }
+  //   // });
+  // }
   toggleMapDisplay(): void {
     this.showFirstMap = !this.showFirstMap;
     this.showSecondMap = !this.showSecondMap;
@@ -939,13 +957,11 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   }
 
   submitParameterForm() {
-    this.filterByDate();
+    // this.filterByDate();
     // const observationForm = {
     //   weatherParam: this.selectedParameter,
-    //   observationDate: this.selected_Date
     //     ? this.manual_date_time.date
     //     : this.current_Date.date,
-    //   observationTime: this.selected_Date
     //     ? this.manual_date_time.time
     //     : this.current_Date.time,
     // };
@@ -1063,31 +1079,58 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
   toggleDataParameter(param: string) {
     return param === this.selectedWeatherOption;
   }
 
-
-
-
-
-
-
-
-
   //  New functions here fot new iRains
   // -----------------------------------------------
   fetchStationData(date: any): void{
+    
     this.isLoading = true;  // Set loading to true before starting the API call
+    console.log('selected_date', this.selected_Date)
     this.fetchStationDataService.fetchStationData(date ?? "")
       .subscribe(
         (response : any) => {
           this.stationData = response?.data;  // Store the fetched data
           this.isLoading = false;  // Set loading to false once data is fetched
-          console.log('Data fetched successfully:', this.stationData, this.stationData.length);
+
+          // Day statistics calculations  ---------------------------------
+          const initialResult = {
+            maxStation: this.stationData[0],
+            minStation: this.stationData[0],
+            validCount: 0,
+            invalidCount: 0
+          };
+      
+          const result = this.stationData.reduce((acc:any, station:any) => {
+            if (station.data !== -999.9 && station.data!==0) {
+              if (!acc.maxStation || station.data > acc.maxStation.data) {
+                acc.maxStation = station;
+              }
+              if (!acc.minStation || station.data < acc.minStation.data) {
+                acc.minStation = station;
+              }
+              acc.validCount++;
+            } else {
+              acc.invalidCount++;
+            }
+            return acc;
+          }, initialResult);
+
+          this.maxStationRainfall = result.maxStation.data==-999.9 ? 'No Data' : result.maxStation.data
+          this.minStationRainfall = result.minStation.data==-999.9 ? 'No Data' : result.minStation.data
+          this.TotalStationsRecieved = result.validCount
+          this.TotalStationsPending = result.invalidCount
+
+          //--------------------------------------------------------------
+
+          
+          this.comparefilteredStations = this.stationData
+
           this.filteredData = this.stationData
+
+          this.getDayStatistics()
           this.loadStations()
         },
         (error : any) => {
@@ -1103,14 +1146,12 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
     this.regionService.fetchData()
       .subscribe(
         response => {
-          console.log('Region data:', response);
           // Ensure response.data contains the expected array structure
           if (response && response.data) {
             this.regions = response.data.map((region: any) => ({
               label: region.region_name,
               value: region.region_code
             }));
-            // console.log('Formatted regions:', this.regions);
           } else {
             console.error('Unexpected response format:', response);
             alert('Data is not coming in the expected format');
@@ -1118,7 +1159,7 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
         },
         error => {
           console.error('Error fetching region data:', error);
-          alert('Data is not coming');
+          alert('Data is not available for today');
         }
       );
     }
@@ -1127,9 +1168,7 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
       this.centerService.fetchData('MC').subscribe(
         response => {
 
-          console.log('getAllMCData', response)
           this.centersMC.push(response.data);
-          console.log('this.centersMC', this.centersMC)  
         },
         error => {
           console.error('Error fetching center details:', error);
@@ -1141,9 +1180,7 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
     getAllRMCData(): void {
         this.centerService.fetchData('RMC').subscribe(
           response => {
-              console.log('getAllRMCData', response)
               this.centersRMC.push(response.data);
-              console.log('this.centersRMC', this.centersRMC)  
             },
             error => {
               console.error('Error fetching center details:', error);
@@ -1155,9 +1192,7 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   getAllStates():void {
     this.getStateService.fetchData().subscribe(
       response =>{
-        console.log('All states', response);
         this.states.push(response);
-        console.log('states', this.states)
       },
       error => {
         console.error('Error fetching center details:', error);
@@ -1168,9 +1203,7 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   getAllDistricts(): void {
     this.getDistrictService.fetchData().subscribe(
       response => {
-        console.log('All Districts', response);
         this.districts.push(response);
-        console.log('Districts', this.districts);
       },
       error => {
         console.error('Error fetching center details:', error);
@@ -1185,35 +1218,23 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
   
 
   onRegionChange(): void {
-    console.log("1")
-    console.log(this.selectedRegion)
     if (this.selectedRegion && this.selectedRegion.length > 0) {
 
-    console.log("2")
-
-      // console.log("here",this.selectedRegion);
-      // console.log(this.centersMC[0]);
       
       const filteredCenters = this.centersMC[0]?.filter((center: any) => this.selectedRegion.includes(center.region_code));
-      // console.log('Filtered centers:', filteredCenters);
 
       this.centersMC.push(filteredCenters);
-      // console.log('centersMC', this.centersMC);
 
       let lenOfCenterMC = this.centersMC.length;
-      // console.log('lenOfCenterMC', lenOfCenterMC)
       this.centersMC1 = this.centersMC[lenOfCenterMC - 1];
-      console.log('this.centersMC1', this.centersMC1);
       
       // <- RMC ->
       const filteredCentersRMC = this.centersRMC[0]?.filter((center: any)=> this.selectedRegion.includes(center.region_code));
-      console.log('filteredCentersRMC', filteredCentersRMC);
 
       this.centersRMC.push(filteredCentersRMC);
 
       let lenOfCenterRMC = this.centersRMC.length;
       this.centersRMC1 = this.centersRMC[lenOfCenterRMC - 1];
-      console.log('centersRMC1', this.centersRMC1);
 
     }
   }
@@ -1223,21 +1244,11 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
 
     this.rmcDisabled = this.selectedMC.length > 0;
 
-    console.log('selectedMC', this.selectedMC);
-    console.log('centersMC1', this.centersMC1);
-    console.log(this.states[0].data);
-
-    // const filteredStates = this.states[0].data.filter((center: any) => this.selectedMC.includes(center.centre_name));
-    // console.log('filteredStates', filteredStates);
-
-    // this.states.push(filteredStates);
-    // console.log('states', this.states);
 
     const filteredStates = this.states[0].data.filter((state: any) => {
       return this.selectedMC.some((mc: any) => mc.centre_name == state.centre_name);
     });
     
-    console.log('Filtered states:', filteredStates);
     this.filterStates = filteredStates;
   }
 
@@ -1251,87 +1262,36 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
       return this.selectedRMC.some((rmc: any)=> rmc.centre_name == state.centre_name);
     })
 
-    console.log('Filtered RMC States:', filterStatesRMC);
     this.filterStates = filterStatesRMC;
 
-    // this.selectedRegion.forEach((code:string)=>{
-    //   this.getStateService.fetchData().subscribe(
-    //     response => {
-    //       console.log('State Data RMC', response);
-    //       const filterStateRMC = response.data.filter((id: any)=> id.region_code === code);
 
-    //       // this.states.push(...filterStateRMC);
-
-    //     // Add only unique states based on state_name
-    //     filterStateRMC.forEach((state: any) => {
-    //       if (!this.states.some(existingState => existingState.state_name === state.state_name)) {
-    //         this.states.push(state);
-    //       }
-    //     });
-
-    //     console.log('filterStateByRMC', filterStateRMC);
-    //       console.log('state by RMC', this.states);
-    //     }
-    //   )
-    // })
   }
 
   onStateChange(event: any): void {
 
   this.selectedStateData = event.value;
-  console.log('selectedStateData', this.selectedStateData)
 
-  console.log('selectedState', this.selectedState);
-  console.log('districts', this.districts);
 
   const filteredDistricts = this.districts[0].data.filter((dist: any) => {
     return this.selectedState.some((mc: any) => mc.state_code == dist.state_code);
   })
-  console.log('Filtered district', filteredDistricts);
   this.filterDistrict = filteredDistricts;
 
-    // if (this.selectedState && this.selectedState.length > 0) {
-    //   const selectedStateCodes = this.selectedState.map((state: any) => state.state_code);
-    //   console.log('selectedStateCodes', selectedStateCodes);
-
-    //   // Fetch districts based on selected states' state_code
-    //   this.getDistrictService.fetchData().subscribe(
-    //     (response : any) => {
-    //       console.log('District Response', response);
-
-    //       selectedStateCodes.forEach((code: any) => {
-    //         const filterDistrict = response.data.filter((district: any) => district.state_code === code);
-    //         console.log('filterDistrict', filterDistrict);
-    //         this.districts.push(...filterDistrict);
-    //       });
-
-    //       console.log('Filtered districts:', this.districts);
-    //     },
-    //     (error : any) => {
-    //       console.error('Error fetching district data:', error);
-    //     }
-    //   );
-    // } else {
-    //   console.log('No states selected');
-    // }
+    
   }
 
   onDistrictChange(event : any): void {
-    console.log("District change", event.value);
     this.selectedDistrictData = event.value;
-    console.log('selectedDistrictData =>', this.selectedDistrictData)
-    console.log(this.stationData.length)
+
     const filteredStations = this.stationData.filter((dist: any) => {
       return this.selectedDistrictData.some((st: any) => dist.district_code == st.district_code);
     })
     
-    console.log('filterd stations',filteredStations)
     this.filteredStations = filteredStations
   }
 
   onStationChange(event : any): void{
     this.selectedstations = event.value
-    console.log('selectedstations', this.selectedstations)
   }
 
 
@@ -1350,47 +1310,82 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
         this.filteredData = this.filteredData.filter((station: any) => 
           selectedMCNames.includes(station.centre_name)
         );
-        console.log("filteredData after rmc:", this.filteredData);
       }
       if (this.selectedRMCData && this.selectedRMCData.length > 0) {
         const selectedRMCNames = this.selectedRMCData.map((rmc:any) => rmc.centre_name);
         this.filteredData = this.filteredData.filter((station: any) => 
           selectedRMCNames.includes(station.centre_name)
         );
-        console.log("filteredData after rmc:", this.filteredData);
       }
       if (this.selectedStateData && this.selectedStateData.length > 0) {
         const selectedStateCodes = this.selectedStateData.map((state: any) => state.state_code);
-        console.log("selectedStateCodes",selectedStateCodes);
-        console.log("selectedStateData:", this.selectedStateData);
-        console.log('filteredData', this.filteredData)
+
         this.filteredData = this.filteredData.filter((item : any) => 
           selectedStateCodes.includes(item.state_code)
         );
-        console.log("filteredData after state:", this.filteredData);
       }
   
       if (this.selectedDistrictData && this.selectedDistrictData.length > 0) {
         const selectedDistrictCodes = this.selectedDistrictData.map((item: any) => item.district_code);
-        // console.log("selectedStateCodes",selectedDistrictCodes);
-        // console.log("selectedStateData:", this.selectedStateData);
-        // console.log('filteredData', this.filteredData);
+
         this.filteredData = this.filteredData.filter((item : any) => 
           selectedDistrictCodes.includes(item.district_code)
         );
-        console.log("filteredData after district:", this.filteredData);
       }
     }else{
       this.filteredData = this.selectedstations
     }
+
     this.filteredData = this.filteredData.filter((x: any) => {
       return (this.isAwsSelected && x.station_type === 'AWS') ||
              (this.isOrgSelected && x.station_type === 'ORG') ||
              (this.isArgSelected && x.station_type === 'ARG');
     });
-    console.log(this.filteredData)
-    
+
+    this.getDayStatistics()
+
+    //preparing day statistic counts
+    this.filteredData = this.filteredData.filter((x:any)=>{
+      const data = x.data
+      return (this.dayStatistics.veryLightRainFallStations.isVeryLightRainFall && (data >= 0.1 && data <= 2.4 )) ||
+             (this.dayStatistics.lightRainfallStations.isLightRainfall && (data > 2.4 && data <= 15.5)) ||
+             (this.dayStatistics.modrateRainFallStations.isModrateRainFall && (data > 15.5 && data <= 64.4)) ||
+             (this.dayStatistics.heavyRainFallStations.isHeavyRainFall && (data > 64.4 && data <= 115.5)) ||
+             (this.dayStatistics.veryHeavyRainfallStations.isVeryHeavyRainfall && (data > 115.5 && data <= 204.4)) ||
+             (this.dayStatistics.extremelyHeavyRainfallStations.isExtremelyHeavyRainfall && (data > 204.4) )
+    })
+
+    //consoloing
+    let cout = 0
+    for(const key in this.dayStatistics){
+      cout=cout+this.dayStatistics[key].count
+    }
+    console.log('consoling',cout, this.filteredData.length, this.filteredData)
     this.loadStations();
+  }
+
+  getDayStatistics(){
+    // resetting previous changes
+    for(const key in this.dayStatistics){
+      this.dayStatistics[key].count = 0
+    }
+    // updating
+    for(let i=0; i<this.filteredData.length; i++){
+      const data = this.filteredData[i].data
+      if (data >= 0.1 && data <= 2.4) {
+          this.dayStatistics.veryLightRainFallStations.count++
+      } else if (data > 2.4 && data <= 15.5) {
+          this.dayStatistics.lightRainfallStations.count++
+      } else if (data > 15.5 && data <= 64.4) {
+        this.dayStatistics.modrateRainFallStations.count++
+      } else if (data > 64.4 && data <= 115.5) {
+        this.dayStatistics.heavyRainFallStations.count++
+      } else if (data > 115.5 && data <= 204.4) {
+        this.dayStatistics.veryHeavyRainfallStations.count++
+      } else if (data > 204.4) {
+        this.dayStatistics.extremelyHeavyRainfallStations.count++
+      } 
+    }
   }
 
   private initStationObservationMap(): void {
@@ -1467,114 +1462,220 @@ export class StationStatisticsPageComponent implements OnInit, OnDestroy {
       }).addTo(this.stationObservationMap);
     });
   }
-
-
   private getIconForData(data: number): L.Icon {
-    console.log('Data value:', data);  
 
     let iconUrl = 'assets/images/EHR.png'; 
-    let data1 = data.toFixed(1)
 
     if (data >= 0.1 && data <= 2.4) {
         iconUrl = 'assets/images/VLR.png';
     } else if (data > 2.4 && data <= 15.5) {
         iconUrl = 'assets/images/LR.png';
     } else if (data > 15.5 && data <= 64.4) {
-        iconUrl = 'assets/images/MR.png';
+        iconUrl = 'assets/images/MR.png';  // light blue
     } else if (data > 64.4 && data <= 115.5) {
-        iconUrl = 'assets/images/HR.png';
+        iconUrl = 'assets/images/HR.png'; // yellow
     } else if (data > 115.5 && data <= 204.4) {
-        iconUrl = 'assets/images/VHR.png';
+        iconUrl = 'assets/images/VHR.png'; // orange
     } else if (data > 204.4) {
         iconUrl = 'assets/images/EHR.png';
     } 
 
-    console.log('Icon URL:', iconUrl);  
 
     return L.icon({
       iconUrl: iconUrl,
-      iconSize: [30, 30],  
-      iconAnchor: [15, 30],  
-      popupAnchor: [0, -30]  
+      iconSize: [13,13],  // Adjust the size here
+      iconAnchor: [10, 20],  // Adjust anchor if needed
+      popupAnchor: [0, -20]  // Adjust popup anchor if needed
     });
   }
 
   private loadStations(): void {
-    // Dummy station data
-const dummyData = [
-  {
-    station_name: "Station A",
-    latitude: "40.7128",
-    longitude: "-74.0060",
-    data: 50.2 // Replace with actual rainfall data
-  },
-  {
-    station_name: "Station B",
-    latitude: "34.0522",
-    longitude: "-118.2437",
-    data: 10.5 // Replace with actual rainfall data
-  },
-  {
-    station_name: "Station C",
-    latitude: "51.5074",
-    longitude: "-0.1278",
-    data: 150.3 // Replace with actual rainfall data
-  },
-  // Add more stations as needed
-];
 
-this.filteredData.forEach((station: any) => {
+    this.markers.forEach(marker => {
+      this.stationObservationMap.removeLayer(marker);
+    });
+    this.markers = [];
+
+    this.filteredData.forEach((station: any) => {
       const lat = parseFloat(station.latitude);
       const lng = parseFloat(station.longitude);
       const dataValue = station.data;
 
-      console.log('Lat:', lat, 'Lng:', lng);
+      if(dataValue>=0.1){
+        const icon = this.getIconForData(dataValue);
 
-      const icon = this.getIconForData(dataValue);
+        if (lat != 0 && lng != 0 && !isNaN(lat) && !isNaN(lng)) {
+          // console.log(station.station_name, lat, lng)
+          const marker = L.marker([lat, lng], { icon: icon })
+            .bindPopup(`
+              <div>
+                <strong>Station Name:</strong> ${station.station_name}<br>
+                <strong>Rainfall:</strong> ${dataValue}<br>
+                <button class="popup-button" data-station="${station.station_name}" style="padding: 5px 10px; background-color: #007bff; color: #fff; border: none; cursor: pointer;">More info</button>
+              </div>
+            `)
+            .addTo(this.stationObservationMap);
 
-      if (lat != 0 && lng != 0) {
-        console.log('Adding marker:', station.station_name, lat, lng);
-        const marker = L.marker([lat, lng], { icon: icon })
-          .bindPopup(`
-            <div>
-              <strong>Station Name:</strong> ${station.station_name}<br>
-              <strong>Rainfall:</strong> ${dataValue}<br>
-              <button class="popup-button" data-station="${station.station_name}" style="padding: 5px 10px; background-color: #007bff; color: #fff; border: none; cursor: pointer;">More info</button>
-            </div>
-          `)
-          .addTo(this.stationObservationMap);
+          marker.on('popupopen', (e) => {
+            const button = document.querySelector(`.popup-button[data-station="${station.station_name}"]`);
+            if (button) {
+              button.addEventListener('click', () => this.showStationData(station.station_code, station.station_name));
+            }
+          });
 
-        marker.on('popupopen', (e) => {
-          const button = document.querySelector(`.popup-button[data-station="${station.station_name}"]`);
-          if (button) {
-            button.addEventListener('click', () => this.showStationData());
-          }
-        });
+          marker.on('popupclose', (e) => {
+            const button = document.querySelector(`.popup-button[data-station="${station.station_name}"]`);
+            if (button) {
+              button.removeEventListener('click', () => this.showStationData(station.station_code, station.station_name));
+            }
+          });
 
-        marker.on('popupclose', (e) => {
-          const button = document.querySelector(`.popup-button[data-station="${station.station_name}"]`);
-          if (button) {
-            button.removeEventListener('click', () => this.showStationData());
-          }
-        });
+          this.markers.push(marker)
 
-      } else {
-        console.log('Invalid coordinates for:', station.station_name);
+        } else {
+        }
       }
-    });
+
+  }
+  
+  );
   }
 
-  // private handleButtonClick(stationName: string): void {
-  //   console.log(`Button clicked for station: ${stationName}`);
-  //   alert(`Action triggered for ${stationName}`);
-  // }
-
-
-
-  showStationData(): void {
+  async showStationData(station_code: any, station_name: any): Promise<void> {
+    this.seriesDailyData = []
+    this.seriesHistoricalData = []
     this.selectedOption = 'station_details';
+
+    const body = {
+      station_id : +station_code
+    }
+
+    const response = await this.fetchStationDataService.fetchAllDatesAndDataOfStation(body).toPromise();
+    const data = response.data
+
+    console.log(data)
+
+    this.showSelectedStation = station_name
+
+    this.StationTotalEntries = data.filter((x:any)=>{
+      return x.data!=-999.9
+    }).length
+
+  
+    this.StationsMissingEntries = data.filter((x:any)=>{
+      return x.data==-999.9
+    }).length
+
+    let maxi = -999.9, mini = 1000, date = new Date()
+
+    data.forEach((element: any) => {
+      if(element.data>maxi){
+        maxi = element.data
+      }
+      if(element.data<mini){
+        mini = element.data
+      }
+      if(new Date(element.collection_date)<date){
+        date = new Date(element.collection_date)
+      }
+    });
+
+    this.StationHighestRecord = maxi
+    this.StationLowestRecord = mini
+    this.StationFirstDate = this.formatDate(date)
+    
+    // this.StationHighestRecord = data.reduce((prev:any, current:any) => (prev.data > current.data) ? prev : current).data;
+    // console.log(this.StationHighestRecord)
+    // this.StationLowestRecord = data.reduce((prev:any, current:any) => (prev.data < current.data) ? prev : current).data;
+    // this.StationFirstDate = data.reduce((prev: any, current: any) => (new Date(prev.collection_date) < new Date(current.collection_date) ? prev : current)).collection_date;
+
+
+  
     this.updateChart(this.stationWeatherParameters[0]);
     this.submitParameterForm();
   }
 
+  onDateChange(event:any){
+    this.selected_Date = event.target.value;
+    this.fetchStationData(this.selected_Date);
+  }
+
+  onCompareStationChange(event : any){
+    this.comparingselectedStations = event.value
+    console.log('comparing selected stations', this.comparingselectedStations)
+  }
+
+
+  updateChartNew(weatherOptions: any) {
+
+    if (weatherOptions.text === 'Daily Data') {
+      this.chart = new Chart({
+        chart: {
+          type: 'line',
+        },
+        title: {
+          text: '',
+        },
+        credits: {
+          enabled: false,
+        },
+        xAxis: {
+          categories: ['r'],
+        },
+        yAxis: {
+          title: {
+            text: 'mm', 
+          },
+        },
+        series: this.seriesDailyData
+      });
+      this.selectedWeatherOption = weatherOptions.text;
+      console.log('i am balu')
+    } else if (weatherOptions.text === 'Historical Data') {
+
+      this.selectedWeatherOption = weatherOptions.text;
+    }
+  }
+
+  async prepareCompareStatistics() {
+    this.seriesDailyData = []
+    console.log('Comparing selected stations:', this.comparingselectedStations);
+    for (const element of this.comparingselectedStations) {
+      console.log('Comparing:', element);
+      const body = {
+        station_id: +element.station_code
+      };
+      try {
+        const response = await this.fetchStationDataService.fetchAllDatesAndDataOfStation(body).toPromise();
+
+        const data = response.data;
+        const obj: any = {
+          type: 'line',
+          name: element.station_name,
+          data: []
+        };
+        for (let j = 0; j < data.length; j++) {
+          const value = data[j].data === -999.9 ? null : data[j].data;  // Use null or an empty value
+          obj.data.push(value);
+        }
+        console.log('Series object:', obj);
+        this.seriesDailyData.push(obj);
+
+
+      } catch (error) {
+        console.error('Error fetching data for station:', element.station_name, error);
+      }
+    }
+    console.log('Prepared series data:', this.seriesDailyData);
+    console.log(this.selectedWeatherOption)
+
+
+    const weatherOption = this.stationWeatherParametersnew.find(option => option.text === this.selectedWeatherOption);
+    if (weatherOption) {
+      // Update the chart with the new series data
+      this.updateChartNew(weatherOption);
+    } else {
+      console.error('Selected weather option is not valid:', this.selectedWeatherOption);
+    }
+  }
 }

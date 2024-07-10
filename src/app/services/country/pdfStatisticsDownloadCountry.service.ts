@@ -18,6 +18,7 @@ import { CountryService } from './country.service';
 export class CountryDownloadStatistics {
 
   private baseUrl: string = environment.baseUrl;
+  isView : boolean = false;
 
   countrydepCurrdate: any[] = [];
   countrydepSeasondate: any[] = [];
@@ -37,13 +38,42 @@ export class CountryDownloadStatistics {
   }
 
 
+  async updateandViewpdf(){
+    this.isView = true
+    const currDate = new Date();
+    this.data = this.constants.getRangeFromDateRange();
+    this.seasonPeriodDate = this.constants.getCurrentMonthSeasonFromAndTodate(currDate);
+    await this.updateCurrDateData(this.data, this.seasonPeriodDate)
+  }
+
+
   async updateCurrDateData(data:any, seasonPeriodDate:any ){
 
-    this.counrtryService.fetchData(data).pipe(
+    // this.counrtryService.fetchData(data).pipe(
+    //   concatMap(country => {
+    //     this.countrydepCurrdate = country.data;
+    //     console.log('indownloading---->',this.countrydepCurrdate)
+    //     return this.counrtryService.fetchData(seasonPeriodDate);
+    //   }),
+
+    //   concatMap(seasoncountryData => {
+    //     this.countrydepSeasondate = seasoncountryData.data;
+    //     console.log('indownloading---->', this.countrydepSeasondate)
+    //     this.downloadPdf()
+    //     return EMPTY
+    //   }),
+
+    // ).subscribe(
+    //   () => { },
+    //   (error:any) => console.error('Error fetching data:', error)
+    // );
+
+
+    this.counrtryService.fetchDataFtp(data).pipe(
       concatMap(country => {
         this.countrydepCurrdate = country.data;
         console.log('indownloading---->',this.countrydepCurrdate)
-        return this.counrtryService.fetchData(seasonPeriodDate);
+        return this.counrtryService.fetchDataFtp(seasonPeriodDate);
       }),
 
       concatMap(seasoncountryData => {
@@ -106,7 +136,7 @@ export class CountryDownloadStatistics {
 
     const columns1 = ['', '', 
       {
-        content : `Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
+        content : this.data.startDate==this.data.endDate ? `Selected Date ${this.data.startDate}`:`Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
       },
       {
         content : `Present Season ${this.seasonPeriodDate.startDate} to ${this.seasonPeriodDate.endDate}`, colSpan:4
@@ -114,7 +144,7 @@ export class CountryDownloadStatistics {
     ]
     const columns1forexcel = ['', '',
     {
-      content : `Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
+      content : this.data.startDate==this.data.endDate ? `Selected Date ${this.data.startDate}`:`Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
     }, '', '', '',    
     {
       content : `Present Season ${this.seasonPeriodDate.startDate} to ${this.seasonPeriodDate.endDate}`, colSpan:4
@@ -219,10 +249,18 @@ export class CountryDownloadStatistics {
     // DISTRIBUTION_COUNTRY_INDIA_cd.pdf
     const filename = `DISTRIBUTION_COUNTRY_INDIA_cd.pdf`;
 
-    setTimeout(()=>{
-      doc.save(filename);
-      this.exportAsExcelFile(newArr, `COUNTRY_RAINFALL_DISTRIBUTION_INDIA_cd`, columns, newcolumns1);
-    },15000)
+
+    if(this.isView){
+      const pdfBlob = doc.output('blob');
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl);
+    }else{
+      setTimeout(()=>{
+        doc.save(filename);
+        this.exportAsExcelFile(newArr, `COUNTRY_RAINFALL_DISTRIBUTION_INDIA_cd`, columns, newcolumns1);
+      },3000)
+    }
+
     
    
   

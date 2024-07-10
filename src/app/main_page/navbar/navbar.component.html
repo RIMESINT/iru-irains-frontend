@@ -417,24 +417,33 @@
                     <a>DAILY & CUMULATIVE</a>
                     <ul>
                         <li>
-                            <a (click)="downloadPDF('State')">
-                STATE RF DISTRIBUTION</a>
+                            <a routerLink="../daily-state-rf-distribution">STATE RF DISTRIBUTION</a>
+
+                            <!-- <a (click)="downloadPDF('State')">
+                STATE RF DISTRIBUTION</a> -->
                         </li>
                         <li>
-                            <a (click)="downloadPDF('SubDivision')">
-                SUBDIVISION RF DISTRIBUTION</a>
+                            <a routerLink="../daily-subdivision-rf-distribution">SUBDIVISION RF DISTRIBUTION</a>
+
+                            <!-- <a (click)="downloadPDF('SubDivision')">
+                SUBDIVISION RF DISTRIBUTION</a> -->
                         </li>
                         <li>
-                            <a (click)="downloadPDF('District')">
-                DISTRICT RF DISTRIBUTION</a>
+                            <a routerLink="../daily-district-rf-distribution">DISTRICT RF DISTRIBUTION</a>
+
+                            <!-- <a (click)="downloadPDF('District')">
+                DISTRICT RF DISTRIBUTION</a> -->
                         </li>
                         <li>
-                            <a (click)="downloadPDF('Homogenous')">
-                HOMOGENOUS RF DISTRIBUTION</a>
+                            <a routerLink="../daily-homogenous-rf-distribution">HOMOGENOUS RF DISTRIBUTION</a>
+                            <!-- <a (click)="downloadPDF('Homogenous')">
+                HOMOGENOUS RF DISTRIBUTION</a> -->
                         </li>
                         <li>
-                            <a (click)="downloadPDF('Country')">
-                COUNTRY RF DISTRIBUTION</a>
+                            <a routerLink="../daily-country-rf-distribution">COUNTRY RF DISTRIBUTION</a>
+
+                            <!-- <a (click)="downloadPDF('Country')">
+                COUNTRY RF DISTRIBUTION</a> -->
                         </li>
                         <li>
                             <a style="background-color: orange;" routerLink="../underprogress">GATEGORYWISE DISTRIBUTION OF DISTRICTS
@@ -700,6 +709,7 @@
         <li>
             <a class="main_nav">STATION STATISTICS</a>
             <ul>
+               
                 <li>
                     <a routerLink="../station-statistics">STATISTICS</a>
                 </li>

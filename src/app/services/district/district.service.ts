@@ -15,4 +15,10 @@ export class DistrictService {
     const url = `${this.baseUrl}/api/v1/fetchDistrictData`;
     return this.http.post<any>(url, data);
   }
+
+  fetchDataFtp(data:any): Observable<any> {
+    const url = `${this.baseUrl}/api/v1/fetchDistrictDataFtp`;
+    console.log('called fetchDataFtp');
+    return this.http.post<any>(url, data);
+  }
 }

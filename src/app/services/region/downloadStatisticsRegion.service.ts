@@ -17,6 +17,7 @@ import { RegionService } from '../region/region.service';
 export class RegionDownloadStatistics {
 
   private baseUrl: string = environment.baseUrl;
+  isView : boolean = false
 
   regiondepCurrdate: any[] = [];
   regiondepSeasondate: any[] = [];
@@ -36,13 +37,40 @@ export class RegionDownloadStatistics {
   }
 
 
+  updateandViewpdf(){
+    this.isView = true;
+    const currDate = new Date();
+    this.data = this.constants.getRangeFromDateRange();
+    this.seasonPeriodDate = this.constants.getCurrentMonthSeasonFromAndTodate(currDate);
+    this.updateCurrDateData(this.data, this.seasonPeriodDate)
+  }
+
   async updateCurrDateData(data:any, seasonPeriodDate:any ){
 
-    this.regionService.fetchData(data).pipe(
+    // this.regionService.fetchData(data).pipe(
+    //   concatMap(region => {
+    //     this.regiondepCurrdate = region.data;
+    //     console.log('indownloading---->',this.regiondepCurrdate)
+    //     return this.regionService.fetchData(seasonPeriodDate);
+    //   }),
+
+    //   concatMap(seasonregionData => {
+    //     this.regiondepSeasondate = seasonregionData.data;
+    //     console.log('indownloading---->', this.regiondepSeasondate)
+    //     this.downloadPdf()
+    //     return EMPTY
+    //   }),
+
+    // ).subscribe(
+    //   () => { },
+    //   (error:any) => console.error('Error fetching data:', error)
+    // );
+
+    this.regionService.fetchDataFtp(data).pipe(
       concatMap(region => {
         this.regiondepCurrdate = region.data;
         console.log('indownloading---->',this.regiondepCurrdate)
-        return this.regionService.fetchData(seasonPeriodDate);
+        return this.regionService.fetchDataFtp(seasonPeriodDate);
       }),
 
       concatMap(seasonregionData => {
@@ -112,7 +140,7 @@ export class RegionDownloadStatistics {
 
     const columns1 = ['', '', 
       {
-        content : `Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
+        content :this.data.startDate==this.data.endDate ? `Selected Date ${this.data.startDate}`:`Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
       },
       {
         content : `Present Season ${this.seasonPeriodDate.startDate} to ${this.seasonPeriodDate.endDate}`, colSpan:4
@@ -120,7 +148,7 @@ export class RegionDownloadStatistics {
     ]
     const columns1forexcel = ['', '',
     {
-      content : `Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
+      content : this.data.startDate==this.data.endDate ? `Selected Date ${this.data.startDate}`:`Selected Date ${this.data.startDate} to ${this.data.endDate}`, colSpan:4
     }, '', '', '',    
     {
       content : `Present Season ${this.seasonPeriodDate.startDate} to ${this.seasonPeriodDate.endDate}`, colSpan:4
@@ -228,7 +256,19 @@ export class RegionDownloadStatistics {
     setTimeout(()=>{
       doc.save(filename);
       this.exportAsExcelFile(newArr, `REGION_RAINFALL_DISTRIBUTION_INDIA_cd`, columns, newcolumns1);
-    },15000)
+    },3000)
+
+
+    if(this.isView){
+      const pdfBlob = doc.output('blob');
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl);
+    }else{
+      setTimeout(()=>{
+        doc.save(filename);
+        this.exportAsExcelFile(newArr, `REGION_RAINFALL_DISTRIBUTION_INDIA_cd`, columns, newcolumns1);
+      },3000)
+    }
     
    
   
