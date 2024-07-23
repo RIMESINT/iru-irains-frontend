@@ -1,3 +1,12 @@
-img{
-   height: 100vh;
-}
+.image-container {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   height: 100vh; /* This will make the container take the full height of the viewport */
+ }
+ 
+ .image-container img {
+   max-width: 100%;
+   max-height: 100%;
+ }
+ 

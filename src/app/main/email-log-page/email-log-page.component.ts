@@ -44,7 +44,7 @@ export class EmailLogPageComponent implements OnInit{
     getAllEmailLogs(): void {
       this.getEmailLogs.fetchData().subscribe(
         response => {
-          console.log('email log', response);
+
           this.emailLogs = response.data;
         
           console.log('emailLogs', this.emailLogs)
@@ -77,7 +77,7 @@ export class EmailLogPageComponent implements OnInit{
         return;
       }
       const formattedDate = this.formatDate(this.selectedDate);
-      console.log(formattedDate)
+      console.log(formattedDate);
       this.dataService.getEmailLogs(formattedDate).subscribe(logs => {
         this.emailLogs = logs;
         console.log(this.emailLogs);

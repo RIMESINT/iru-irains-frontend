@@ -62,13 +62,15 @@ export class DistrictMapDupComponent implements AfterViewInit{
       const mon = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
       const year = String(currentDate.getFullYear());
       this.formatteddate = `${dd}-${mon}-${year}`;
+      console.log('formatteddate', this.formatteddate);
   
       this.dataService.fromAndToDate$.subscribe((value) => {
         if (value) {
+          console.log('JSON.parse(value)', JSON.parse(value));
           let fromAndToDates = JSON.parse(value);
           this.StartDate = fromAndToDates.fromDate;
           this.EndDate = fromAndToDates.toDate;
-          // console.log(this.previousWeekWeeklyStartDate, this.previousWeekWeeklyEndDate);
+          console.log('Start, End', this.StartDate, this.EndDate);
         }
         else {
         this.StartDate = `${year}-${mon}-${dd}`;
@@ -87,12 +89,13 @@ export class DistrictMapDupComponent implements AfterViewInit{
     const year = String(currentDate.getFullYear());
   
     const data = {
-      startDate: this.StartDate,
-      endDate: this.EndDate,
+      startDate: this.StartDate || `${year}-${mon}-${dd}`,
+      endDate: this.EndDate || `${year}-${mon}-${dd}`,
     };
+    console.log('data for districts', data);
       this.district.fetchDataFtp(data).subscribe(res => {
         this.districtdatacum = res.data;
-        console.log('fbdudusdubsudbsud', res.data);
+        // console.log('fbdudusdubsudbsud', res.data);
         this.loadGeoJSON();
       })
     

@@ -125,9 +125,15 @@ import { RegionMapDupComponent } from './main/region-map-dup/region-map-dup.comp
 import { StateMapDupComponent } from './main/state-map-dup/state-map-dup.component';
 import { SubdivisionMapDupComponent } from './main/subdivision-map-dup/subdivision-map-dup.component';
 import { RainfallStatisticsComponent } from './main/rainfall-statistics/rainfall-statistics.component';
+import { RainfallStatisticsWeeklyComponent } from './main/rainfall-statistics-weekly/rainfall-statistics-weekly.component';
+import { MatSelectModule } from '@angular/material/select';
+// import { MatFormFieldModule } from '@angular/material/form-field';
+// import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 // import { DistrictMapComponent } from './app';
 // import { AppDistrictMapComponent } from './app-district-map/app-district-map.component';
 // import { DistrictMapComponent } from './district-map/district-map.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -227,6 +233,7 @@ import { RainfallStatisticsComponent } from './main/rainfall-statistics/rainfall
     StateMapDupComponent,
     SubdivisionMapDupComponent,
     RainfallStatisticsComponent,
+    RainfallStatisticsWeeklyComponent,
   ],
   imports: [
     PdfViewerModule,
@@ -254,7 +261,11 @@ import { RainfallStatisticsComponent } from './main/rainfall-statistics/rainfall
     MatNativeDateModule,
     ChartModule,
     MatTabsModule,
-    MultiSelectModule
+    MultiSelectModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
   ],
 
   providers: [AuthGuard, DatePipe],

@@ -24,7 +24,7 @@
                         class="text-black fw-bold"
                         style="font-family: Arial; font-size: 14px;"
                       >
-                        Date : {{ formatteddate }}
+                        Date : {{ formatteddate | date: 'dd-MM-yyyy'}}
                       </label>
                       <label
                         *ngIf="
@@ -36,8 +36,8 @@
                         style="font-family: Arial; font-size: 14px;"
                       >
                         Date :
-                        {{ StartDate }} to
-                        {{ EndDate  }}
+                        {{ StartDate | date: 'dd-MM-yyyy' }} to
+                        {{ EndDate | date: 'dd-MM-yyyy' }}
                       </label>
                       <label
                         *ngIf="
@@ -47,7 +47,7 @@
                         class="text-black fw-bold"
                         style="font-family: Arial; font-size: 14px;"
                       >
-                        Date : {{ StartDate}}
+                        Date : {{ StartDate | date: 'dd-MM-yyyy' }}
                       </label>
                     </div>
                     <div>

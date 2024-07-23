@@ -10,7 +10,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class DataService {
 
   // private baseUrl = 'http://203.156.108.107:3000';
-  private baseUrl = 'http://localhost:10023';
+  private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {}
   addData(data: any): Observable<any> {
@@ -170,6 +170,7 @@ export class DataService {
   }
   // filtered Email log
    getEmailLogs(date: string): Observable<any[]> {
+    console.log(date);
       return this.http.get<any[]>(`${this.baseUrl}/email-dissemination/email-log?date=${date}`);
   }
 }

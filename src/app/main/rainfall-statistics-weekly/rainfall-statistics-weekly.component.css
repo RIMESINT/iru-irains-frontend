@@ -1,0 +1,8 @@
+.full-width {
+    width: 45%;
+  }
+  
+  ::ng-deep .mat-select-panel {
+    min-width: 300px; /* Adjust this value as needed */
+  }
+  

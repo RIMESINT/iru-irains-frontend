@@ -17,6 +17,7 @@ export class DistrictService {
   }
 
   fetchDataFtp(data:any): Observable<any> {
+    console.log("In the services", data);
     const url = `${this.baseUrl}/api/v1/fetchDistrictDataFtp`;
     console.log('called fetchDataFtp');
     return this.http.post<any>(url, data);

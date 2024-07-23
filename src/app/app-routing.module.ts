@@ -83,6 +83,7 @@ import { DefinedEmailGroupPageComponent } from './main/defined-email-group-page/
 import { EmailLogPageComponent } from './main/email-log-page/email-log-page.component';
 import { AllMapsDupComponent } from './main/all-maps-dup/all-maps-dup.component';
 import { RainfallStatisticsComponent } from './main/rainfall-statistics/rainfall-statistics.component';
+import { RainfallStatisticsWeeklyComponent } from './main/rainfall-statistics-weekly/rainfall-statistics-weekly.component';
 // import { DistrictMapComponent } from './district-map/district-map.component';
 
 const routes: Routes = [
@@ -103,6 +104,12 @@ const routes: Routes = [
   { path: 'daily-homogenous-rf-distribution', component: RainfallStatisticsComponent,  data:{category : 'REGION '},canActivate: [AuthGuard] },
   { path: 'daily-country-rf-distribution', component: RainfallStatisticsComponent,  data:{category : 'COUNTRY'},canActivate: [AuthGuard] },
 
+  
+  { path: 'weekly-state-rf-distribution', component: RainfallStatisticsWeeklyComponent, data:{category : 'STATE'}, canActivate: [AuthGuard] },
+  { path: 'weekly-subdivision-rf-distribution', component: RainfallStatisticsWeeklyComponent,  data:{category : 'SUBDIVISION'},canActivate: [AuthGuard] },
+  { path: 'weekly-district-rf-distribution', component: RainfallStatisticsWeeklyComponent, data:{category : 'DISTRICT'}, canActivate: [AuthGuard] },
+  { path: 'weekly-homogenous-rf-distribution', component: RainfallStatisticsWeeklyComponent,  data:{category : 'REGION '},canActivate: [AuthGuard] },
+  { path: 'weekly-country-rf-distribution', component: RainfallStatisticsWeeklyComponent,  data:{category : 'COUNTRY'},canActivate: [AuthGuard] },
 
   { path: 'daily-departure-district-map', component: DailyWeeklyDistrictDepartureMapComponent, canActivate: [AuthGuard] },
   { path: 'daily-departure-state-map', component: DailyWeeklyStateDepartureMapComponent, canActivate: [AuthGuard] },

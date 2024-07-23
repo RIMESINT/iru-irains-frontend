@@ -7,6 +7,9 @@ import { DataService } from 'src/app/data.service';
 import * as FileSaver from 'file-saver';
 import { format } from 'date-fns';
 import { FetchStationDataService } from 'src/app/services/station/station.service';
+import { saveAs } from 'file-saver';
+// import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType } from 'docx';
+import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType } from "docx";
 
 @Component({
   selector: 'app-rainfall-data-cm-page',
@@ -95,7 +98,96 @@ export class RainfallDataCmPageComponent implements OnInit{
     goBack() {
         window.history.back();
     }
-      
+    exportAsDOCX(): void {
+      console.log(this.filteredItems)
+      this.exportAsWordFile(this.sampleFile(), 'Significant_RainFall_Data');
+    }
+
+    exportAsWordFile(json: any[], docFileName: string): void {
+      const table = new Table({
+          width: {
+              size: 100,
+              type: WidthType.PERCENTAGE
+          },
+          rows: [
+              new TableRow({
+                  children: [
+                      new TableCell({
+                          children: [new Paragraph('Met Subdivision')],
+                          width: { size: 25, type: WidthType.PERCENTAGE },
+                          margins: { top: 100, bottom: 100, left: 100, right: 100 } // Adding margins to the cell
+                      }),
+                      new TableCell({
+                          children: [new Paragraph('District Name')],
+                          width: { size: 25, type: WidthType.PERCENTAGE },
+                          margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                      }),
+                      new TableCell({
+                          children: [new Paragraph('Station Name')],
+                          width: { size: 25, type: WidthType.PERCENTAGE },
+                          margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                      }),
+                      new TableCell({
+                          children: [new Paragraph('Rainfall (cm)')],
+                          width: { size: 25, type: WidthType.PERCENTAGE },
+                          margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                      }),
+                  ]
+              }),
+              ...json.map(item => new TableRow({
+                  children: [
+                      new TableCell({
+                          children: [new Paragraph(item.Metsubdivision)],
+                          width: { size: 25, type: WidthType.PERCENTAGE },
+                          margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                      }),
+                      new TableCell({
+                          children: [new Paragraph(item.District_Name)],
+                          width: { size: 25, type: WidthType.PERCENTAGE },
+                          margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                      }),
+                      new TableCell({
+                          children: [new Paragraph(item.Station_Name)],
+                          width: { size: 25, type: WidthType.PERCENTAGE },
+                          margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                      }),
+                      new TableCell({
+                          children: [new Paragraph(item.Rainfall_CM.toString())],
+                          width: { size: 25, type: WidthType.PERCENTAGE },
+                          margins: { top: 100, bottom: 100, left: 100, right: 100 }
+                      }),
+                  ]
+              }))
+          ]
+      });
+    
+      const doc = new Document({
+        sections: [{
+          properties: {},
+          children: [table],
+        }],
+      });
+  
+      Packer.toBlob(doc).then(blob => {
+        saveAs(blob, docFileName + '.docx');
+      });
+    }
+  
+    sampleFile(){
+      let data: any[] = [];
+      this.filteredItems.forEach(x => {
+        let station: any = {
+          Metsubdivision: x.subdiv_name,
+          Station_Name: x.station_name,
+          District_Name: x.district_name,
+          Rainfall_CM: x.data,
+        }
+        data.push(station);
+      });
+      return data;
+    }
+
+    
     exportAsXLSX(): void {
       console.log(this.filteredItems)
       this.exportAsExcelFile(this.sampleFile(), 'Significant_RainFall_Data');
@@ -119,19 +211,19 @@ export class RainfallDataCmPageComponent implements OnInit{
       FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
     }
   
-      sampleFile(){
-      let data:any[] = [];
-      this.filteredItems.forEach(x => {
-        let station:any = {
-          Metsubdivision: x.subdiv_name,
-          Station_Name: x.station_name,
-          District_Name: x.district_name,
-          Rainfall_CM: x.data,
-        }
-        data.push(station);
-      })
-      return data;
-      }
+      // sampleFile(){
+      // let data:any[] = [];
+      // this.filteredItems.forEach(x => {
+      //   let station:any = {
+      //     Metsubdivision: x.subdiv_name,
+      //     Station_Name: x.station_name,
+      //     District_Name: x.district_name,
+      //     Rainfall_CM: x.data,
+      //   }
+      //   data.push(station);
+      // })
+      // return data;
+      // }
     
       onFileSelected(event: any) {
       this.selectedFile = event.target.files[0];

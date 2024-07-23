@@ -36,46 +36,15 @@
     </div>
   </div>
 
-    <!-- <div class="col-6 col-md-8 col-lg-12 mt-5">
-      <div class="significantRainfall-table overflow-x-auto px-3">
-      <div class="d-flex justify-content-center">
-          <h5 class="text-center p-2 font-weight-text">Significant Rainfall Data</h5>
-          <div class="col-md-1 col-sm-6 mb-3">
-            <button class="btn btn-primary" [disabled]="filteredItems.length === 0" (click)="exportAsXLSX()">Download</button>
-          </div>
-      </div>
-        <div>
-          <table class="table table-bordered border-dark rounded-3">
-            <thead class="">
-              <tr>
-                <th>Met Subdivision</th>
-                <th>District Name</th>
-                <th>Station Name</th>
-                <th (click)="sortData('rainFall')">Rainfall (cm)
-                  <span *ngIf="sortDirection === 'asc' && sortKey === 'rainFall'">&#9650;</span>
-                  <span *ngIf="sortDirection === 'desc' && sortKey === 'rainFall'">&#9660;</span>
-            </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of filteredItems">
-                <td>{{item.metsubdivision}}</td>
-                <td>{{item.district}}</td>
-                <td>{{item.stationname}}</td>
-                <td>{{ (item.rainFall / 10).toFixed(1) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div> -->
-
+   
     <div class="col-6 col-md-8 col-lg-12 mt-5">
       <div class="significantRainfall-table overflow-x-auto px-3">
         <div class="d-flex justify-content-center">
           <h5 class="text-center p-2 font-weight-text">Significant Rainfall Data</h5>
           <div class="col-md-1 col-sm-6 mb-3">
-            <button class="btn btn-primary" [disabled]="filteredItems.length === 0" (click)="exportAsXLSX()">Download</button>
+            <!-- <button class="btn btn-primary" [disabled]="filteredItems.length === 0" (click)="exportAsXLSX()">Download</button> -->
+            <button class="btn btn-primary" [disabled]="filteredItems.length === 0" (click)="exportAsDOCX()">Download</button>
+
           </div>
         </div>
         <div>

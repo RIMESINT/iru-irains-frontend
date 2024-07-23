@@ -51,6 +51,8 @@ export class DownloadPdf {
 
   async updateCurrDateData(data:any, seasonPeriodDate:any ){
 
+    console.log('line 54', data, seasonPeriodDate);
+
     this.fetchDistrictData(data).pipe(
       concatMap(districtData => {
         this.districtdepCurrdate = districtData.data;
@@ -176,6 +178,8 @@ export class DownloadPdf {
   public async downloadPdf(){
 
     console.log(this.data.startDate, this.data.endDate, this.data.startDate==this.data.endDate)
+    console.log('startDate', this.data.startDate);
+    console.log('endDate', this.data.endDate);
 
     const columns1 = ['', '', 
       {

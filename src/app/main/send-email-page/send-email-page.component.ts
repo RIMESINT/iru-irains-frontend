@@ -37,9 +37,10 @@ export class SendEmailPageComponent implements OnInit{
       // this.dataService.emailLog().subscribe(res => {
       //   this.emailLogs = res;
       // })
-      // this.dataService.getEmailGroup().subscribe(res => {
-      //   this.emailGroups = res;
-      // })
+      this.emailService.fetchEmailGroups().subscribe(res => {
+        console.log(res);
+        this.emailGroups = res.data;
+      })
     }
   
     goBack() {
