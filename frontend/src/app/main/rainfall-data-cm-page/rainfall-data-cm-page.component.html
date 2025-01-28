@@ -1,0 +1,200 @@
+<div class="background-effect">
+  <app-header></app-header>
+
+    <!-- Loader (shown only while loading) -->
+    <div *ngIf="isLoading" class="loader-overlay">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>Loading data, please wait...</p>
+    </div>
+
+ <div  [class.blurred]="isLoading">
+  <div class="d-flex justify-content-center pt-4">
+    <div class="row">
+      <div class="col">
+      <label class="form-label text-white fs-4"><b>Select Rainfall Filter Type </b></label>
+    <!-- Toggle Buttons for Custom Range and No Range -->
+       <div class="btn-group px-3" role="group">
+       <button type="button" class="btn btn-outline-primary" [class.active]="isCustomRange" (click)="setRangeMode(true)">Custom Range</button>
+       <button type="button" class="btn btn-outline-primary" [class.active]="!isCustomRange" (click)="setRangeMode(false)">No Range</button>
+       </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container pt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="row">
+          <div class="col">
+            <label class="form-label"><b>Select Date</b></label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <input type="date" class="form-control" [(ngModel)]="filterDate" name="date" placeholder="Select date" (change)="onDateChange($event)" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Integrated unit selection and rainfall range -->
+       <div class="col-md-5" *ngIf="!isCustomRange">
+        <div class="row">
+          <div class="col">
+            <label class="form-label"><b>Enter Rainfall Range</b></label>
+          </div>
+        </div>
+        <div class="row w-75">
+          <div class="input-group">
+            <input type="number" class="form-control" [(ngModel)]="filterRainfall" (change)="validateRainfall()" name="rainfall" placeholder="Enter value" />
+            <select class="form-select" [(ngModel)]="selectedUnit">
+              <option value="mm">mm</option>
+              <option value="cm">cm</option>
+            </select>
+          </div>
+        </div>
+      </div> 
+
+       <!-- Custom Range Dropdown (Shown when Custom Range is ON) -->  
+      <!-- <div class="col-md-5" *ngIf="isCustomRange">
+        <div class="row">
+          <div class="col">
+            <label class="form-label"><b>Enter Rainfall Range</b></label>
+          </div>
+        </div>
+        <div class="row w-75">
+          <div class="input-group">
+            <input type="number" class="form-control" [(ngModel)]="fromRange" placeholder="From" min="0" />
+            <input type="number" class="form-control" [(ngModel)]="toRange" placeholder="To" min="0" />
+          </div>
+        </div>
+      </div> -->
+
+          <!-- Custom Range Dropdown (Shown when Custom Range is ON) -->
+          <div class="col-md-5" *ngIf="isCustomRange">
+            <div class="row">
+              <div class="col">
+                <label class="form-label"><b>Enter Rainfall Range</b></label>
+              </div>
+            </div>
+            <!-- <div class="row w-75" *ngIf="isCustomRange">
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="fromRange"
+                placeholder="From"
+                min="0"
+              />
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="toRange"
+                placeholder="To"
+                min="0"
+              />
+              <select
+                class="form-select"
+                [(ngModel)]="customRangeUnit"
+                (change)="onCustomRangeUnitChange(customRangeUnit)"
+              >
+                <option value="mm">mm</option>
+                <option value="cm">cm</option>
+              </select>
+            </div>
+          </div> -->
+          <div class="row w-75"  *ngIf="isCustomRange">
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="fromRange"
+                placeholder="From"
+                min="0"
+              />
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="toRange"
+                placeholder="To"
+                min="0"
+              />
+              <select
+                class="form-select"
+                [(ngModel)]="customRangeUnit"
+                (change)="onCustomRangeUnitChange(customRangeUnit)"
+              >
+                <option value="mm">mm</option>
+                <option value="cm">cm</option>
+              </select>
+            </div>
+          </div>
+          </div>       
+  
+
+      <div class="col-md-2 align-self-center">
+        <button type="button" class="btn btn-primary mt-md-4 mt-2" (click)="filterData()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-8 col-lg-12 mt-5">
+    <div class="significantRainfall-table overflow-x-auto px-3">
+      <div class="d-flex justify-content-center">
+        <h5 class="text-center p-2 font-weight-text">Significant Rainfall Data</h5>
+        <div class="col-md-1 col-sm-6 mb-3">
+          <button class="btn btn-primary" [disabled]="filteredItems.length === 0" (click)="exportAsXLSX()">Download</button>
+        </div>
+      </div>
+      <div>
+        <!-- <table class="table table-bordered border-dark rounded-3">
+          <thead>
+            <tr>
+              <th>Met Subdivision</th>
+              <th>District Name</th>
+              <th>Station Name</th>
+              <th (click)="sortData('rainFall')">Rainfall ({{selectedUnit}})
+                <span *ngIf="sortDirection === 'asc' && sortKey === 'rainFall'">&#9650;</span>
+                <span *ngIf="sortDirection === 'desc' && sortKey === 'rainFall'">&#9660;</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredItems">
+              <td>{{item.subdiv_name}}</td>
+              <td>{{item.district_name}}</td>
+              <td>{{item.station_name}}</td>
+              <td>{{ (selectedUnit === 'cm' ? item.data / 10 : item.data).toFixed(1) }}</td>
+            </tr>
+          </tbody>
+        </table> -->
+
+        <table class="table table-bordered border-dark rounded-3">
+          <thead>
+            <tr>
+              <th>Met Subdivision</th>
+              <th>District Name</th>
+              <th>Station Name</th>
+              <th (click)="sortData('rainFall')">
+                Rainfall ({{ selectedUnit }})
+                <span *ngIf="sortDirection === 'asc' && sortKey === 'rainFall'">&#9650;</span>
+                <span *ngIf="sortDirection === 'desc' && sortKey === 'rainFall'">&#9660;</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredItems">
+              <td>{{ item.subdiv_name }}</td>
+              <td>{{ item.district_name }}</td>
+              <td>{{ item.station_name }}</td>
+              <td>{{ (selectedUnit === 'cm' ? item.data / 10 : item.data).toFixed(1) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,15 @@
+<div class="container mt-2">
+  <h5>INFO UPLOAD</h5>
+  <div class="mb-3 d-flex align-items-center"> 
+    <select id="form-control" class="form-control" [(ngModel)]="selectedSection">
+      <option value="Select Section" selected>Select Section</option>
+      <option value="QPF VERIFICATION REPORT">QPF VERIFICATION REPORT</option>
+      <option value="RAINFALL REPORTS">RAINFALL REPORTS</option>
+      <option value="DESIGN STORM ANALYSIS">DESIGN STORM ANALYSIS</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <input class="form-control" #fileInput type="file" (change)="onFileSelected($event)">
+  </div>
+  <button type="button" (click)="uploadFile()" class="btn btn-success">Upload</button>
+</div>

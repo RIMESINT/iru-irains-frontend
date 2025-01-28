@@ -1,0 +1,65 @@
+.full-width {
+  width: 45%;
+}
+
+::ng-deep .mat-select-panel {
+  min-width: 300px; /* Adjust this value as needed */
+}
+
+
+.custom-spinner {
+  display: inline-block;
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.spinner-circle {
+  border: 3px solid #f3f3f3; /* Light grey */
+  border-top: 3px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.spinner {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid blue;
+  border-right: 16px solid green;
+  border-bottom: 16px solid red;
+  border-left: 16px solid pink;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+.mat-form-field {
+  margin-right: 10px; /* Add spacing between dropdowns */
+}
+
+.wholebody{
+  background-color: #a2c5b6 ;
+  height: 100vh;
+}

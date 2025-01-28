@@ -1,0 +1,4 @@
+.nav-link.active {
+    font-weight: bold;
+    color: #007bff; /* Bootstrap primary color */
+  }

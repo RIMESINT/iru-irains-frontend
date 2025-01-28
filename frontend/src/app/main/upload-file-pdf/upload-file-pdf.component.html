@@ -1,0 +1,54 @@
+<div class="container mt-4">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title text-center mb-4">File Upload</h5>
+  
+        <!-- Section Selection -->
+        <div class="form-group mb-3">
+            <label for="sectionSelect">Select Section</label>
+            <select id="sectionSelect" class="form-control" (change)="onSectionSelected($event)" required>
+            <option value="" disabled [selected]="!selectedSection">Select Section</option>
+            <option value="QPF VERIFICATION REPORT">QPF VERIFICATION REPORT</option>
+            <option value="RAINFALL REPORTS">RAINFALL REPORTS</option>
+            <option value="DESIGN STORM ANALYSIS">DESIGN STORM ANALYSIS</option>
+            </select>
+            <!-- Validation message -->
+            <div *ngIf="!selectedSection && formSubmitted" class="text-danger mt-2">
+            Please select a section.
+            </div>
+        </div>
+        <!-- File Upload -->
+        <div class="file-upload-container mb-4">
+          <button class="btn btn-outline-primary" (click)="fileInput.click()">
+            <i class="bi bi-paperclip"></i> Choose File
+          </button>
+          <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none;">
+          <span *ngIf="selectedFileName" class="ml-2">{{ selectedFileName }}</span>
+          <!-- Validation message -->
+          <div *ngIf="!selectedFileName && formSubmitted" class="text-danger mt-2">
+            Please select a file.
+          </div>
+        </div>
+  
+        <!-- Loading Spinner -->
+        <div *ngIf="loading" class="text-center mb-3">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Uploading...</span>
+          </div>
+        </div>
+  
+        <!-- Upload Button -->
+        <div class="text-center">
+          <button class="btn btn-primary" (click)="uploadFile()" [disabled]="loading">Upload</button>
+        </div>
+  
+        <!-- Success/Error Messages -->
+        <div *ngIf="uploadSuccess" class="alert alert-success mt-3">
+          File uploaded successfully!
+        </div>
+        <div *ngIf="uploadError" class="alert alert-danger mt-3">
+          {{ uploadError }}
+        </div>
+      </div>
+    </div>
+  </div>

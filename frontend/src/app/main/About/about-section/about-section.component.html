@@ -1,0 +1,34 @@
+<div>
+
+    <app-header></app-header>
+
+    <div class="container mt-4">
+        
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs justify-content-center">
+          <li class="nav-item" role="button">
+            <a class="nav-link" [class.active]="selectedTab === 'services'" (click)="selectTab('services')">Hydromet Services</a>
+          </li>
+          <li class="nav-item" role="button">
+            <a class="nav-link" [class.active]="selectedTab === 'contact'" (click)="selectTab('contact')">Contact Us</a>
+          </li>
+          <li class="nav-item" role="button">
+            <a class="nav-link" [class.active]="selectedTab === 'help'" (click)="selectTab('help')">Help Index</a>
+          </li>
+        </ul>
+      
+        <!-- Tab Content -->
+        <div class="tab-content mt-4">
+          <div *ngIf="selectedTab === 'services'">
+            <app-about-section-hydromet-services></app-about-section-hydromet-services>
+          </div>
+          <div *ngIf="selectedTab === 'contact'">
+            <app-about-section-contact-us></app-about-section-contact-us>
+          </div>
+          <div *ngIf="selectedTab === 'help'">
+            <app-about-section-help-index></app-about-section-help-index>
+          </div>
+        </div>
+      </div>
+      
+</div>

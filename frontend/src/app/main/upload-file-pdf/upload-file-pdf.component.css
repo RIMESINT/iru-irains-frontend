@@ -1,0 +1,42 @@
+.custom-upload-card {
+    background-color: transparent !important; /* Remove background */
+    border: none !important; /* Remove border */
+    box-shadow: none !important; /* Remove box shadow */
+    padding: 24px; /* Add padding for spacing */
+  }
+  
+  .container {
+    max-width: 600px; /* Limit width for larger screens */
+    margin: auto; /* Center the container */
+  }
+  
+  .file-upload-container {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center vertically */
+  }
+  
+  .file-upload-btn {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center;
+    margin-right: 16px; /* Space between button and filename */
+    padding: 8px 16px; /* Add padding for a larger button */
+    border-radius: 4px; /* Rounded corners */
+  }
+  
+  .file-name {
+    margin-left: 8px; /* Space between button and filename */
+    font-weight: 500;
+    color: #555; /* Darker color for readability */
+  }
+  
+  h5.mat-title {
+    font-size: 24px; /* Increase title size for emphasis */
+    font-weight: bold; /* Bold title */
+    margin-bottom: 20px; /* Space below the title */
+  }
+  
+  button.mat-raised-button {
+    width: 100%; /* Full width for the upload button */
+    padding: 12px; /* Increase padding for better touch targets */
+    border-radius: 8px; /* Slightly round the corners */
+  }

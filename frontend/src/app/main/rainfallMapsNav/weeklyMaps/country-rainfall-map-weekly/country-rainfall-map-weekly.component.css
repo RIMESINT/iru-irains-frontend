@@ -1,0 +1,289 @@
+img {
+    width: 60px;
+}
+  
+.wholebody {
+    background-color: #a2c5b6;
+    height: fit-content; 
+    margin: 0; 
+}
+
+
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+  z-index: 1050; /* higher than other elements */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Loading message box styling */
+.loading-message {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+/* Spinner icon styling */
+.loading-message i {
+  margin-right: 10px;
+  font-size: 24px; /* Adjust the spinner size */
+}
+
+
+
+  .subdivdatacont {
+    display: flex;
+  }
+  .statedatacont {
+    display: flex;
+  }
+  
+  .logo {
+    margin: 6px 0 0 51px;
+  }
+  
+  .map_data {
+    text-align: center;
+    margin: 2%;
+    font-weight: 600;
+    font-size: 10px;
+  }
+  
+  #load {
+    background-color: white;
+    padding: 10px;
+    margin: 6px;
+    margin-left: 15px;
+    width: 160px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: #002467
+  }
+  
+  #load:hover {
+    background-color: #002467;
+    color: white;
+    border-style: solid;
+    border-width: 2px;
+    border-color: white;
+  }
+  
+  /* Add this to your district-map.component.css or global styles */
+  .fullscreen-logo {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  
+  
+  .download {
+    background-color: #002467;
+    padding: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: white;
+  }
+  
+  
+  .download:hover {
+    background-color: white;
+    color: #002467;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #002467;
+  }
+  
+  .downloadpdf {
+    background-color: #002467;
+    padding: 8px;
+    padding-left: 18px;
+    padding-right: 18px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: white;
+  }
+  
+  .downloadpdf:hover {
+    background-color: white;
+    padding: 8px;
+    margin: 6px;
+    width: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: #002467;
+  }
+  
+ 
+   
+  .values {
+    margin: 20px auto;
+    background-color: #f8f9fa; /* Bootstrap light background */
+    padding: 20px 30px;
+    border-radius: 15px;
+    max-width: 800px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+  }
+  
+  h4 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .form-label {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: #343a40; /* Bootstrap dark color */
+  }
+  
+  .form-control {
+    border-radius: 8px;
+    box-shadow: none;
+    transition: box-shadow 0.2s ease-in-out;
+  }
+  
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+  button {
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3; /* Darker shade for hover */
+  }
+ 
+ 
+  #month {
+    background-color: #002467;
+    padding: 10px;
+    margin: 6px;
+    width: 150px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: white;
+  }
+  
+  #month_label {
+    color: #002467;
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: 15px;
+  }
+  
+  #date {
+    background-color: #002467;
+    padding: 10px 10px 10px 22px;
+    margin: 6px;
+    width: 120px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 20px;
+    color: white;
+  }
+  
+  #date_label {
+    color: #002467;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  
+  
+  #myDate {
+    margin: 5px 0px 10px 10px;
+    font-size: 14px;
+  }
+  
+  .map_data {
+    text-align: center;
+    margin: 2%;
+    font-weight: 600;
+    font-size: 10px;
+  }
+  
+  .custom-overlay {
+    position: absolute;
+    background: none;
+  }
+  
+  .checkbox-container {
+    display: inline-block;
+    margin-right: 20px;
+    /* Adjust the margin as needed */
+  }
+  
+  .checkbox-container input {
+    margin-right: 8px;
+    /* Add space to the right of the checkbox */
+  }
+  
+  .gridmap {
+    left: 308px;
+    position: relative;
+  }
+  
+  .gridmap-another-class {
+    left: 0px;
+    position: sticky;
+  }
+
+
+  .small-img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .mode-button {
+    background-color: #69aedc;
+    color: black;
+    /* border: 2px solid #007bff; */
+    padding: 10px 20px;
+    font-size: 12px;
+    border-radius: 5px;
+    width: auto;
+    transition: all 0.3s ease-in-out;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); /* Default shadow for unclicked state */
+    transform: translateY(0); /* Default position for unclicked state */
+  }
+  
+  
+  .mode-button:hover:not(.active) {
+    background-color: #e0e0e0;
+    color: #0056b3;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); 
+    transform: translateY(0); 
+  }  
+  
+  
+  .DownloadMaps{
+    margin-top: 20px;
+  }
+  
+  .disabled {
+    color: grey; /* Text color */
+    cursor: not-allowed; /* Shows a 'no' sign cursor */
+    pointer-events: none; /* Disables clicking */
+    opacity: 0.6; /* Makes the text look faded */
+  }

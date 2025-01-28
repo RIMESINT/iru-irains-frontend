@@ -1,0 +1,65 @@
+<div class="background-effect">
+    <div class="pt-3 pb-1">
+    <!-- <h4 class="text-center pb-3 text-primary">
+      Please select date to see particular date's data
+    </h4> -->
+    <div class="values container shadow-lg">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-8">
+          <label class="form-label">Select Date</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="fromDate"
+            placeholder="Select date"
+            [max]="today"
+          />
+        </div>
+        <div class="col-md-4 d-flex justify-content-start">
+          <button
+            type="button"
+            class="btn btn-primary w-100"
+            (click)="setFromAndToDate()"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div style="text-align: center; padding-top: 40px">
+      <div class="dataentry">
+        <div class="row">
+          <div class="col-12">
+            <h3>STATIONS LOG</h3>
+          </div>
+        </div>
+        <br />
+          <table style="width: 90%; margin: auto; border: 1px solid black; overflow: hidden;">
+            <thead>
+              <tr>
+                <th style="border: 1px solid black">Officer Name</th>
+                <!-- <th style="border: 1px solid black">Mc</th> -->
+                <th style="border: 1px solid black">LoggedIn as</th>
+                <!-- <th style="border: 1px solid black">User</th> -->
+                <th style="border: 1px solid rgb(16, 11, 11)">Time</th>
+                <th style="border: 1px solid black">Action</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="stationData && stationData.length > 0">
+              <tr *ngFor="let station of stationData; let i = index">
+                <td style="border: 1px solid black">{{station.employee_name}}</td>
+                <!-- <td>{{station.centre_type}}</td> -->
+                <td style="border: 1px solid black">{{station.loggedin_user}}</td>
+                <td style="border: 1px solid black;">
+                    {{ station.updated_at | date: 'hh:mm a' }}
+                  </td>
+                                  <!-- <td>{{station.user_name}}</td> -->
+                <td style="border: 1px solid black">{{station.action}}</td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>

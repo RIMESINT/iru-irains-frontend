@@ -1,0 +1,97 @@
+.background-effect {
+  background-color: #a2c5b6;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  min-height: 100vh;
+  height: auto;
+}
+
+body{
+  display: flex;
+}
+
+/* #region:hover, #mcs:hover, #state:hover, #district:hover{
+  color: #002467;
+  font-weight: 600;
+  background-color: white;
+  border-color: #002467;
+  border-width: 2px;
+  box-shadow: none;
+} */
+
+
+.Back{
+  background-color: #002467;
+  padding: 10px;
+  margin: 6px;
+  width: 120px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: white;
+  top: 2px;
+  box-shadow: 5px 5px 10px 2px rgba(0,0,0,.8);
+}
+.Back:hover{
+  color: #002467;
+  font-weight: 600;
+  background-color: white;
+  border-color: #002467;
+  border-width: 2px;
+  box-shadow: none;
+}
+.button{
+  text-align: center;
+}
+h2 {
+    margin-top: 0;
+}
+
+th {
+  padding: 10px;
+}
+
+.significantRainfall-table {
+
+  text-align: center;
+  background-color: white;
+  margin: 0px 15px;
+  border-color: black;
+  border-width: 2px;
+  border-style: solid;
+  padding: 20px 0px;
+  border-radius: 20px;
+}
+
+
+
+/* Loader overlay styling with more transparency */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1); /* Increase transparency by lowering the alpha value */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Ensure it overlays all other elements */
+  text-align: center;
+}
+
+/* Spinner size */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* Blur effect when loading */
+.blurred {
+  filter: blur(4px);
+  pointer-events: none; /* Prevent interaction with content behind the overlay */
+  user-select: none;
+}
