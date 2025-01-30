@@ -1,0 +1,263 @@
+img{
+  width: 60px;
+}
+
+.background-image{
+  background-color: #a2c5b6;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* .background-image {
+  padding: 20px;
+}
+
+@media (max-width: 576px) {
+  .background-image {
+    padding: 10px;
+  }
+  .text-center {
+    font-size: 14px;
+  }
+} */
+
+
+.logo {
+  margin: 6px 0 0 51px;
+}
+
+.map_data{
+  text-align: center;
+ margin: 2%;
+ font-weight: 600;
+ font-size: 10px;
+}
+.load{
+  background-color: white;
+  padding: 10px;
+  margin: 6px;
+  margin-left: 15px;
+  width: 160px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: #002467;
+  box-shadow: 5px 5px 5px 2px rgba(0,0,0,0.8);
+}
+.load:hover{
+  background-color: #002467;
+  color: white;
+  border-style: solid;
+  border-width: 2px;
+  border-color: white;
+  box-shadow: none;
+}
+.download{
+  background-color: #002467;
+  padding: 8px;
+  margin: 6px;
+  width: 83px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: white;
+}
+.download:hover{
+  background-color: white;
+  color: #002467;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #002467;
+}
+/* .values{
+  margin: 10px 32% 10px  32%;
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: auto;
+} */
+#month{
+  background-color: #002467;
+  padding: 10px 10px 10px 20px;
+  margin: 6px;
+  width: 150px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: white;
+  box-shadow: 5px 5px 5px 2px rgba(0,0,0,0.8);
+}
+#month_label{
+  color: #002467;
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 15px;
+}
+#date{
+  background-color: #002467;
+  padding: 10px 10px 10px 22px;
+  margin: 6px;
+  width: 120px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: white;
+  box-shadow: 5px 5px 5px 2px rgba(0,0,0,0.8);
+}
+#date_label{
+  color: #002467;
+  font-size: 18px;
+  font-weight: 600;
+}
+#year{
+  background-color: #002467;
+  padding: 10px 10px 10px 20px;
+  margin: 6px;
+  width: 150px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: white;
+  box-shadow: 5px 5px 5px 2px rgba(0,0,0,0.8);
+}
+#year_label{
+  color: #002467;
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 15px;
+}
+
+img{
+  width: 60px;
+}
+#myDate{
+  margin: 5px 0px 10px 10px;
+  font-size: 14px;
+}
+.map_data{
+  text-align: center;
+ margin: 2%;
+ font-weight: 600;
+ font-size: 10px;
+}
+.download{
+  background-color: #002467;
+  padding: 8px;
+  margin: 6px;
+  width: 83px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: white;
+}
+.downloadpdf{
+  background-color: #002467;
+  padding: 8px;
+  margin: 6px;
+  width: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: white;
+}
+.downloadpdf:hover{
+  background-color: white;
+  padding: 8px;
+  margin: 6px;
+  width: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  color: #002467;
+}
+.download:hover{
+  background-color: white;
+  color: #002467;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #002467;
+}
+.custom-overlay {
+  position: absolute;
+  background: none;
+}
+
+.active {   background-color: #002467;
+  color: white;
+  border-style: solid;
+  border-width: 2px;
+
+}
+
+
+
+.values {
+  margin: 10px;
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 31%;
+  text-align: center;
+  display: inline-block;
+}
+
+.new-box {
+  background-color: #f8f9fa; 
+  padding: 15px; 
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column; 
+  gap: 10px; 
+  align-items: center; 
+  max-height: 200px;  
+  overflow: hidden;  
+}
+
+
+.ms-3 {
+  margin-left: 1rem; 
+}
+
+
+
+.mode-button {
+  background-color: #f0f0f0;
+  color: black;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Default shadow for unclicked state */
+  transform: translateY(0); /* Default position for unclicked state */
+  text-align: center; /* Ensures the text is centered horizontally */
+  display: flex; /* Allows flexbox alignment inside the button */
+  justify-content: center; /* Horizontally center the text */
+  align-items: center; /* Vertically center the text */
+  width: 200px; /* Set fixed width */
+}
+
+
+
+
+.mode-button.active {
+  background-color: #0072ed;
+  color: white;
+  transform: translateY(-1px); /* Move button up for 3D effect */
+}
+
+.mode-button:not(.active) {
+  background-color: #a8a8a8;
+  color: white;
+  transform: translateY(1px); /* Move button down for 3D effect */
+}
+
+.mode-button:hover:not(.active) {
+  background-color: #e0e0e0;
+  color: #0056b3;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow on hover */
+  transform: translateY(0); /* Reset position on hover */
+}

@@ -1,0 +1,30 @@
+<div class="background-effect">
+  <div style="text-align: center; padding-top: 40px">
+    <div class="dataentry">
+      <div class="row">
+        <div class="col-12">
+          <h3>REPORTS LOG</h3>
+        </div>
+      </div>
+      <br />
+      <table style=" margin: auto; border-collapse: collapse; width: 90%; border: 1px solid black;">
+        <thead>
+          <tr>
+            <th style="border: 1px solid black">Report Name</th>
+            <th style="border: 1px solid black">User</th>
+            <th style="border: 1px solid black">Date Time</th>
+            <th style="border: 1px solid black">Uploaded</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="reportsLogs && reportsLogs.length > 0">
+          <tr *ngFor="let delstation of reportsLogs; let i = index">
+            <td>{{delstation.stationname}}</td>
+            <td>{{delstation.username}}</td>
+            <td>{{delstation.datetime | date: 'dd-MM-yyy hh:mm:ss'}}</td>
+            <td>{{delstation.type}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

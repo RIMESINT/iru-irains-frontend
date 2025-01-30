@@ -1,0 +1,442 @@
+<div class="row" style="height: 99vh; overflow-x: hidden;">
+	
+	<div class="col-md-8 login-side-pic container-fluid">
+		<div class="side-text-container container-fluid">
+			<div class="mt-5 ms-4">
+				<span style="
+                    background-color: rgba(0, 0, 0, 0.85);
+                    color:white;
+                    display: inline-block;
+                    letter-spacing: 2px;
+                    font-weight: 700;
+                    font-size: 2.5rem;
+                    padding: 1.2rem 0.75rem ;
+                    text-align: center;
+                    text-shadow: 0px 2px 2px black;
+                    border-radius: 10px 10px 0 0;
+                ">
+					<img height="80px" style="margin-left: 10px;" src="/assets/images/logoimage.png">
+				</span>
+			</div>
+
+			<div class="ms-4">
+				<span style="
+                      font-size: 2.2rem;
+                      background-color: rgba(0, 0, 0, 0.85);
+                      color: white;
+                      padding: 0.75rem;
+                      text-align: center;
+                      font-weight: 300;
+                      display: inline-block;
+                      border-radius: 0 10px 10px 10px;
+                  ">
+				  India Meteorological Department RAinfall INformation System
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4 mt-md-0 mt-3 p-5 container-fluid" style="background-color: #F1f1f1;">
+		<form *ngIf="isLoginOpen" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" autocomplete="off">
+
+			<div class="w-100 text-center h5">
+				<img height="95px" style="margin-right: 10px;" src="/assets/images/IMDlogo_Ipart-iris.png">
+				<img height="80px" style="margin-left: 10px;" src="/assets/images/IMD150(BGR).png">
+				<br>
+				IMD RAinfall INformation System (iRAINS) Hydromet Division <br>
+			</div>
+
+			<div class="w-100 text-center h6">
+				India Meteorological Department <br>
+				Ministry Of Earth Sciences <br>
+				New Delhi-110 003
+			</div>
+
+			<div class="mt-5">
+				<mat-form-field class="w-100" appearance="outline">
+					<mat-icon matSuffix>email</mat-icon>
+					<mat-label>Email Address</mat-label>
+					<input [formControlName]="'username'" matInput placeholder="Email Address" type="email">
+				</mat-form-field>
+			</div>
+
+			<div class="mt-3">
+				<mat-form-field class="w-100" appearance="outline">
+					<mat-icon matSuffix>vpn_key</mat-icon>
+					<mat-label>Password</mat-label>
+					<input [formControlName]="'password'" matInput type="password">
+				</mat-form-field>
+			</div>
+
+			<mat-divider></mat-divider>
+
+			<div class="d-flex justify-content-between mt-3">
+				<div class="d-flex justify-content-left">
+				  <mat-slide-toggle color="primary">Remember Password</mat-slide-toggle>
+				</div>
+				<div>
+				  <a (click)="onForgotPassword()" style="text-decoration: none; cursor: pointer; color: #007bff;">
+					Forgot Password?
+				  </a>
+				</div>
+			  </div>
+			  
+
+			<button [type]="'submit'" mat-raised-button color="primary" class="w-100 mt-4 mb-4">
+				<mat-icon>input</mat-icon> Login
+			</button>
+		
+
+			<!-- Guest Login Button -->
+			<div class="d-flex justify-content-center mt-2">
+				<span>No account? </span>
+				<a (click)="onGuestLogin()" style="cursor: pointer; color: #007bff; margin-left: 5px; text-decoration: none;">
+					Login as Guest
+				</a>
+			</div>
+			
+
+			<div class="d-flex justify-content-center mt-2">
+				<span>To Register your account! </span>
+				<a (click)="RequestRegister()" style="cursor: pointer; color: #007bff; margin-left: 5px; text-decoration: none;">
+					Request here
+				</a>
+			</div>
+			
+			
+		</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<form [hidden]="!isForgotPasswordOpen" [formGroup]="ForgotPasswordForm" (ngSubmit)="SendOTP()" autocomplete="off">
+  
+			<!-- Logo Section -->
+			<div class="text-center mb-4">
+			  <img height="95px" src="/assets/images/IMDlogo_Ipart-iris.png" style="margin-right: 10px;">
+			  <img height="80px" src="/assets/images/IMD150(BGR).png" style="margin-left: 10px;">
+			  <h5 class="mt-3">IMD Rainfall Information System (iRAINS)</h5>
+			  <p>Hydromet Division</p>
+			</div>
+		  
+			<!-- Department Info Section -->
+			<div class="text-center text-muted small mb-4">
+			  <div>India Meteorological Department</div>
+			  <div>Ministry of Earth Sciences</div>
+			  <div>New Delhi-110 003</div>
+			</div>
+		  
+			<!-- Email Input Field -->
+			<div class="mb-3">
+			  <mat-form-field class="w-100" appearance="outline">
+				<mat-label>Email Address</mat-label>
+				<mat-icon matSuffix>email</mat-icon>
+				<input matInput formControlName="email" placeholder="Enter your email" type="email" required>
+
+			  </mat-form-field>
+			</div>
+		  
+
+		  
+			<!-- Login Button -->
+			<button
+			type="submit"
+			mat-raised-button
+			color="primary"
+			class="w-100 mb-3"
+			[disabled]="isLoading"
+			[ngClass]="{ 'loading-spinner': isLoading }">
+			
+			<mat-icon *ngIf="!isLoading">login</mat-icon>
+			<span *ngIf="!isLoading">Send OTP</span>
+			<mat-spinner *ngIf="isLoading" diameter="20" color="white"></mat-spinner>
+		  </button>
+		  
+
+			<mat-divider></mat-divider>
+
+		  
+			<div class="d-flex justify-content-end mt-3 mb-3">
+				<div>
+					<a (click)="onBackToLogin()" style="text-decoration: none; cursor: pointer; color: #007bff;">
+						Back to Login?
+					</a>
+				</div>
+			</div>
+		  
+			<div class="text-center mt-3">
+			  <span class="text-muted">No account?</span>
+			  <a (click)="onGuestLogin()" class="text-primary" style="cursor: pointer; text-decoration: none;">
+				Login as Guest
+			  </a>
+			</div>
+		  </form>
+
+
+
+
+
+
+
+		  <form [hidden]="!isNewPasswordOpen"  [formGroup]="NewPassWordFormAndOTPForm" (ngSubmit)="onVerifyOtp()" autocomplete="off">
+			<div class="text-center">
+			  <h5>Enter OTP</h5>
+			  <p>We've sent an OTP to your email. Please enter it below to verify.</p>
+			  <p *ngIf="timeLeft > 0">Time left: {{ timeLeft }} seconds</p>
+			  <p *ngIf="timeLeft === 0">OTP expired. <a (click)="resendOtp()" style="cursor: pointer; color: #007bff;">Resend OTP</a></p>
+			</div>
+
+
+
+		  
+			<mat-form-field class="w-100" appearance="outline">
+			  <mat-label>OTP</mat-label>
+			  <input formControlName="otp" matInput placeholder="Enter OTP" type="text" required>
+			  <mat-error *ngIf="NewPassWordFormAndOTPForm.get('otp')?.invalid && NewPassWordFormAndOTPForm.get('otp')?.touched">
+				Please enter a valid OTP.
+			  </mat-error>
+			</mat-form-field>
+		  
+
+			<div class="mt-3">
+				<mat-form-field class="w-100" appearance="outline">
+					<mat-icon matSuffix>vpn_key</mat-icon>
+					<mat-label>Password</mat-label>
+					<input [formControlName]="'password'" matInput type="password">
+				</mat-form-field>
+			</div>
+
+
+
+			<div class="mt-3">
+				<mat-form-field class="w-100" appearance="outline">
+					<mat-icon matSuffix>vpn_key</mat-icon>
+					<mat-label>Confirm Password</mat-label>
+					<input [formControlName]="'confirmPassword'" matInput type="password">
+				</mat-form-field>
+			</div>
+
+
+
+
+			<button
+			type="submit"
+			mat-raised-button
+			color="primary"
+			class="w-100 mt-4"
+			[disabled]="isLoading || timeLeft === 0"
+			[ngClass]="{ 'loading-spinner': isLoading }">
+			
+			<mat-icon *ngIf="!isLoading">login</mat-icon>
+			<span *ngIf="!isLoading">Verify And Change</span>
+			<mat-spinner *ngIf="isLoading" diameter="20" color="white"></mat-spinner>
+		  </button>
+
+
+
+
+			<mat-divider></mat-divider>
+
+		  
+			<div class="d-flex justify-content-end mt-3 mb-3">
+				<div>
+					<a (click)="onBackToLogin()" style="text-decoration: none; cursor: pointer; color: #007bff;">
+						Back to Login?
+					</a>
+				</div>
+			</div>
+		  
+			<div class="text-center mt-3">
+			  <span class="text-muted">No account?</span>
+			  <a (click)="onGuestLogin()" class="text-primary" style="cursor: pointer; text-decoration: none;">
+				Login as Guest
+			  </a>
+			</div>
+
+
+
+
+		  </form>
+		  
+
+
+		  <form [hidden]="!isRegisterNewUser" [formGroup]="RegisterUserForm" (ngSubmit)="onRegister()" autocomplete="off">
+			<div class="text-center">
+			  <h5>Register New User</h5>
+			  <p>Please fill in the details below to create a new account.</p>
+			</div>
+		  
+			<!-- User Name -->
+			<mat-form-field class="w-100" appearance="outline">
+			  <mat-label>User Name</mat-label>
+			  <input formControlName="userName" matInput placeholder="Enter User Name" required>
+			  <mat-error *ngIf="RegisterUserForm.get('userName')?.invalid && RegisterUserForm.get('userName')?.touched">
+				Please enter a valid user name.
+			  </mat-error>
+			</mat-form-field>
+		  
+			<!-- Email -->
+			<mat-form-field class="w-100" appearance="outline">
+			  <mat-label>Email</mat-label>
+			  <input formControlName="email" matInput placeholder="Enter Email" type="email" required>
+			  <mat-error *ngIf="RegisterUserForm.get('email')?.invalid && RegisterUserForm.get('email')?.touched">
+				Please enter a valid email.
+			  </mat-error>
+			</mat-form-field>
+		  
+			<!-- Phone Number -->
+			<mat-form-field class="w-100" appearance="outline">
+			  <mat-label>Phone Number</mat-label>
+			  <input formControlName="phoneNumber" matInput placeholder="Enter Phone Number" type="tel" required>
+			  <mat-error *ngIf="RegisterUserForm.get('phoneNumber')?.invalid && RegisterUserForm.get('phoneNumber')?.touched">
+				Please enter a valid 10-digit phone number.
+			  </mat-error>
+			</mat-form-field>
+		  
+			<!-- Requester Type -->
+			<!-- <mat-form-field class="w-100" appearance="outline">
+			  <mat-label>Who is requesting?</mat-label>
+			  <mat-select formControlName="requesterType" required>
+				<mat-option value="metrologist">Meteorologist</mat-option>
+				<mat-option value="public">Public</mat-option>
+				<mat-option value="media">Media</mat-option>
+				<mat-option value="media">Others</mat-option>
+			  </mat-select>
+			  <mat-error *ngIf="RegisterUserForm.get('requesterType')?.invalid && RegisterUserForm.get('requesterType')?.touched">
+				Please select a requester type.
+			  </mat-error>
+			</mat-form-field> -->
+
+
+			<!-- Requester Type -->
+			<mat-form-field class="w-100" appearance="outline">
+				<mat-label>Who is requesting?</mat-label>
+				<mat-select formControlName="requesterType" required (selectionChange)="showOthersInput = $event.value === 'others'">
+				<mat-option value="metrologist">Meteorologist</mat-option>
+				<mat-option value="public">Public</mat-option>
+				<mat-option value="media">Media</mat-option>
+				<mat-option value="others">Others</mat-option>
+				</mat-select>
+				<mat-error *ngIf="RegisterUserForm.get('requesterType')?.invalid && RegisterUserForm.get('requesterType')?.touched">
+				Please select a requester type.
+				</mat-error>
+			</mat-form-field>
+			
+			<!-- Conditional Text Box for "Others" -->
+			<mat-form-field class="w-100" appearance="outline" *ngIf="showOthersInput">
+				<mat-label>Please specify</mat-label>
+				<input matInput formControlName="otherRequester" placeholder="Enter details" />
+				<mat-error *ngIf="RegisterUserForm.get('otherRequester')?.invalid && RegisterUserForm.get('otherRequester')?.touched">
+				This field is required.
+				</mat-error>
+			</mat-form-field>
+  
+		  
+			<!-- Request Role -->
+			<mat-form-field class="w-100" appearance="outline">
+			  <mat-label>Request Role</mat-label>
+			  <mat-select formControlName="requestRole" required>
+				<mat-option value="superadmin">Superadmin</mat-option>
+				<mat-option value="admin">Admin</mat-option>
+			  </mat-select>
+			  <mat-error *ngIf="RegisterUserForm.get('requestRole')?.invalid && RegisterUserForm.get('requestRole')?.touched">
+				Please select a request role.
+			  </mat-error>
+			</mat-form-field>
+		  
+			<!-- Request Reason -->
+			<mat-form-field class="w-100" appearance="outline">
+			  <mat-label>Reason for User Request</mat-label>
+			  <textarea formControlName="requestReason" matInput placeholder="Enter Reason" required></textarea>
+			  <mat-error *ngIf="RegisterUserForm.get('requestReason')?.invalid && RegisterUserForm.get('requestReason')?.touched">
+				Please provide a reason for the user request.
+			  </mat-error>
+			</mat-form-field>
+		  
+			<!-- Submit Button -->
+			<button type="submit" mat-raised-button color="primary" class="w-100 mt-4" [disabled]="RegisterUserForm.invalid">
+			  Registration Request
+			</button>
+		  
+			<mat-divider></mat-divider>
+		  
+			<!-- Back to Login Link -->
+			<div class="d-flex justify-content-end mt-3 mb-3">
+			  <a (click)="onBackToLogin()" style="text-decoration: none; cursor: pointer; color: #007bff;">
+				Back to Login?
+			  </a>
+			</div>
+		  
+			<!-- Guest Login Option -->
+			<div class="text-center mt-3">
+			  <span class="text-muted">No account?</span>
+			  <a (click)="onGuestLogin()" class="text-primary" style="cursor: pointer; text-decoration: none;">
+				Login as Guest
+			  </a>
+			</div>
+		  </form>
+		  
+		  
+		  
+
+
+
+
+
+
+		  <div [hidden]="!isPasswordResetSuccesfully" class="success-message">
+			<div class="tick-container">
+			  <span class="tick-mark">✔</span>
+			</div>
+			<h5 style="color: green;">Password reset done successfully!</h5>
+			<button mat-raised-button color="primary" (click)="onBackToLogin()" class="w-100 mt-4">
+			  Back to Login
+			</button>
+			<div class="text-center mt-3">
+			  <a (click)="onGuestLogin()" class="text-primary" style="cursor: pointer; text-decoration: none;">
+				Login as Guest
+			  </a>
+			</div>
+		  </div>
+
+
+
+
+
+
+
+		  <div [hidden]="!isSuccesfullRegist" class="success-message">
+			<div class="tick-container">
+			  <span class="tick-mark">✔</span>
+			</div>
+			<h5 style="color: green;">Request sent successfully!</h5>
+			<p>We will analyze your request and approve it to create your new account.</p>
+			<button mat-raised-button color="primary" (click)="onBackToLogin()" class="w-100 mt-4">
+			  Back to Login
+			</button>
+			<div class="text-center mt-3">
+			  <a (click)="onGuestLogin()" class="text-primary" style="cursor: pointer; text-decoration: none;">
+				Login as Guest
+			  </a>
+			</div>
+		  </div>
+		  
+	</div>
+</div>

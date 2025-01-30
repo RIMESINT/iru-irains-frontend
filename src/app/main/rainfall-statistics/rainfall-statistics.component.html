@@ -1,0 +1,32 @@
+<div class="wholebody">
+  <app-header></app-header>
+  <div class="align-items-center d-flex justify-content-center">
+    <div class="values container gap-4 margin w-75 justify-content-center d-flex align-it flex-column mx-auto">
+      <div class="row" style="align-items: center; justify-content: center; font-weight: bold; font-size: xx-large;">
+        DAILY {{ category }} STATISTICS
+      </div>
+      <hr />
+      <div class="row" style="align-items: center; justify-content: center">
+        <div class="col-md-5">
+          <label class="form-label fs-3">From Date :</label>
+          <input type="date" class="form-control" [(ngModel)]="fromDate" (ngModelChange)="validateDateRange()" placeholder="Select date"/>
+        </div>
+        <div class="col-md-5">
+          <label class="form-label fs-3">To Date :</label>
+          <input type="date" class="form-control" [(ngModel)]="toDate" (ngModelChange)="validateDateRange()" placeholder="Select date"/>
+        </div>
+      </div>
+      <div class="row w-100">
+        <div class="col-md-2 w-25 py-3 justify-content-center d-flex flex-column mx-auto">
+          <button type="button" class="btn btn-primary py-2 mx-auto w-100 fs-5" (click)="setFromAndToDateAndView()">
+            View
+            <span *ngIf="!loading"></span>
+          <span *ngIf="loading">
+            <i class="fa fa-spinner fa-spin"></i> 
+          </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

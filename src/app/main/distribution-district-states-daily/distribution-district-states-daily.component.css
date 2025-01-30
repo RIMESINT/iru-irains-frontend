@@ -1,0 +1,29 @@
+.wholebody{
+    background-color: #a2c5b6;
+}
+
+.tableData{
+    height: max-content;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: 10px;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute; /* Make sure it's positioned relative to the page */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the spinner */
+}
+
+.mat-spinner {
+    stroke: blue; /* Sets the spinner color to blue */
+}
+
+.sum-row {
+    font-weight: bold;
+    background-color: #f1f1f1; /* Light gray background */
+}

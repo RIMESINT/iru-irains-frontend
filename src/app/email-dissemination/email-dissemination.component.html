@@ -1,0 +1,58 @@
+<div class="background-effect">
+  <table style="width: 100%; background: linear-gradient(to top, #09203f 0%, #537895 100%);">
+    <tbody>
+      <tr>
+        <td style="width: 8%; padding: 10px 0px 17px 25px;" align="left">
+        </td>
+        <td style="text-align: center; padding: 20px; width: 90%">
+          <table style="width: 100%">
+            <tbody>
+              <tr>
+                <td>
+                  <label style="
+                      color: white;
+                      vertical-align: middle;
+                      font-family: Arial;
+                      font-weight: bolder;
+                      font-size: 20px;
+                    ">
+                    IMD Rainfall Information System <img width="100px" style="margin-left: 10px;"
+                    src="/assets/images/logoimage.png"></label>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label style="
+                      color: white;
+                      vertical-align: middle;
+                      font-family: Arial;
+                      font-weight: bolder;
+                      font-size: 18px;
+                    ">
+                    Hydromet Division</label>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+        <td>
+          <div class="button">
+            <button class="Back" type="button" routerLink="../front-page">Back</button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="sidebar">
+  <a [ngClass]="{'active': isSelected('send-email')}" (click)="selectMenuItem('send-email')" routerLink="send-email">Send Email</a>
+  <!-- <a [ngClass]="{'active': isSelected('auto-email')}" (click)="selectMenuItem('auto-email')" routerLink="auto-email">Auto Email</a> -->
+  <a [ngClass]="{'active': isSelected('defined-email')}" (click)="selectMenuItem('defined-email')" routerLink="defined-email">Email Group</a>
+  <a [ngClass]="{'active': isSelected('email-log')}" (click)="selectMenuItem('email-log')" routerLink="email-log">Email Log</a>
+</div>
+
+<div class="content">
+  <router-outlet></router-outlet>
+</div>
+

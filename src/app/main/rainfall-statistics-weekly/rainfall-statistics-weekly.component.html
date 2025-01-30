@@ -1,0 +1,54 @@
+<div class="wholebody">
+  <app-header></app-header>
+  <div class="values container pt-5">
+    <div class="row text-white" style="align-items: center; justify-content: center; font-weight: bold; font-size: xx-large;">
+      WEEKLY {{ category }} STATISTICS
+    </div>
+    <hr />
+
+    <div class="row align-items-center justify-content-center">
+      <!-- Category Dropdown -->
+      <div class="col-12 col-md-5 mb-3 mb-md-0"> <!-- Adjusted for responsiveness -->
+        <mat-form-field appearance="fill" class="w-100"> <!-- Use w-100 for full width -->
+          <mat-label>Select Category</mat-label>
+          <mat-select
+            [(ngModel)]="selectedCategory"
+            (selectionChange)="onCategoryChange($event.value)"
+          >
+            <mat-option value="STATE">State</mat-option>
+            <mat-option value="SUBDIVISION">Subdivision</mat-option>
+            <mat-option value="DISTRICT">District</mat-option>
+            <mat-option value="REGION">Region</mat-option>
+            <mat-option value="COUNTRY">Country</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Week Dropdown -->
+      <div class="col-12 col-md-5"> <!-- Adjusted for responsiveness -->
+        <mat-form-field appearance="fill" class="w-100"> <!-- Use w-100 for full width -->
+          <mat-label>Select Week</mat-label>
+          <mat-select [(ngModel)]="selectedWeek">
+            <mat-optgroup *ngFor="let month of months" [label]="month.name">
+              <mat-option *ngFor="let week of month.weeks" [value]="week.range">
+                {{ week.label }} ({{ week.displayRange }})
+              </mat-option>
+            </mat-optgroup>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row d-flex justify-content-center mt-3">
+      <div class="col-md-2">
+        <button mat-raised-button color="primary" class="w-100" (click)="viewWeeklyStatistics()"> <!-- Use w-100 for full width -->
+          <span *ngIf="!loading">View</span>
+          <span *ngIf="loading" class="custom-spinner-container">
+            <mat-spinner diameter="5"></mat-spinner>
+            <span class="loading-text text-white">Loading...</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="wholebody">
+    <app-header></app-header>
+    
+    <div class="pt-3 pb-1">
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="d-flex align-items-center">
+                        <!-- Season Dropdown -->
+                        <mat-form-field appearance="fill" class="me-3 flex-fill">
+                            <mat-label>Select Season</mat-label>
+                            <mat-select [(ngModel)]="selectedSeason" (ngModelChange)="onSeasonChange()">
+                                <mat-option *ngFor="let season of seasons" [value]="season">
+                                    {{ season }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+  
+                        <!-- Map Dropdown -->
+                        <mat-form-field appearance="fill" class="me-3 flex-fill">
+                            <mat-label>Select Map</mat-label>
+                            <mat-select [(ngModel)]="selectedMap" (ngModelChange)="onSeasonChange()">
+                                <mat-option *ngFor="let map of maps" [value]="map">
+                                    {{ map }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+  
+                              <!-- Date Picker (only visible when 'Daily' is selected) -->
+                              <mat-form-field *ngIf="selectedSeason === 'Daily'" appearance="fill" class="me-3 flex-fill">
+                                  <mat-label>Select Date</mat-label>
+                                  <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (ngModelChange)="onSeasonChange()">
+                                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                  <mat-datepicker #picker></mat-datepicker>
+                              </mat-form-field>
+  
+                        <!-- Submit Button -->       
+                        <!-- <button mat-raised-button color="primary" class="submit-btn" (click)="onSubmit()">
+                            Submit
+                        </button>     -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-center">
+                <app-normal-map-state 
+                  *ngIf="selectedMap === 'State'" 
+                  [mapData]="mapData" 
+                  [selectedSeason]="selectedSeason" 
+                  [selectedMap] = "selectedMap"
+                  [dateRange]="getDateRange(selectedSeason)">
+                </app-normal-map-state>
+                 
+                <!-- <app-subdivision-map-dup *ngIf="selectedMap === 'Subdivision'" [mapData]="mapData"></app-subdivision-map-dup> -->
+                <app-normal-map-subdiv *ngIf="selectedMap === 'Subdivision'"
+                 [mapData]="mapData" 
+                 [selectedSeason]="selectedSeason" 
+                 [selectedMap] = "selectedMap"
+                 [dateRange]="getDateRange(selectedSeason)"></app-normal-map-subdiv>
+            </div>
+        </div>
+    </div>
+  </div>
+  

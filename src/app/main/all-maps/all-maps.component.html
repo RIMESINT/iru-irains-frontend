@@ -1,0 +1,35 @@
+<div class="main-body">
+    <app-front-page></app-front-page>
+    <div *ngIf="selecteddatamode == 'Departure'">
+        <div *ngIf="loggedInUserObject.data[0].mcorhq == 'mc'">
+            <app-mc-rmc-map-component-for-mcs></app-mc-rmc-map-component-for-mcs>
+        </div>
+    </div>
+
+    <div *ngIf="selecteddatamode == 'Actual'">
+        <div *ngIf="loggedInUserObject.data[0].mcorhq == 'mc'">
+            <app-mc-rmc-map-component-for-mcs-actual></app-mc-rmc-map-component-for-mcs-actual>
+        </div>
+    </div>
+
+    <div *ngIf="selecteddatamode == 'Departure'">
+        <div *ngIf="loggedInUserObject.data[0].mcorhq == 'hq' || loggedInUserObject.data[0].mcorhq == 'public'" class="d-flex justify-content-center flex-wrap gap-3">
+            <app-district-map></app-district-map>
+            <app-state-map></app-state-map>
+            <app-subdivision-map></app-subdivision-map>
+            <app-region-map></app-region-map>
+            <!-- <app-country-map></app-country-map> -->
+        </div>
+    </div>
+
+    <div *ngIf="selecteddatamode == 'Actual'">
+        <div *ngIf="loggedInUserObject.data[0].mcorhq == 'hq' || loggedInUserObject.data[0].mcorhq == 'public'" class="d-flex justify-content-center flex-wrap gap-3">
+            <app-district-actual-map></app-district-actual-map>
+            <app-state-actual-map></app-state-actual-map>
+            <app-subdivision-actual-map></app-subdivision-actual-map>
+            <app-region-actual-map></app-region-actual-map>
+            <!-- <app-country-map></app-country-map> -->
+        </div>
+    </div>    
+
+</div>

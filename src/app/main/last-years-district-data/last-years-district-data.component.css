@@ -1,0 +1,13 @@
+.wholebody{
+    background-color: #a2c5b6;
+    height: 100vh;
+}
+
+.year-column {
+    width: 140px; /* Fixed width for YEAR column */
+}
+
+.month-column {
+    /* width: calc((100% - 160px) / 12 + 20px);  */
+    width: 140px;
+}

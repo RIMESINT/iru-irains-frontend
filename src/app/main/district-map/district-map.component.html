@@ -1,0 +1,233 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12" id="mapdiv1">
+      <div class="map-container">
+        <div class="map-frame">
+          <div
+            id="map-district"
+            class="text-center shadow-sm bg-white" style="width: 44rem; height: 58.8rem; padding: 1rem;"
+          >
+
+          <div
+          style="
+            border: 2px solid black;
+            width: 100%;
+            height: 100%;
+            padding: 2em;
+          "
+          id="border-remove-district"
+        >
+
+          <div id="loader" class="loader" *ngIf="isLoading">
+            <div class="loading-message">
+              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i> Downloading...
+            </div>
+          </div>
+
+            <div class="d-flex w-100">
+              <div class="text-center ms-2" style="width: 15%;">
+                <img id="logoImage-district" class="" src="/assets/images/IMDlogo_Ipart-iris.png" alt="" />
+                <div *ngIf="!isFullscreen()" class="download-buttons">
+                  <div id="all-btn-district_" class="d-flex flex-column mt-3">
+                    <button mat-button class="mode-button mb-2" (click)="downloadMapImage(false)">
+                        Map Download
+                    </button>
+                    <button mat-button class="mode-button mb-2" (click)="downloadMappdf()">
+                        Map Pdf Download
+                    </button>
+                    <button mat-button class="mode-button mb-2" (click)="downloadMapData()">
+                        Statistics Download
+                    </button>
+                    <button mat-button class="mode-button mb-2 custom-z-index" (click)="resetMapSmallScreen()">
+                      Reset Position
+                  </button>
+                </div>
+                </div>
+              </div>
+
+              <div id="middle-header-district" class="text-center pt-3" style="width: 72%;">
+                <div class="d-flex flex-column align-items-center ps-4">
+                  <div>
+                    <label class="text-black fw-bold" style="font-family: Arial; font-size: 12px;">
+                      INDIA METEOROLOGICAL DEPARTMENT, NEW DELHI
+                    </label>
+                  </div>
+                  <div>
+                    <label
+                      *ngIf="!StartDate && !EndDate"
+                      class="text-black fw-bold"
+                      style="font-family: Arial; font-size: 14px;"
+                    >
+                      Date : {{ formatteddate }}
+                    </label>
+                    <label
+                      *ngIf="
+                        StartDate &&
+                        EndDate &&
+                        StartDate != EndDate
+                      "
+                      class="text-black fw-bold"
+                      style="font-family: Arial; font-size: 14px;"
+                    >
+                      Date :
+                      {{ StartDate }} to
+                      {{ EndDate  }}
+                    </label>
+                    <label
+                      *ngIf="
+                        StartDate &&
+                        StartDate == EndDate
+                      "
+                      class="text-black fw-bold"
+                      style="font-family: Arial; font-size: 14px;"
+                    >
+                      Date : {{ StartDate}}
+                    </label>
+                  </div>
+                  <div>
+                    <label class="text-black fw-bold" style="font-family: Arial; font-size: 14px;">
+                      DISTRICT WISE RAINFALL MAP (mm)
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div *ngIf="isFullscreen()" id="resetButton" class="ResetMap text-center" style="width: 72%;">
+                <button mat-button class="mode-button" (click)="resetMap()">
+                  Reset Position
+                </button>
+              </div> -->
+              <div *ngIf="isFullscreen()" id="resetButton" class="ResetMap text-center" style="width: 72%;">
+                <button mat-button class="mode-button w-25" (click)="resetMap()">
+                  Reset Position
+                </button>
+              </div>
+              
+              
+<!-- 
+              <div *ngIf="isFullscreen()" class="DownloadMaps">
+                <div id="all-btn-district" class="d-flex flex-column mt-3">
+                  <button mat-button class="mode-button mb-2" (click)="downloadMapImage(false)">
+                      Map Download
+                  </button>
+                  <button mat-button class="mode-button mb-2" (click)="downloadMappdf()">
+                      Map Pdf Download
+                  </button>
+                  <button mat-button class="mode-button" (click)="downloadMapData()">
+                      Statistics Download
+                  </button>
+                </div>
+              </div> -->
+              
+              
+              <div>
+
+
+                <div id="celebrations-district" class="text-center mt-3 ms-1">
+                  <img class="logo" src="assets/images/IMD150(BGR).png" alt="" />
+                </div>
+
+                <img
+                class="mt-5 ms-1 img-fluid small-img"
+                src="../../assets/images/—Pngtree—compass_6028609.png"
+                alt=""
+                id="compassArrow-district"
+                />
+              </div>
+
+              <div>
+                <div id="country_values_district_all_maps" *ngIf="isFullscreen()" class="text-center mt-3 ms-1">
+                  <p style="text-align: center; font-weight: bold; font-size: xx-large; color: #FF9933;"> India </p>
+                  <table style="border: 1px solid black; border-collapse: collapse; width: 10px">
+                    <tr>
+                      <th style="border: 2px solid black;" class="px-2">Actual</th>
+                      <th style="border: 2px solid black;" class="px-2">Normal</th>
+                      <th style="border: 2px solid black;" class="px-2 text-nowrap">% Dep.</th>
+                    </tr>
+                    <tr>
+                      <td style="border: 2px solid black; color: #000080; ">{{countryActual==-999 || countryActual==null ? 'No Data' : countryActual}}</td>
+                      <td style="border: 2px solid black; color: #000080;">{{countryNormal==-999 || countryNormal==null ? 'No Data' : countryNormal}}</td>
+                      <td style="border: 2px solid black; color: #000080;">{{countryDeparture==-999 || countryDeparture==null ?'No Data' : countryDeparture}}</td>
+                    </tr>
+                  </table>
+              
+                  <!-- <img class="logo" src="assets/images/IMD150(BGR).png" alt="" /> -->
+                </div>
+              
+                <!-- <img
+                  class="mt-2 ms-1"
+                  style="width: 150px; height: 150px;"
+                  src="../../assets/images/—Pngtree—compass_6028609.png"
+                  alt=""
+                  id="compassArrow-district"
+                /> -->
+              </div>
+
+              <div id="additional_table" *ngIf="!isFullscreen()" class="position-absolute" style="bottom: 15%; right: 30%;">
+                <p style="color: black;" class="fs-4">India</p>
+                  <table class="table table-bordered table-sm" style="width: 10px;">
+                    <thead class="thead-light">
+                      <tr>
+                        <th style="font-size: xx-small; border: 2px solid black;">Actual</th>
+                        <th style="font-size: xx-small; border: 2px solid black;">Normal</th>
+                        <th style="font-size: xx-small; border: 2px solid black;" class="text-nowrap">% Dep</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="font-size: xx-small; border: 2px solid black; color: #000080;">{{countryActual==-999 || countryActual==null ? 'null' : countryActual}}</td>
+                        <td style="font-size: xx-small; border: 2px solid black; color: #000080;">{{countryNormal==-999 || countryNormal==null ? 'null' : countryNormal}}</td>
+                        <td style="font-size: xx-small; border: 2px solid black; color: #000080;">{{countryDeparture==-999 || countryDeparture==null ? 'null' : countryDeparture}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+              </div>
+
+              <!-- <div id="all-btn-district" class="d-flex flex-column me-2 text-start w-25">
+                <div class="d-flex">
+                  <button class="download" style="margin-right: 5px;" (click)="downloadMapImage(false)">
+                    IMG
+                  </button>
+                  <button class="download" style="margin-left: 5px;" (click)="downloadMappdf()">
+                    PDF
+                  </button>
+                </div>
+                <div class="mt-1 text-start">
+                  <button class="download" style="margin-left: 10px;" (click)="downloadMapData()">
+                    Statistics
+                  </button>
+                </div>
+              </div>
+            </div> -->
+
+            <div class="leaflet-bottom" id="leaflet-bottom-district">
+              <div
+              class="info_legend leaflet-control justify-content-center d-flex align-items-center flex-wrap mb-5"
+              id="legends-district"
+                style="width: auto; height: 30px;"
+              >
+                <div
+                  *ngFor="let item of legendItems"
+                  class="d-flex align-items-center me-3"
+                >
+                  <div
+                    [style.background-color]="item.color"
+                    class="d-inline-block border border-1 border-black"
+                    style="width: 9px; height: 9px;"
+                  ></div>
+                  <div
+                    [style.font-size]="item.fontSize"
+                    class="text-black fw-bold mx-2"
+                  >
+                  <div class="text-size" [innerHTML]="item.text"></div>
+                  <!-- {{ item.text }} -->                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

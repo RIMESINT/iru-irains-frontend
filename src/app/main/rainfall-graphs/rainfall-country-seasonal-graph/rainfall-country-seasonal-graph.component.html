@@ -1,0 +1,91 @@
+<app-header></app-header>
+
+<div id="loader" class="loader" *ngIf="isLoading">
+    <div class="loading-message">
+      <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i> Loading Chart..
+    </div>
+</div>
+
+
+
+
+
+<div class="mt-3 mb-0 p-3 bg-light rounded align-items-center justify-content-center">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-6 align-items-center justify-content-center">
+  
+    <mat-form-field appearance="fill" class="me-3 ">
+      <mat-label>Select Season</mat-label>
+      <mat-select [(ngModel)]="selectedSeason">
+          <mat-option *ngFor="let season of seasons" [value]="season">
+              {{ season }}
+          </mat-option>
+      </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="me-3">
+        <mat-label>Select Region</mat-label>
+        <mat-select [(ngModel)]="selectedMap" (selectionChange)="onMapChange($event)">
+          <mat-option *ngFor="let map of maps" [value]="map">
+            {{ map }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      
+  
+  
+  
+
+  
+  <mat-form-field appearance="fill" class="me-3 ">
+    <mat-label>Select Year</mat-label>
+    <mat-select [(ngModel)]="selectedYear">
+        <mat-option *ngFor="let year of years" [value]="year">
+            {{ year }}
+        </mat-option>
+    </mat-select>
+    </mat-form-field>
+  
+
+  
+    <div class="col mb-2 ">
+      <button
+        class="btn btn-success w-50"
+        type="button"
+        (click)="onSubmit()"
+        >
+        Submit
+      </button>
+    </div>
+  </div>
+  </div>
+
+
+
+
+
+  <div class="chart">
+    <h1 class="heading-title" style="font-size: 18px; text-align: center; font-weight: bold; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 8vh;">
+      DISTRIBUTION OF {{selectedModeCummOrNonCumm.toUpperCase()}} RAINFALL GRAPHS <br> {{ Map }} IN {{ Year }} {{ Season }} SEASON
+    </h1>
+  
+    <!-- Centered Buttons -->
+    <div style="display: flex; justify-content: center; align-items: center; margin: 20px 0; gap: 10px;">
+      <button 
+        mat-button 
+        (click)="selectCumulativeOrNonCumulative('Non-Cummulative')" 
+        class="mode-button" 
+        [ngClass]="{'active': selectedModeCummOrNonCumm === 'Non-Cummulative'}">
+        Non-Cumulative
+      </button>
+      <button 
+        mat-button 
+        (click)="selectCumulativeOrNonCumulative('Cummulative')" 
+        class="mode-button" 
+        [ngClass]="{'active': selectedModeCummOrNonCumm === 'Cummulative'}">
+        Cumulative
+      </button>
+    </div>
+  
+    <div [chart]="chart"></div>
+  </div>

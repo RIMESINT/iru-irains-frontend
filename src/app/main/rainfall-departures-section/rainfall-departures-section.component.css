@@ -1,0 +1,236 @@
+img {
+    width: 50px;
+}
+.wholepage{
+    background-color: #f8f9fa;
+}
+.wholebody {
+    background-color: #a2c5b6;
+    height: fit-content; 
+    margin: 0;
+}
+
+.loaderRainfallMap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+    z-index: 1051; /* higher than other elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Loading message box styling */
+.loading-message {
+    background-color: white;
+    padding: 15px; /* Reduced padding */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    font-size: 14px; /* Reduced font size */
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+/* Spinner icon styling */
+.loading-message i {
+    margin-right: 8px; /* Reduced margin */
+    font-size: 20px; /* Reduced size */
+}
+
+.subdivdatacont, .statedatacont {
+    display: flex;
+}
+
+.logo {
+    margin: 4px 0 0 40px; /* Reduced margin */
+}
+
+.map_data {
+    text-align: center;
+    margin: 2%;
+    font-weight: 600;
+    font-size: 9px; /* Reduced font size */
+}
+
+#load {
+    background-color: white;
+    padding: 8px;
+    margin: 4px;
+    margin-left: 12px;
+    width: 140px;
+    font-size: 13px; /* Reduced font size */
+    font-weight: 600;
+    border-radius: 18px;
+    color: #002467;
+}
+
+#load:hover {
+    background-color: #002467;
+    color: white;
+    border-style: solid;
+    border-width: 2px;
+    border-color: white;
+}
+
+.fullscreen-logo {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.download, .downloadpdf {
+    background-color: #002467;
+    padding: 6px; /* Reduced padding */
+    font-size: 10px; /* Reduced font size */
+    font-weight: 600;
+    border-radius: 18px;
+    color: white;
+}
+
+.download:hover, .downloadpdf:hover {
+    background-color: white;
+    color: #002467;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #002467;
+}
+
+.values {
+    margin: 15px auto;
+    background-color: #f8f9fa;
+    padding: 18px 25px;
+    border-radius: 15px;
+    max-width: 750px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+h4 {
+    font-weight: 600;
+    font-size: 1.4rem; /* Reduced font size */
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 1rem; /* Reduced font size */
+    color: #343a40;
+}
+
+.form-control {
+    border-radius: 8px;
+    box-shadow: none;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.15rem rgba(0, 123, 255, 0.25); /* Reduced shadow size */
+}
+
+button {
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#month, #date {
+    background-color: #002467;
+    padding: 8px; /* Reduced padding */
+    width: 140px;
+    font-size: 13px; /* Reduced font size */
+    font-weight: 600;
+    border-radius: 18px;
+    color: white;
+}
+
+#month_label, #date_label {
+    color: #002467;
+    font-size: 16px; /* Reduced font size */
+    font-weight: 600;
+    margin-left: 12px; /* Reduced margin */
+}
+
+.values {
+    margin: 10px 30%;
+    background-color: white;
+    padding: 20px; /* Reduced padding */
+    border-radius: 10px;
+    width: auto;
+}
+
+#myDate {
+    margin: 5px 0px 10px 10px;
+    font-size: 12px; /* Reduced font size */
+}
+
+.checkbox-container {
+    display: inline-block;
+    margin-right: 16px; /* Reduced margin */
+}
+
+.checkbox-container input {
+    margin-right: 6px; /* Reduced spacing */
+}
+
+.gridmap {
+    left: 308px;
+    position: relative;
+}
+
+.mode-button {
+    background-color: #69aedc;
+    padding: 8px 18px; /* Reduced padding */
+    font-size: 11px; /* Reduced font size */
+    border-radius: 5px;
+}
+
+.submit-btn {
+    padding: 10px 20px; /* Reduced padding */
+    font-size: 0.9rem; /* Reduced font size */
+    margin-left: 12px; /* Reduced space between button and dropdown */
+    margin-top: -6px; /* Adjusted alignment */
+}
+
+.submit-btn:hover {
+    background-color: #1976d2;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.d-flex .mat-form-field {
+    min-width: 180px; /* Reduced width */
+}
+
+.mat-form-field {
+    flex-grow: 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
